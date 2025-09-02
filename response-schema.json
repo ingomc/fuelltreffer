@@ -1,0 +1,6223 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "participant": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "teamSeason": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "playingVenue": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "locationCity": {
+                  "type": "string"
+                },
+                "locationPostalCode": {
+                  "type": "string"
+                },
+                "locationStreet": {
+                  "type": "string"
+                },
+                "isActive": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "locationCity",
+                "locationPostalCode",
+                "locationStreet",
+                "isActive"
+              ]
+            },
+            "name": {
+              "type": "string"
+            },
+            "weekTypeCdMatch": {
+              "type": "string"
+            },
+            "weekdayMatch": {
+              "type": "integer"
+            },
+            "throwoffTime": {
+              "type": "string"
+            },
+            "teamMembers": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "displayName": {
+                      "type": "string"
+                    },
+                    "member": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "player": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "passNr": {
+                              "type": "integer"
+                            },
+                            "displayName": {
+                              "type": "string"
+                            },
+                            "firstname": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "genderCd": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "passNr",
+                            "displayName",
+                            "firstname",
+                            "name",
+                            "genderCd"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "player"
+                      ]
+                    },
+                    "dateFrom": {
+                      "type": "string"
+                    },
+                    "dateTo": {
+                      "type": "string"
+                    },
+                    "competitionEventTypeCd": {
+                      "type": "string"
+                    },
+                    "memberPlayerName": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "displayName",
+                    "member",
+                    "dateFrom",
+                    "dateTo",
+                    "competitionEventTypeCd",
+                    "memberPlayerName"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "displayName": {
+                      "type": "string"
+                    },
+                    "member": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "player": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "passNr": {
+                              "type": "integer"
+                            },
+                            "displayName": {
+                              "type": "string"
+                            },
+                            "firstname": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "genderCd": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "passNr",
+                            "displayName",
+                            "firstname",
+                            "name",
+                            "genderCd"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "player"
+                      ]
+                    },
+                    "dateFrom": {
+                      "type": "string"
+                    },
+                    "dateTo": {
+                      "type": "string"
+                    },
+                    "competitionEventTypeCd": {
+                      "type": "string"
+                    },
+                    "memberPlayerName": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "displayName",
+                    "member",
+                    "dateFrom",
+                    "dateTo",
+                    "competitionEventTypeCd",
+                    "memberPlayerName"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "displayName": {
+                      "type": "string"
+                    },
+                    "member": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "player": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "passNr": {
+                              "type": "integer"
+                            },
+                            "displayName": {
+                              "type": "string"
+                            },
+                            "firstname": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "genderCd": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "passNr",
+                            "displayName",
+                            "firstname",
+                            "name",
+                            "genderCd"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "player"
+                      ]
+                    },
+                    "dateFrom": {
+                      "type": "string"
+                    },
+                    "dateTo": {
+                      "type": "string"
+                    },
+                    "competitionEventTypeCd": {
+                      "type": "string"
+                    },
+                    "memberPlayerName": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "displayName",
+                    "member",
+                    "dateFrom",
+                    "dateTo",
+                    "competitionEventTypeCd",
+                    "memberPlayerName"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "displayName": {
+                      "type": "string"
+                    },
+                    "member": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "player": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "passNr": {
+                              "type": "integer"
+                            },
+                            "displayName": {
+                              "type": "string"
+                            },
+                            "firstname": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "genderCd": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "passNr",
+                            "displayName",
+                            "firstname",
+                            "name",
+                            "genderCd"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "player"
+                      ]
+                    },
+                    "dateFrom": {
+                      "type": "string"
+                    },
+                    "dateTo": {
+                      "type": "string"
+                    },
+                    "competitionEventTypeCd": {
+                      "type": "string"
+                    },
+                    "memberPlayerName": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "displayName",
+                    "member",
+                    "dateFrom",
+                    "dateTo",
+                    "competitionEventTypeCd",
+                    "memberPlayerName"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "displayName": {
+                      "type": "string"
+                    },
+                    "member": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "player": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "passNr": {
+                              "type": "integer"
+                            },
+                            "displayName": {
+                              "type": "string"
+                            },
+                            "firstname": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "genderCd": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "passNr",
+                            "displayName",
+                            "firstname",
+                            "name",
+                            "genderCd"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "player"
+                      ]
+                    },
+                    "dateFrom": {
+                      "type": "string"
+                    },
+                    "dateTo": {
+                      "type": "string"
+                    },
+                    "competitionEventTypeCd": {
+                      "type": "string"
+                    },
+                    "memberPlayerName": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "displayName",
+                    "member",
+                    "dateFrom",
+                    "dateTo",
+                    "competitionEventTypeCd",
+                    "memberPlayerName"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "displayName": {
+                      "type": "string"
+                    },
+                    "member": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "player": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "passNr": {
+                              "type": "integer"
+                            },
+                            "displayName": {
+                              "type": "string"
+                            },
+                            "firstname": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "genderCd": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "passNr",
+                            "displayName",
+                            "firstname",
+                            "name",
+                            "genderCd"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "player"
+                      ]
+                    },
+                    "dateFrom": {
+                      "type": "string"
+                    },
+                    "dateTo": {
+                      "type": "string"
+                    },
+                    "tc1": {
+                      "type": "boolean"
+                    },
+                    "competitionEventTypeCd": {
+                      "type": "string"
+                    },
+                    "memberPlayerName": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "displayName",
+                    "member",
+                    "dateFrom",
+                    "dateTo",
+                    "tc1",
+                    "competitionEventTypeCd",
+                    "memberPlayerName"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "displayName": {
+                      "type": "string"
+                    },
+                    "member": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "player": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "passNr": {
+                              "type": "integer"
+                            },
+                            "displayName": {
+                              "type": "string"
+                            },
+                            "firstname": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "genderCd": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "passNr",
+                            "displayName",
+                            "firstname",
+                            "name",
+                            "genderCd"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "player"
+                      ]
+                    },
+                    "dateFrom": {
+                      "type": "string"
+                    },
+                    "dateTo": {
+                      "type": "string"
+                    },
+                    "competitionEventTypeCd": {
+                      "type": "string"
+                    },
+                    "memberPlayerName": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "displayName",
+                    "member",
+                    "dateFrom",
+                    "dateTo",
+                    "competitionEventTypeCd",
+                    "memberPlayerName"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "displayName": {
+                      "type": "string"
+                    },
+                    "member": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "player": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "passNr": {
+                              "type": "integer"
+                            },
+                            "displayName": {
+                              "type": "string"
+                            },
+                            "firstname": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "genderCd": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "passNr",
+                            "displayName",
+                            "firstname",
+                            "name",
+                            "genderCd"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "player"
+                      ]
+                    },
+                    "dateFrom": {
+                      "type": "string"
+                    },
+                    "dateTo": {
+                      "type": "string"
+                    },
+                    "tc2": {
+                      "type": "boolean"
+                    },
+                    "competitionEventTypeCd": {
+                      "type": "string"
+                    },
+                    "memberPlayerName": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "displayName",
+                    "member",
+                    "dateFrom",
+                    "dateTo",
+                    "tc2",
+                    "competitionEventTypeCd",
+                    "memberPlayerName"
+                  ]
+                }
+              ]
+            },
+            "competitionChampionship": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "id",
+            "playingVenue",
+            "name",
+            "weekTypeCdMatch",
+            "weekdayMatch",
+            "throwoffTime",
+            "teamMembers",
+            "competitionChampionship"
+          ]
+        },
+        "displayName": {
+          "type": "string"
+        },
+        "currentPosition": {
+          "type": "string"
+        },
+        "paid": {
+          "type": "boolean"
+        },
+        "present": {
+          "type": "boolean"
+        },
+        "deregistered": {
+          "type": "boolean"
+        },
+        "retired": {
+          "type": "boolean"
+        },
+        "rankingPos": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "teamSeason",
+        "displayName",
+        "currentPosition",
+        "paid",
+        "present",
+        "deregistered",
+        "retired",
+        "rankingPos"
+      ]
+    },
+    "matches": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "eventId": {
+              "type": "integer"
+            },
+            "event": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "datetime": {
+                  "type": "string"
+                },
+                "statusCd": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "nameShort": {
+                  "type": "string"
+                },
+                "hasPerformancesDefined": {
+                  "type": "boolean"
+                },
+                "leagueLock": {
+                  "type": "boolean"
+                },
+                "hideDataLeagueSetup": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "datetime",
+                "statusCd",
+                "name",
+                "nameShort",
+                "hasPerformancesDefined",
+                "leagueLock",
+                "hideDataLeagueSetup"
+              ]
+            },
+            "round": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "index": {
+                  "type": "integer"
+                },
+                "typeCd": {
+                  "type": "string"
+                },
+                "groupCd": {
+                  "type": "string"
+                },
+                "matchmode": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "matchmodeCd": {
+                      "type": "string"
+                    },
+                    "matchmodeInCd": {
+                      "type": "string"
+                    },
+                    "matchmodeOutCd": {
+                      "type": "string"
+                    },
+                    "matchmodePoints": {
+                      "type": "integer"
+                    },
+                    "setsBestOf": {
+                      "type": "integer"
+                    },
+                    "setsTotal": {
+                      "type": "integer"
+                    },
+                    "legsBestOf": {
+                      "type": "integer"
+                    },
+                    "legsTotal": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "matchmodeCd",
+                    "matchmodeInCd",
+                    "matchmodeOutCd",
+                    "matchmodePoints",
+                    "setsBestOf",
+                    "setsTotal",
+                    "legsBestOf",
+                    "legsTotal"
+                  ]
+                },
+                "nameCd": {
+                  "type": "string"
+                },
+                "dateFrom": {
+                  "type": "string"
+                },
+                "dateTo": {
+                  "type": "string"
+                },
+                "waitForLastRound": {
+                  "type": "boolean"
+                },
+                "level": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "index",
+                "typeCd",
+                "groupCd",
+                "matchmode",
+                "nameCd",
+                "dateFrom",
+                "dateTo",
+                "waitForLastRound",
+                "level"
+              ]
+            },
+            "phase": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "index": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "statusCd": {
+                  "type": "string"
+                },
+                "modeCd": {
+                  "type": "string"
+                },
+                "typeCd": {
+                  "type": "string"
+                },
+                "writerCd": {
+                  "type": "string"
+                },
+                "numberOfGroups": {
+                  "type": "integer"
+                },
+                "setEquation": {
+                  "type": "boolean"
+                },
+                "lastUpdate": {
+                  "type": "string"
+                },
+                "created": {
+                  "type": "string"
+                },
+                "templateId": {
+                  "type": "integer"
+                },
+                "matchReportMemberSourceCd": {
+                  "type": "string"
+                },
+                "setInputTypeCd": {
+                  "type": "string"
+                },
+                "lineupCd": {
+                  "type": "string"
+                },
+                "matchApproval": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "index",
+                "name",
+                "statusCd",
+                "modeCd",
+                "typeCd",
+                "writerCd",
+                "numberOfGroups",
+                "setEquation",
+                "lastUpdate",
+                "created",
+                "templateId",
+                "matchReportMemberSourceCd",
+                "setInputTypeCd",
+                "lineupCd",
+                "matchApproval"
+              ]
+            },
+            "participantHome": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "currentPosition": {
+                  "type": "string"
+                },
+                "paid": {
+                  "type": "boolean"
+                },
+                "present": {
+                  "type": "boolean"
+                },
+                "deregistered": {
+                  "type": "boolean"
+                },
+                "retired": {
+                  "type": "boolean"
+                },
+                "rankingPos": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "displayName",
+                "currentPosition",
+                "paid",
+                "present",
+                "deregistered",
+                "retired",
+                "rankingPos"
+              ]
+            },
+            "participantGuest": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "currentPosition": {
+                  "type": "string"
+                },
+                "paid": {
+                  "type": "boolean"
+                },
+                "present": {
+                  "type": "boolean"
+                },
+                "deregistered": {
+                  "type": "boolean"
+                },
+                "retired": {
+                  "type": "boolean"
+                },
+                "rankingPos": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "displayName",
+                "currentPosition",
+                "paid",
+                "present",
+                "deregistered",
+                "retired",
+                "rankingPos"
+              ]
+            },
+            "gameNr": {
+              "type": "integer"
+            },
+            "gameNrRound": {
+              "type": "integer"
+            },
+            "statusCd": {
+              "type": "string"
+            },
+            "matchmode": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "matchmodeCd": {
+                  "type": "string"
+                },
+                "matchmodeInCd": {
+                  "type": "string"
+                },
+                "matchmodeOutCd": {
+                  "type": "string"
+                },
+                "matchmodePoints": {
+                  "type": "integer"
+                },
+                "setsBestOf": {
+                  "type": "integer"
+                },
+                "setsTotal": {
+                  "type": "integer"
+                },
+                "legsBestOf": {
+                  "type": "integer"
+                },
+                "legsTotal": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "matchmodeCd",
+                "matchmodeInCd",
+                "matchmodeOutCd",
+                "matchmodePoints",
+                "setsBestOf",
+                "setsTotal",
+                "legsBestOf",
+                "legsTotal"
+              ]
+            },
+            "hasPerformances": {
+              "type": "boolean"
+            },
+            "active": {
+              "type": "boolean"
+            },
+            "byeHome": {
+              "type": "boolean"
+            },
+            "byeAway": {
+              "type": "boolean"
+            },
+            "datePlanned": {
+              "type": "string"
+            },
+            "matchReport": {
+              "type": "boolean"
+            },
+            "level": {
+              "type": "integer"
+            },
+            "ready": {
+              "type": "boolean"
+            },
+            "prioritize": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "id",
+            "eventId",
+            "event",
+            "round",
+            "phase",
+            "participantHome",
+            "participantGuest",
+            "gameNr",
+            "gameNrRound",
+            "statusCd",
+            "matchmode",
+            "hasPerformances",
+            "active",
+            "byeHome",
+            "byeAway",
+            "datePlanned",
+            "matchReport",
+            "level",
+            "ready",
+            "prioritize"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "eventId": {
+              "type": "integer"
+            },
+            "event": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "datetime": {
+                  "type": "string"
+                },
+                "statusCd": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "nameShort": {
+                  "type": "string"
+                },
+                "hasPerformancesDefined": {
+                  "type": "boolean"
+                },
+                "leagueLock": {
+                  "type": "boolean"
+                },
+                "hideDataLeagueSetup": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "datetime",
+                "statusCd",
+                "name",
+                "nameShort",
+                "hasPerformancesDefined",
+                "leagueLock",
+                "hideDataLeagueSetup"
+              ]
+            },
+            "round": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "index": {
+                  "type": "integer"
+                },
+                "typeCd": {
+                  "type": "string"
+                },
+                "groupCd": {
+                  "type": "string"
+                },
+                "matchmode": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "matchmodeCd": {
+                      "type": "string"
+                    },
+                    "matchmodeInCd": {
+                      "type": "string"
+                    },
+                    "matchmodeOutCd": {
+                      "type": "string"
+                    },
+                    "matchmodePoints": {
+                      "type": "integer"
+                    },
+                    "setsBestOf": {
+                      "type": "integer"
+                    },
+                    "setsTotal": {
+                      "type": "integer"
+                    },
+                    "legsBestOf": {
+                      "type": "integer"
+                    },
+                    "legsTotal": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "matchmodeCd",
+                    "matchmodeInCd",
+                    "matchmodeOutCd",
+                    "matchmodePoints",
+                    "setsBestOf",
+                    "setsTotal",
+                    "legsBestOf",
+                    "legsTotal"
+                  ]
+                },
+                "nameCd": {
+                  "type": "string"
+                },
+                "dateFrom": {
+                  "type": "string"
+                },
+                "dateTo": {
+                  "type": "string"
+                },
+                "waitForLastRound": {
+                  "type": "boolean"
+                },
+                "level": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "index",
+                "typeCd",
+                "groupCd",
+                "matchmode",
+                "nameCd",
+                "dateFrom",
+                "dateTo",
+                "waitForLastRound",
+                "level"
+              ]
+            },
+            "phase": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "index": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "statusCd": {
+                  "type": "string"
+                },
+                "modeCd": {
+                  "type": "string"
+                },
+                "typeCd": {
+                  "type": "string"
+                },
+                "writerCd": {
+                  "type": "string"
+                },
+                "numberOfGroups": {
+                  "type": "integer"
+                },
+                "setEquation": {
+                  "type": "boolean"
+                },
+                "lastUpdate": {
+                  "type": "string"
+                },
+                "created": {
+                  "type": "string"
+                },
+                "templateId": {
+                  "type": "integer"
+                },
+                "matchReportMemberSourceCd": {
+                  "type": "string"
+                },
+                "setInputTypeCd": {
+                  "type": "string"
+                },
+                "lineupCd": {
+                  "type": "string"
+                },
+                "matchApproval": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "index",
+                "name",
+                "statusCd",
+                "modeCd",
+                "typeCd",
+                "writerCd",
+                "numberOfGroups",
+                "setEquation",
+                "lastUpdate",
+                "created",
+                "templateId",
+                "matchReportMemberSourceCd",
+                "setInputTypeCd",
+                "lineupCd",
+                "matchApproval"
+              ]
+            },
+            "participantHome": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "currentPosition": {
+                  "type": "string"
+                },
+                "paid": {
+                  "type": "boolean"
+                },
+                "present": {
+                  "type": "boolean"
+                },
+                "deregistered": {
+                  "type": "boolean"
+                },
+                "retired": {
+                  "type": "boolean"
+                },
+                "rankingPos": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "displayName",
+                "currentPosition",
+                "paid",
+                "present",
+                "deregistered",
+                "retired",
+                "rankingPos"
+              ]
+            },
+            "participantGuest": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "currentPosition": {
+                  "type": "string"
+                },
+                "paid": {
+                  "type": "boolean"
+                },
+                "present": {
+                  "type": "boolean"
+                },
+                "deregistered": {
+                  "type": "boolean"
+                },
+                "retired": {
+                  "type": "boolean"
+                },
+                "rankingPos": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "displayName",
+                "currentPosition",
+                "paid",
+                "present",
+                "deregistered",
+                "retired",
+                "rankingPos"
+              ]
+            },
+            "gameNr": {
+              "type": "integer"
+            },
+            "gameNrRound": {
+              "type": "integer"
+            },
+            "statusCd": {
+              "type": "string"
+            },
+            "matchmode": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "matchmodeCd": {
+                  "type": "string"
+                },
+                "matchmodeInCd": {
+                  "type": "string"
+                },
+                "matchmodeOutCd": {
+                  "type": "string"
+                },
+                "matchmodePoints": {
+                  "type": "integer"
+                },
+                "setsBestOf": {
+                  "type": "integer"
+                },
+                "setsTotal": {
+                  "type": "integer"
+                },
+                "legsBestOf": {
+                  "type": "integer"
+                },
+                "legsTotal": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "matchmodeCd",
+                "matchmodeInCd",
+                "matchmodeOutCd",
+                "matchmodePoints",
+                "setsBestOf",
+                "setsTotal",
+                "legsBestOf",
+                "legsTotal"
+              ]
+            },
+            "hasPerformances": {
+              "type": "boolean"
+            },
+            "active": {
+              "type": "boolean"
+            },
+            "byeHome": {
+              "type": "boolean"
+            },
+            "byeAway": {
+              "type": "boolean"
+            },
+            "datePlanned": {
+              "type": "string"
+            },
+            "matchReport": {
+              "type": "boolean"
+            },
+            "level": {
+              "type": "integer"
+            },
+            "ready": {
+              "type": "boolean"
+            },
+            "prioritize": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "id",
+            "eventId",
+            "event",
+            "round",
+            "phase",
+            "participantHome",
+            "participantGuest",
+            "gameNr",
+            "gameNrRound",
+            "statusCd",
+            "matchmode",
+            "hasPerformances",
+            "active",
+            "byeHome",
+            "byeAway",
+            "datePlanned",
+            "matchReport",
+            "level",
+            "ready",
+            "prioritize"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "eventId": {
+              "type": "integer"
+            },
+            "event": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "datetime": {
+                  "type": "string"
+                },
+                "statusCd": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "nameShort": {
+                  "type": "string"
+                },
+                "hasPerformancesDefined": {
+                  "type": "boolean"
+                },
+                "leagueLock": {
+                  "type": "boolean"
+                },
+                "hideDataLeagueSetup": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "datetime",
+                "statusCd",
+                "name",
+                "nameShort",
+                "hasPerformancesDefined",
+                "leagueLock",
+                "hideDataLeagueSetup"
+              ]
+            },
+            "round": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "index": {
+                  "type": "integer"
+                },
+                "typeCd": {
+                  "type": "string"
+                },
+                "groupCd": {
+                  "type": "string"
+                },
+                "matchmode": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "matchmodeCd": {
+                      "type": "string"
+                    },
+                    "matchmodeInCd": {
+                      "type": "string"
+                    },
+                    "matchmodeOutCd": {
+                      "type": "string"
+                    },
+                    "matchmodePoints": {
+                      "type": "integer"
+                    },
+                    "setsBestOf": {
+                      "type": "integer"
+                    },
+                    "setsTotal": {
+                      "type": "integer"
+                    },
+                    "legsBestOf": {
+                      "type": "integer"
+                    },
+                    "legsTotal": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "matchmodeCd",
+                    "matchmodeInCd",
+                    "matchmodeOutCd",
+                    "matchmodePoints",
+                    "setsBestOf",
+                    "setsTotal",
+                    "legsBestOf",
+                    "legsTotal"
+                  ]
+                },
+                "nameCd": {
+                  "type": "string"
+                },
+                "dateFrom": {
+                  "type": "string"
+                },
+                "dateTo": {
+                  "type": "string"
+                },
+                "waitForLastRound": {
+                  "type": "boolean"
+                },
+                "level": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "index",
+                "typeCd",
+                "groupCd",
+                "matchmode",
+                "nameCd",
+                "dateFrom",
+                "dateTo",
+                "waitForLastRound",
+                "level"
+              ]
+            },
+            "phase": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "index": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "statusCd": {
+                  "type": "string"
+                },
+                "modeCd": {
+                  "type": "string"
+                },
+                "typeCd": {
+                  "type": "string"
+                },
+                "writerCd": {
+                  "type": "string"
+                },
+                "numberOfGroups": {
+                  "type": "integer"
+                },
+                "setEquation": {
+                  "type": "boolean"
+                },
+                "lastUpdate": {
+                  "type": "string"
+                },
+                "created": {
+                  "type": "string"
+                },
+                "templateId": {
+                  "type": "integer"
+                },
+                "matchReportMemberSourceCd": {
+                  "type": "string"
+                },
+                "setInputTypeCd": {
+                  "type": "string"
+                },
+                "lineupCd": {
+                  "type": "string"
+                },
+                "matchApproval": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "index",
+                "name",
+                "statusCd",
+                "modeCd",
+                "typeCd",
+                "writerCd",
+                "numberOfGroups",
+                "setEquation",
+                "lastUpdate",
+                "created",
+                "templateId",
+                "matchReportMemberSourceCd",
+                "setInputTypeCd",
+                "lineupCd",
+                "matchApproval"
+              ]
+            },
+            "participantHome": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "currentPosition": {
+                  "type": "string"
+                },
+                "paid": {
+                  "type": "boolean"
+                },
+                "present": {
+                  "type": "boolean"
+                },
+                "deregistered": {
+                  "type": "boolean"
+                },
+                "retired": {
+                  "type": "boolean"
+                },
+                "rankingPos": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "displayName",
+                "currentPosition",
+                "paid",
+                "present",
+                "deregistered",
+                "retired",
+                "rankingPos"
+              ]
+            },
+            "participantGuest": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "currentPosition": {
+                  "type": "string"
+                },
+                "paid": {
+                  "type": "boolean"
+                },
+                "present": {
+                  "type": "boolean"
+                },
+                "deregistered": {
+                  "type": "boolean"
+                },
+                "retired": {
+                  "type": "boolean"
+                },
+                "rankingPos": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "displayName",
+                "currentPosition",
+                "paid",
+                "present",
+                "deregistered",
+                "retired",
+                "rankingPos"
+              ]
+            },
+            "gameNr": {
+              "type": "integer"
+            },
+            "gameNrRound": {
+              "type": "integer"
+            },
+            "statusCd": {
+              "type": "string"
+            },
+            "matchmode": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "matchmodeCd": {
+                  "type": "string"
+                },
+                "matchmodeInCd": {
+                  "type": "string"
+                },
+                "matchmodeOutCd": {
+                  "type": "string"
+                },
+                "matchmodePoints": {
+                  "type": "integer"
+                },
+                "setsBestOf": {
+                  "type": "integer"
+                },
+                "setsTotal": {
+                  "type": "integer"
+                },
+                "legsBestOf": {
+                  "type": "integer"
+                },
+                "legsTotal": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "matchmodeCd",
+                "matchmodeInCd",
+                "matchmodeOutCd",
+                "matchmodePoints",
+                "setsBestOf",
+                "setsTotal",
+                "legsBestOf",
+                "legsTotal"
+              ]
+            },
+            "hasPerformances": {
+              "type": "boolean"
+            },
+            "active": {
+              "type": "boolean"
+            },
+            "byeHome": {
+              "type": "boolean"
+            },
+            "byeAway": {
+              "type": "boolean"
+            },
+            "datePlanned": {
+              "type": "string"
+            },
+            "matchReport": {
+              "type": "boolean"
+            },
+            "level": {
+              "type": "integer"
+            },
+            "ready": {
+              "type": "boolean"
+            },
+            "prioritize": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "id",
+            "eventId",
+            "event",
+            "round",
+            "phase",
+            "participantHome",
+            "participantGuest",
+            "gameNr",
+            "gameNrRound",
+            "statusCd",
+            "matchmode",
+            "hasPerformances",
+            "active",
+            "byeHome",
+            "byeAway",
+            "datePlanned",
+            "matchReport",
+            "level",
+            "ready",
+            "prioritize"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "eventId": {
+              "type": "integer"
+            },
+            "event": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "datetime": {
+                  "type": "string"
+                },
+                "statusCd": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "nameShort": {
+                  "type": "string"
+                },
+                "hasPerformancesDefined": {
+                  "type": "boolean"
+                },
+                "leagueLock": {
+                  "type": "boolean"
+                },
+                "hideDataLeagueSetup": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "datetime",
+                "statusCd",
+                "name",
+                "nameShort",
+                "hasPerformancesDefined",
+                "leagueLock",
+                "hideDataLeagueSetup"
+              ]
+            },
+            "round": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "index": {
+                  "type": "integer"
+                },
+                "typeCd": {
+                  "type": "string"
+                },
+                "groupCd": {
+                  "type": "string"
+                },
+                "matchmode": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "matchmodeCd": {
+                      "type": "string"
+                    },
+                    "matchmodeInCd": {
+                      "type": "string"
+                    },
+                    "matchmodeOutCd": {
+                      "type": "string"
+                    },
+                    "matchmodePoints": {
+                      "type": "integer"
+                    },
+                    "setsBestOf": {
+                      "type": "integer"
+                    },
+                    "setsTotal": {
+                      "type": "integer"
+                    },
+                    "legsBestOf": {
+                      "type": "integer"
+                    },
+                    "legsTotal": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "matchmodeCd",
+                    "matchmodeInCd",
+                    "matchmodeOutCd",
+                    "matchmodePoints",
+                    "setsBestOf",
+                    "setsTotal",
+                    "legsBestOf",
+                    "legsTotal"
+                  ]
+                },
+                "nameCd": {
+                  "type": "string"
+                },
+                "dateFrom": {
+                  "type": "string"
+                },
+                "dateTo": {
+                  "type": "string"
+                },
+                "waitForLastRound": {
+                  "type": "boolean"
+                },
+                "level": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "index",
+                "typeCd",
+                "groupCd",
+                "matchmode",
+                "nameCd",
+                "dateFrom",
+                "dateTo",
+                "waitForLastRound",
+                "level"
+              ]
+            },
+            "phase": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "index": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "statusCd": {
+                  "type": "string"
+                },
+                "modeCd": {
+                  "type": "string"
+                },
+                "typeCd": {
+                  "type": "string"
+                },
+                "writerCd": {
+                  "type": "string"
+                },
+                "numberOfGroups": {
+                  "type": "integer"
+                },
+                "setEquation": {
+                  "type": "boolean"
+                },
+                "lastUpdate": {
+                  "type": "string"
+                },
+                "created": {
+                  "type": "string"
+                },
+                "templateId": {
+                  "type": "integer"
+                },
+                "matchReportMemberSourceCd": {
+                  "type": "string"
+                },
+                "setInputTypeCd": {
+                  "type": "string"
+                },
+                "lineupCd": {
+                  "type": "string"
+                },
+                "matchApproval": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "index",
+                "name",
+                "statusCd",
+                "modeCd",
+                "typeCd",
+                "writerCd",
+                "numberOfGroups",
+                "setEquation",
+                "lastUpdate",
+                "created",
+                "templateId",
+                "matchReportMemberSourceCd",
+                "setInputTypeCd",
+                "lineupCd",
+                "matchApproval"
+              ]
+            },
+            "participantHome": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "currentPosition": {
+                  "type": "string"
+                },
+                "paid": {
+                  "type": "boolean"
+                },
+                "present": {
+                  "type": "boolean"
+                },
+                "deregistered": {
+                  "type": "boolean"
+                },
+                "retired": {
+                  "type": "boolean"
+                },
+                "rankingPos": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "displayName",
+                "currentPosition",
+                "paid",
+                "present",
+                "deregistered",
+                "retired",
+                "rankingPos"
+              ]
+            },
+            "participantGuest": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "currentPosition": {
+                  "type": "string"
+                },
+                "paid": {
+                  "type": "boolean"
+                },
+                "present": {
+                  "type": "boolean"
+                },
+                "deregistered": {
+                  "type": "boolean"
+                },
+                "retired": {
+                  "type": "boolean"
+                },
+                "rankingPos": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "displayName",
+                "currentPosition",
+                "paid",
+                "present",
+                "deregistered",
+                "retired",
+                "rankingPos"
+              ]
+            },
+            "gameNr": {
+              "type": "integer"
+            },
+            "gameNrRound": {
+              "type": "integer"
+            },
+            "statusCd": {
+              "type": "string"
+            },
+            "matchmode": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "matchmodeCd": {
+                  "type": "string"
+                },
+                "matchmodeInCd": {
+                  "type": "string"
+                },
+                "matchmodeOutCd": {
+                  "type": "string"
+                },
+                "matchmodePoints": {
+                  "type": "integer"
+                },
+                "setsBestOf": {
+                  "type": "integer"
+                },
+                "setsTotal": {
+                  "type": "integer"
+                },
+                "legsBestOf": {
+                  "type": "integer"
+                },
+                "legsTotal": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "matchmodeCd",
+                "matchmodeInCd",
+                "matchmodeOutCd",
+                "matchmodePoints",
+                "setsBestOf",
+                "setsTotal",
+                "legsBestOf",
+                "legsTotal"
+              ]
+            },
+            "hasPerformances": {
+              "type": "boolean"
+            },
+            "active": {
+              "type": "boolean"
+            },
+            "byeHome": {
+              "type": "boolean"
+            },
+            "byeAway": {
+              "type": "boolean"
+            },
+            "datePlanned": {
+              "type": "string"
+            },
+            "matchReport": {
+              "type": "boolean"
+            },
+            "level": {
+              "type": "integer"
+            },
+            "ready": {
+              "type": "boolean"
+            },
+            "prioritize": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "id",
+            "eventId",
+            "event",
+            "round",
+            "phase",
+            "participantHome",
+            "participantGuest",
+            "gameNr",
+            "gameNrRound",
+            "statusCd",
+            "matchmode",
+            "hasPerformances",
+            "active",
+            "byeHome",
+            "byeAway",
+            "datePlanned",
+            "matchReport",
+            "level",
+            "ready",
+            "prioritize"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "eventId": {
+              "type": "integer"
+            },
+            "event": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "datetime": {
+                  "type": "string"
+                },
+                "statusCd": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "nameShort": {
+                  "type": "string"
+                },
+                "hasPerformancesDefined": {
+                  "type": "boolean"
+                },
+                "leagueLock": {
+                  "type": "boolean"
+                },
+                "hideDataLeagueSetup": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "datetime",
+                "statusCd",
+                "name",
+                "nameShort",
+                "hasPerformancesDefined",
+                "leagueLock",
+                "hideDataLeagueSetup"
+              ]
+            },
+            "round": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "index": {
+                  "type": "integer"
+                },
+                "typeCd": {
+                  "type": "string"
+                },
+                "groupCd": {
+                  "type": "string"
+                },
+                "matchmode": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "matchmodeCd": {
+                      "type": "string"
+                    },
+                    "matchmodeInCd": {
+                      "type": "string"
+                    },
+                    "matchmodeOutCd": {
+                      "type": "string"
+                    },
+                    "matchmodePoints": {
+                      "type": "integer"
+                    },
+                    "setsBestOf": {
+                      "type": "integer"
+                    },
+                    "setsTotal": {
+                      "type": "integer"
+                    },
+                    "legsBestOf": {
+                      "type": "integer"
+                    },
+                    "legsTotal": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "matchmodeCd",
+                    "matchmodeInCd",
+                    "matchmodeOutCd",
+                    "matchmodePoints",
+                    "setsBestOf",
+                    "setsTotal",
+                    "legsBestOf",
+                    "legsTotal"
+                  ]
+                },
+                "nameCd": {
+                  "type": "string"
+                },
+                "dateFrom": {
+                  "type": "string"
+                },
+                "dateTo": {
+                  "type": "string"
+                },
+                "waitForLastRound": {
+                  "type": "boolean"
+                },
+                "level": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "index",
+                "typeCd",
+                "groupCd",
+                "matchmode",
+                "nameCd",
+                "dateFrom",
+                "dateTo",
+                "waitForLastRound",
+                "level"
+              ]
+            },
+            "phase": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "index": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "statusCd": {
+                  "type": "string"
+                },
+                "modeCd": {
+                  "type": "string"
+                },
+                "typeCd": {
+                  "type": "string"
+                },
+                "writerCd": {
+                  "type": "string"
+                },
+                "numberOfGroups": {
+                  "type": "integer"
+                },
+                "setEquation": {
+                  "type": "boolean"
+                },
+                "lastUpdate": {
+                  "type": "string"
+                },
+                "created": {
+                  "type": "string"
+                },
+                "templateId": {
+                  "type": "integer"
+                },
+                "matchReportMemberSourceCd": {
+                  "type": "string"
+                },
+                "setInputTypeCd": {
+                  "type": "string"
+                },
+                "lineupCd": {
+                  "type": "string"
+                },
+                "matchApproval": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "index",
+                "name",
+                "statusCd",
+                "modeCd",
+                "typeCd",
+                "writerCd",
+                "numberOfGroups",
+                "setEquation",
+                "lastUpdate",
+                "created",
+                "templateId",
+                "matchReportMemberSourceCd",
+                "setInputTypeCd",
+                "lineupCd",
+                "matchApproval"
+              ]
+            },
+            "participantHome": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "currentPosition": {
+                  "type": "string"
+                },
+                "paid": {
+                  "type": "boolean"
+                },
+                "present": {
+                  "type": "boolean"
+                },
+                "deregistered": {
+                  "type": "boolean"
+                },
+                "retired": {
+                  "type": "boolean"
+                },
+                "rankingPos": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "displayName",
+                "currentPosition",
+                "paid",
+                "present",
+                "deregistered",
+                "retired",
+                "rankingPos"
+              ]
+            },
+            "participantGuest": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "currentPosition": {
+                  "type": "string"
+                },
+                "paid": {
+                  "type": "boolean"
+                },
+                "present": {
+                  "type": "boolean"
+                },
+                "deregistered": {
+                  "type": "boolean"
+                },
+                "retired": {
+                  "type": "boolean"
+                },
+                "rankingPos": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "displayName",
+                "currentPosition",
+                "paid",
+                "present",
+                "deregistered",
+                "retired",
+                "rankingPos"
+              ]
+            },
+            "gameNr": {
+              "type": "integer"
+            },
+            "gameNrRound": {
+              "type": "integer"
+            },
+            "statusCd": {
+              "type": "string"
+            },
+            "matchmode": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "matchmodeCd": {
+                  "type": "string"
+                },
+                "matchmodeInCd": {
+                  "type": "string"
+                },
+                "matchmodeOutCd": {
+                  "type": "string"
+                },
+                "matchmodePoints": {
+                  "type": "integer"
+                },
+                "setsBestOf": {
+                  "type": "integer"
+                },
+                "setsTotal": {
+                  "type": "integer"
+                },
+                "legsBestOf": {
+                  "type": "integer"
+                },
+                "legsTotal": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "matchmodeCd",
+                "matchmodeInCd",
+                "matchmodeOutCd",
+                "matchmodePoints",
+                "setsBestOf",
+                "setsTotal",
+                "legsBestOf",
+                "legsTotal"
+              ]
+            },
+            "hasPerformances": {
+              "type": "boolean"
+            },
+            "active": {
+              "type": "boolean"
+            },
+            "byeHome": {
+              "type": "boolean"
+            },
+            "byeAway": {
+              "type": "boolean"
+            },
+            "datePlanned": {
+              "type": "string"
+            },
+            "matchReport": {
+              "type": "boolean"
+            },
+            "level": {
+              "type": "integer"
+            },
+            "ready": {
+              "type": "boolean"
+            },
+            "prioritize": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "id",
+            "eventId",
+            "event",
+            "round",
+            "phase",
+            "participantHome",
+            "participantGuest",
+            "gameNr",
+            "gameNrRound",
+            "statusCd",
+            "matchmode",
+            "hasPerformances",
+            "active",
+            "byeHome",
+            "byeAway",
+            "datePlanned",
+            "matchReport",
+            "level",
+            "ready",
+            "prioritize"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "eventId": {
+              "type": "integer"
+            },
+            "event": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "datetime": {
+                  "type": "string"
+                },
+                "statusCd": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "nameShort": {
+                  "type": "string"
+                },
+                "hasPerformancesDefined": {
+                  "type": "boolean"
+                },
+                "leagueLock": {
+                  "type": "boolean"
+                },
+                "hideDataLeagueSetup": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "datetime",
+                "statusCd",
+                "name",
+                "nameShort",
+                "hasPerformancesDefined",
+                "leagueLock",
+                "hideDataLeagueSetup"
+              ]
+            },
+            "round": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "index": {
+                  "type": "integer"
+                },
+                "typeCd": {
+                  "type": "string"
+                },
+                "groupCd": {
+                  "type": "string"
+                },
+                "matchmode": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "matchmodeCd": {
+                      "type": "string"
+                    },
+                    "matchmodeInCd": {
+                      "type": "string"
+                    },
+                    "matchmodeOutCd": {
+                      "type": "string"
+                    },
+                    "matchmodePoints": {
+                      "type": "integer"
+                    },
+                    "setsBestOf": {
+                      "type": "integer"
+                    },
+                    "setsTotal": {
+                      "type": "integer"
+                    },
+                    "legsBestOf": {
+                      "type": "integer"
+                    },
+                    "legsTotal": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "matchmodeCd",
+                    "matchmodeInCd",
+                    "matchmodeOutCd",
+                    "matchmodePoints",
+                    "setsBestOf",
+                    "setsTotal",
+                    "legsBestOf",
+                    "legsTotal"
+                  ]
+                },
+                "nameCd": {
+                  "type": "string"
+                },
+                "dateFrom": {
+                  "type": "string"
+                },
+                "dateTo": {
+                  "type": "string"
+                },
+                "waitForLastRound": {
+                  "type": "boolean"
+                },
+                "level": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "index",
+                "typeCd",
+                "groupCd",
+                "matchmode",
+                "nameCd",
+                "dateFrom",
+                "dateTo",
+                "waitForLastRound",
+                "level"
+              ]
+            },
+            "phase": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "index": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "statusCd": {
+                  "type": "string"
+                },
+                "modeCd": {
+                  "type": "string"
+                },
+                "typeCd": {
+                  "type": "string"
+                },
+                "writerCd": {
+                  "type": "string"
+                },
+                "numberOfGroups": {
+                  "type": "integer"
+                },
+                "setEquation": {
+                  "type": "boolean"
+                },
+                "lastUpdate": {
+                  "type": "string"
+                },
+                "created": {
+                  "type": "string"
+                },
+                "templateId": {
+                  "type": "integer"
+                },
+                "matchReportMemberSourceCd": {
+                  "type": "string"
+                },
+                "setInputTypeCd": {
+                  "type": "string"
+                },
+                "lineupCd": {
+                  "type": "string"
+                },
+                "matchApproval": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "index",
+                "name",
+                "statusCd",
+                "modeCd",
+                "typeCd",
+                "writerCd",
+                "numberOfGroups",
+                "setEquation",
+                "lastUpdate",
+                "created",
+                "templateId",
+                "matchReportMemberSourceCd",
+                "setInputTypeCd",
+                "lineupCd",
+                "matchApproval"
+              ]
+            },
+            "participantHome": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "currentPosition": {
+                  "type": "string"
+                },
+                "paid": {
+                  "type": "boolean"
+                },
+                "present": {
+                  "type": "boolean"
+                },
+                "deregistered": {
+                  "type": "boolean"
+                },
+                "retired": {
+                  "type": "boolean"
+                },
+                "rankingPos": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "displayName",
+                "currentPosition",
+                "paid",
+                "present",
+                "deregistered",
+                "retired",
+                "rankingPos"
+              ]
+            },
+            "participantGuest": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "currentPosition": {
+                  "type": "string"
+                },
+                "paid": {
+                  "type": "boolean"
+                },
+                "present": {
+                  "type": "boolean"
+                },
+                "deregistered": {
+                  "type": "boolean"
+                },
+                "retired": {
+                  "type": "boolean"
+                },
+                "rankingPos": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "displayName",
+                "currentPosition",
+                "paid",
+                "present",
+                "deregistered",
+                "retired",
+                "rankingPos"
+              ]
+            },
+            "gameNr": {
+              "type": "integer"
+            },
+            "gameNrRound": {
+              "type": "integer"
+            },
+            "statusCd": {
+              "type": "string"
+            },
+            "matchmode": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "matchmodeCd": {
+                  "type": "string"
+                },
+                "matchmodeInCd": {
+                  "type": "string"
+                },
+                "matchmodeOutCd": {
+                  "type": "string"
+                },
+                "matchmodePoints": {
+                  "type": "integer"
+                },
+                "setsBestOf": {
+                  "type": "integer"
+                },
+                "setsTotal": {
+                  "type": "integer"
+                },
+                "legsBestOf": {
+                  "type": "integer"
+                },
+                "legsTotal": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "matchmodeCd",
+                "matchmodeInCd",
+                "matchmodeOutCd",
+                "matchmodePoints",
+                "setsBestOf",
+                "setsTotal",
+                "legsBestOf",
+                "legsTotal"
+              ]
+            },
+            "hasPerformances": {
+              "type": "boolean"
+            },
+            "active": {
+              "type": "boolean"
+            },
+            "byeHome": {
+              "type": "boolean"
+            },
+            "byeAway": {
+              "type": "boolean"
+            },
+            "datePlanned": {
+              "type": "string"
+            },
+            "matchReport": {
+              "type": "boolean"
+            },
+            "level": {
+              "type": "integer"
+            },
+            "ready": {
+              "type": "boolean"
+            },
+            "prioritize": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "id",
+            "eventId",
+            "event",
+            "round",
+            "phase",
+            "participantHome",
+            "participantGuest",
+            "gameNr",
+            "gameNrRound",
+            "statusCd",
+            "matchmode",
+            "hasPerformances",
+            "active",
+            "byeHome",
+            "byeAway",
+            "datePlanned",
+            "matchReport",
+            "level",
+            "ready",
+            "prioritize"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "eventId": {
+              "type": "integer"
+            },
+            "event": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "datetime": {
+                  "type": "string"
+                },
+                "statusCd": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "nameShort": {
+                  "type": "string"
+                },
+                "hasPerformancesDefined": {
+                  "type": "boolean"
+                },
+                "leagueLock": {
+                  "type": "boolean"
+                },
+                "hideDataLeagueSetup": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "datetime",
+                "statusCd",
+                "name",
+                "nameShort",
+                "hasPerformancesDefined",
+                "leagueLock",
+                "hideDataLeagueSetup"
+              ]
+            },
+            "round": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "index": {
+                  "type": "integer"
+                },
+                "typeCd": {
+                  "type": "string"
+                },
+                "groupCd": {
+                  "type": "string"
+                },
+                "matchmode": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "matchmodeCd": {
+                      "type": "string"
+                    },
+                    "matchmodeInCd": {
+                      "type": "string"
+                    },
+                    "matchmodeOutCd": {
+                      "type": "string"
+                    },
+                    "matchmodePoints": {
+                      "type": "integer"
+                    },
+                    "setsBestOf": {
+                      "type": "integer"
+                    },
+                    "setsTotal": {
+                      "type": "integer"
+                    },
+                    "legsBestOf": {
+                      "type": "integer"
+                    },
+                    "legsTotal": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "matchmodeCd",
+                    "matchmodeInCd",
+                    "matchmodeOutCd",
+                    "matchmodePoints",
+                    "setsBestOf",
+                    "setsTotal",
+                    "legsBestOf",
+                    "legsTotal"
+                  ]
+                },
+                "nameCd": {
+                  "type": "string"
+                },
+                "dateFrom": {
+                  "type": "string"
+                },
+                "dateTo": {
+                  "type": "string"
+                },
+                "waitForLastRound": {
+                  "type": "boolean"
+                },
+                "level": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "index",
+                "typeCd",
+                "groupCd",
+                "matchmode",
+                "nameCd",
+                "dateFrom",
+                "dateTo",
+                "waitForLastRound",
+                "level"
+              ]
+            },
+            "phase": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "index": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "statusCd": {
+                  "type": "string"
+                },
+                "modeCd": {
+                  "type": "string"
+                },
+                "typeCd": {
+                  "type": "string"
+                },
+                "writerCd": {
+                  "type": "string"
+                },
+                "numberOfGroups": {
+                  "type": "integer"
+                },
+                "setEquation": {
+                  "type": "boolean"
+                },
+                "lastUpdate": {
+                  "type": "string"
+                },
+                "created": {
+                  "type": "string"
+                },
+                "templateId": {
+                  "type": "integer"
+                },
+                "matchReportMemberSourceCd": {
+                  "type": "string"
+                },
+                "setInputTypeCd": {
+                  "type": "string"
+                },
+                "lineupCd": {
+                  "type": "string"
+                },
+                "matchApproval": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "index",
+                "name",
+                "statusCd",
+                "modeCd",
+                "typeCd",
+                "writerCd",
+                "numberOfGroups",
+                "setEquation",
+                "lastUpdate",
+                "created",
+                "templateId",
+                "matchReportMemberSourceCd",
+                "setInputTypeCd",
+                "lineupCd",
+                "matchApproval"
+              ]
+            },
+            "participantHome": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "currentPosition": {
+                  "type": "string"
+                },
+                "paid": {
+                  "type": "boolean"
+                },
+                "present": {
+                  "type": "boolean"
+                },
+                "deregistered": {
+                  "type": "boolean"
+                },
+                "retired": {
+                  "type": "boolean"
+                },
+                "rankingPos": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "displayName",
+                "currentPosition",
+                "paid",
+                "present",
+                "deregistered",
+                "retired",
+                "rankingPos"
+              ]
+            },
+            "participantGuest": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "currentPosition": {
+                  "type": "string"
+                },
+                "paid": {
+                  "type": "boolean"
+                },
+                "present": {
+                  "type": "boolean"
+                },
+                "deregistered": {
+                  "type": "boolean"
+                },
+                "retired": {
+                  "type": "boolean"
+                },
+                "rankingPos": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "displayName",
+                "currentPosition",
+                "paid",
+                "present",
+                "deregistered",
+                "retired",
+                "rankingPos"
+              ]
+            },
+            "gameNr": {
+              "type": "integer"
+            },
+            "gameNrRound": {
+              "type": "integer"
+            },
+            "statusCd": {
+              "type": "string"
+            },
+            "matchmode": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "matchmodeCd": {
+                  "type": "string"
+                },
+                "matchmodeInCd": {
+                  "type": "string"
+                },
+                "matchmodeOutCd": {
+                  "type": "string"
+                },
+                "matchmodePoints": {
+                  "type": "integer"
+                },
+                "setsBestOf": {
+                  "type": "integer"
+                },
+                "setsTotal": {
+                  "type": "integer"
+                },
+                "legsBestOf": {
+                  "type": "integer"
+                },
+                "legsTotal": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "matchmodeCd",
+                "matchmodeInCd",
+                "matchmodeOutCd",
+                "matchmodePoints",
+                "setsBestOf",
+                "setsTotal",
+                "legsBestOf",
+                "legsTotal"
+              ]
+            },
+            "hasPerformances": {
+              "type": "boolean"
+            },
+            "active": {
+              "type": "boolean"
+            },
+            "byeHome": {
+              "type": "boolean"
+            },
+            "byeAway": {
+              "type": "boolean"
+            },
+            "datePlanned": {
+              "type": "string"
+            },
+            "matchReport": {
+              "type": "boolean"
+            },
+            "level": {
+              "type": "integer"
+            },
+            "ready": {
+              "type": "boolean"
+            },
+            "prioritize": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "id",
+            "eventId",
+            "event",
+            "round",
+            "phase",
+            "participantHome",
+            "participantGuest",
+            "gameNr",
+            "gameNrRound",
+            "statusCd",
+            "matchmode",
+            "hasPerformances",
+            "active",
+            "byeHome",
+            "byeAway",
+            "datePlanned",
+            "matchReport",
+            "level",
+            "ready",
+            "prioritize"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "eventId": {
+              "type": "integer"
+            },
+            "event": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "datetime": {
+                  "type": "string"
+                },
+                "statusCd": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "nameShort": {
+                  "type": "string"
+                },
+                "hasPerformancesDefined": {
+                  "type": "boolean"
+                },
+                "leagueLock": {
+                  "type": "boolean"
+                },
+                "hideDataLeagueSetup": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "datetime",
+                "statusCd",
+                "name",
+                "nameShort",
+                "hasPerformancesDefined",
+                "leagueLock",
+                "hideDataLeagueSetup"
+              ]
+            },
+            "round": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "index": {
+                  "type": "integer"
+                },
+                "typeCd": {
+                  "type": "string"
+                },
+                "groupCd": {
+                  "type": "string"
+                },
+                "matchmode": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "matchmodeCd": {
+                      "type": "string"
+                    },
+                    "matchmodeInCd": {
+                      "type": "string"
+                    },
+                    "matchmodeOutCd": {
+                      "type": "string"
+                    },
+                    "matchmodePoints": {
+                      "type": "integer"
+                    },
+                    "setsBestOf": {
+                      "type": "integer"
+                    },
+                    "setsTotal": {
+                      "type": "integer"
+                    },
+                    "legsBestOf": {
+                      "type": "integer"
+                    },
+                    "legsTotal": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "matchmodeCd",
+                    "matchmodeInCd",
+                    "matchmodeOutCd",
+                    "matchmodePoints",
+                    "setsBestOf",
+                    "setsTotal",
+                    "legsBestOf",
+                    "legsTotal"
+                  ]
+                },
+                "nameCd": {
+                  "type": "string"
+                },
+                "dateFrom": {
+                  "type": "string"
+                },
+                "dateTo": {
+                  "type": "string"
+                },
+                "waitForLastRound": {
+                  "type": "boolean"
+                },
+                "level": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "index",
+                "typeCd",
+                "groupCd",
+                "matchmode",
+                "nameCd",
+                "dateFrom",
+                "dateTo",
+                "waitForLastRound",
+                "level"
+              ]
+            },
+            "phase": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "index": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "statusCd": {
+                  "type": "string"
+                },
+                "modeCd": {
+                  "type": "string"
+                },
+                "typeCd": {
+                  "type": "string"
+                },
+                "writerCd": {
+                  "type": "string"
+                },
+                "numberOfGroups": {
+                  "type": "integer"
+                },
+                "setEquation": {
+                  "type": "boolean"
+                },
+                "lastUpdate": {
+                  "type": "string"
+                },
+                "created": {
+                  "type": "string"
+                },
+                "templateId": {
+                  "type": "integer"
+                },
+                "matchReportMemberSourceCd": {
+                  "type": "string"
+                },
+                "setInputTypeCd": {
+                  "type": "string"
+                },
+                "lineupCd": {
+                  "type": "string"
+                },
+                "matchApproval": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "index",
+                "name",
+                "statusCd",
+                "modeCd",
+                "typeCd",
+                "writerCd",
+                "numberOfGroups",
+                "setEquation",
+                "lastUpdate",
+                "created",
+                "templateId",
+                "matchReportMemberSourceCd",
+                "setInputTypeCd",
+                "lineupCd",
+                "matchApproval"
+              ]
+            },
+            "participantHome": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "currentPosition": {
+                  "type": "string"
+                },
+                "paid": {
+                  "type": "boolean"
+                },
+                "present": {
+                  "type": "boolean"
+                },
+                "deregistered": {
+                  "type": "boolean"
+                },
+                "retired": {
+                  "type": "boolean"
+                },
+                "rankingPos": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "displayName",
+                "currentPosition",
+                "paid",
+                "present",
+                "deregistered",
+                "retired",
+                "rankingPos"
+              ]
+            },
+            "participantGuest": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "currentPosition": {
+                  "type": "string"
+                },
+                "paid": {
+                  "type": "boolean"
+                },
+                "present": {
+                  "type": "boolean"
+                },
+                "deregistered": {
+                  "type": "boolean"
+                },
+                "retired": {
+                  "type": "boolean"
+                },
+                "rankingPos": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "displayName",
+                "currentPosition",
+                "paid",
+                "present",
+                "deregistered",
+                "retired",
+                "rankingPos"
+              ]
+            },
+            "gameNr": {
+              "type": "integer"
+            },
+            "gameNrRound": {
+              "type": "integer"
+            },
+            "statusCd": {
+              "type": "string"
+            },
+            "matchmode": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "matchmodeCd": {
+                  "type": "string"
+                },
+                "matchmodeInCd": {
+                  "type": "string"
+                },
+                "matchmodeOutCd": {
+                  "type": "string"
+                },
+                "matchmodePoints": {
+                  "type": "integer"
+                },
+                "setsBestOf": {
+                  "type": "integer"
+                },
+                "setsTotal": {
+                  "type": "integer"
+                },
+                "legsBestOf": {
+                  "type": "integer"
+                },
+                "legsTotal": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "matchmodeCd",
+                "matchmodeInCd",
+                "matchmodeOutCd",
+                "matchmodePoints",
+                "setsBestOf",
+                "setsTotal",
+                "legsBestOf",
+                "legsTotal"
+              ]
+            },
+            "hasPerformances": {
+              "type": "boolean"
+            },
+            "active": {
+              "type": "boolean"
+            },
+            "byeHome": {
+              "type": "boolean"
+            },
+            "byeAway": {
+              "type": "boolean"
+            },
+            "datePlanned": {
+              "type": "string"
+            },
+            "matchReport": {
+              "type": "boolean"
+            },
+            "level": {
+              "type": "integer"
+            },
+            "ready": {
+              "type": "boolean"
+            },
+            "prioritize": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "id",
+            "eventId",
+            "event",
+            "round",
+            "phase",
+            "participantHome",
+            "participantGuest",
+            "gameNr",
+            "gameNrRound",
+            "statusCd",
+            "matchmode",
+            "hasPerformances",
+            "active",
+            "byeHome",
+            "byeAway",
+            "datePlanned",
+            "matchReport",
+            "level",
+            "ready",
+            "prioritize"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "eventId": {
+              "type": "integer"
+            },
+            "event": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "datetime": {
+                  "type": "string"
+                },
+                "statusCd": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "nameShort": {
+                  "type": "string"
+                },
+                "hasPerformancesDefined": {
+                  "type": "boolean"
+                },
+                "leagueLock": {
+                  "type": "boolean"
+                },
+                "hideDataLeagueSetup": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "datetime",
+                "statusCd",
+                "name",
+                "nameShort",
+                "hasPerformancesDefined",
+                "leagueLock",
+                "hideDataLeagueSetup"
+              ]
+            },
+            "round": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "index": {
+                  "type": "integer"
+                },
+                "typeCd": {
+                  "type": "string"
+                },
+                "groupCd": {
+                  "type": "string"
+                },
+                "matchmode": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "matchmodeCd": {
+                      "type": "string"
+                    },
+                    "matchmodeInCd": {
+                      "type": "string"
+                    },
+                    "matchmodeOutCd": {
+                      "type": "string"
+                    },
+                    "matchmodePoints": {
+                      "type": "integer"
+                    },
+                    "setsBestOf": {
+                      "type": "integer"
+                    },
+                    "setsTotal": {
+                      "type": "integer"
+                    },
+                    "legsBestOf": {
+                      "type": "integer"
+                    },
+                    "legsTotal": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "matchmodeCd",
+                    "matchmodeInCd",
+                    "matchmodeOutCd",
+                    "matchmodePoints",
+                    "setsBestOf",
+                    "setsTotal",
+                    "legsBestOf",
+                    "legsTotal"
+                  ]
+                },
+                "nameCd": {
+                  "type": "string"
+                },
+                "dateFrom": {
+                  "type": "string"
+                },
+                "dateTo": {
+                  "type": "string"
+                },
+                "waitForLastRound": {
+                  "type": "boolean"
+                },
+                "level": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "index",
+                "typeCd",
+                "groupCd",
+                "matchmode",
+                "nameCd",
+                "dateFrom",
+                "dateTo",
+                "waitForLastRound",
+                "level"
+              ]
+            },
+            "phase": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "index": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "statusCd": {
+                  "type": "string"
+                },
+                "modeCd": {
+                  "type": "string"
+                },
+                "typeCd": {
+                  "type": "string"
+                },
+                "writerCd": {
+                  "type": "string"
+                },
+                "numberOfGroups": {
+                  "type": "integer"
+                },
+                "setEquation": {
+                  "type": "boolean"
+                },
+                "lastUpdate": {
+                  "type": "string"
+                },
+                "created": {
+                  "type": "string"
+                },
+                "templateId": {
+                  "type": "integer"
+                },
+                "matchReportMemberSourceCd": {
+                  "type": "string"
+                },
+                "setInputTypeCd": {
+                  "type": "string"
+                },
+                "lineupCd": {
+                  "type": "string"
+                },
+                "matchApproval": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "index",
+                "name",
+                "statusCd",
+                "modeCd",
+                "typeCd",
+                "writerCd",
+                "numberOfGroups",
+                "setEquation",
+                "lastUpdate",
+                "created",
+                "templateId",
+                "matchReportMemberSourceCd",
+                "setInputTypeCd",
+                "lineupCd",
+                "matchApproval"
+              ]
+            },
+            "participantHome": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "currentPosition": {
+                  "type": "string"
+                },
+                "paid": {
+                  "type": "boolean"
+                },
+                "present": {
+                  "type": "boolean"
+                },
+                "deregistered": {
+                  "type": "boolean"
+                },
+                "retired": {
+                  "type": "boolean"
+                },
+                "rankingPos": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "displayName",
+                "currentPosition",
+                "paid",
+                "present",
+                "deregistered",
+                "retired",
+                "rankingPos"
+              ]
+            },
+            "participantGuest": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "currentPosition": {
+                  "type": "string"
+                },
+                "paid": {
+                  "type": "boolean"
+                },
+                "present": {
+                  "type": "boolean"
+                },
+                "deregistered": {
+                  "type": "boolean"
+                },
+                "retired": {
+                  "type": "boolean"
+                },
+                "rankingPos": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "displayName",
+                "currentPosition",
+                "paid",
+                "present",
+                "deregistered",
+                "retired",
+                "rankingPos"
+              ]
+            },
+            "gameNr": {
+              "type": "integer"
+            },
+            "gameNrRound": {
+              "type": "integer"
+            },
+            "statusCd": {
+              "type": "string"
+            },
+            "matchmode": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "matchmodeCd": {
+                  "type": "string"
+                },
+                "matchmodeInCd": {
+                  "type": "string"
+                },
+                "matchmodeOutCd": {
+                  "type": "string"
+                },
+                "matchmodePoints": {
+                  "type": "integer"
+                },
+                "setsBestOf": {
+                  "type": "integer"
+                },
+                "setsTotal": {
+                  "type": "integer"
+                },
+                "legsBestOf": {
+                  "type": "integer"
+                },
+                "legsTotal": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "matchmodeCd",
+                "matchmodeInCd",
+                "matchmodeOutCd",
+                "matchmodePoints",
+                "setsBestOf",
+                "setsTotal",
+                "legsBestOf",
+                "legsTotal"
+              ]
+            },
+            "hasPerformances": {
+              "type": "boolean"
+            },
+            "active": {
+              "type": "boolean"
+            },
+            "byeHome": {
+              "type": "boolean"
+            },
+            "byeAway": {
+              "type": "boolean"
+            },
+            "datePlanned": {
+              "type": "string"
+            },
+            "matchReport": {
+              "type": "boolean"
+            },
+            "level": {
+              "type": "integer"
+            },
+            "ready": {
+              "type": "boolean"
+            },
+            "prioritize": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "id",
+            "eventId",
+            "event",
+            "round",
+            "phase",
+            "participantHome",
+            "participantGuest",
+            "gameNr",
+            "gameNrRound",
+            "statusCd",
+            "matchmode",
+            "hasPerformances",
+            "active",
+            "byeHome",
+            "byeAway",
+            "datePlanned",
+            "matchReport",
+            "level",
+            "ready",
+            "prioritize"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "eventId": {
+              "type": "integer"
+            },
+            "event": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "datetime": {
+                  "type": "string"
+                },
+                "statusCd": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "nameShort": {
+                  "type": "string"
+                },
+                "hasPerformancesDefined": {
+                  "type": "boolean"
+                },
+                "leagueLock": {
+                  "type": "boolean"
+                },
+                "hideDataLeagueSetup": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "datetime",
+                "statusCd",
+                "name",
+                "nameShort",
+                "hasPerformancesDefined",
+                "leagueLock",
+                "hideDataLeagueSetup"
+              ]
+            },
+            "round": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "index": {
+                  "type": "integer"
+                },
+                "typeCd": {
+                  "type": "string"
+                },
+                "groupCd": {
+                  "type": "string"
+                },
+                "matchmode": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "matchmodeCd": {
+                      "type": "string"
+                    },
+                    "matchmodeInCd": {
+                      "type": "string"
+                    },
+                    "matchmodeOutCd": {
+                      "type": "string"
+                    },
+                    "matchmodePoints": {
+                      "type": "integer"
+                    },
+                    "setsBestOf": {
+                      "type": "integer"
+                    },
+                    "setsTotal": {
+                      "type": "integer"
+                    },
+                    "legsBestOf": {
+                      "type": "integer"
+                    },
+                    "legsTotal": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "matchmodeCd",
+                    "matchmodeInCd",
+                    "matchmodeOutCd",
+                    "matchmodePoints",
+                    "setsBestOf",
+                    "setsTotal",
+                    "legsBestOf",
+                    "legsTotal"
+                  ]
+                },
+                "nameCd": {
+                  "type": "string"
+                },
+                "dateFrom": {
+                  "type": "string"
+                },
+                "dateTo": {
+                  "type": "string"
+                },
+                "waitForLastRound": {
+                  "type": "boolean"
+                },
+                "level": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "index",
+                "typeCd",
+                "groupCd",
+                "matchmode",
+                "nameCd",
+                "dateFrom",
+                "dateTo",
+                "waitForLastRound",
+                "level"
+              ]
+            },
+            "phase": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "index": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "statusCd": {
+                  "type": "string"
+                },
+                "modeCd": {
+                  "type": "string"
+                },
+                "typeCd": {
+                  "type": "string"
+                },
+                "writerCd": {
+                  "type": "string"
+                },
+                "numberOfGroups": {
+                  "type": "integer"
+                },
+                "setEquation": {
+                  "type": "boolean"
+                },
+                "lastUpdate": {
+                  "type": "string"
+                },
+                "created": {
+                  "type": "string"
+                },
+                "templateId": {
+                  "type": "integer"
+                },
+                "matchReportMemberSourceCd": {
+                  "type": "string"
+                },
+                "setInputTypeCd": {
+                  "type": "string"
+                },
+                "lineupCd": {
+                  "type": "string"
+                },
+                "matchApproval": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "index",
+                "name",
+                "statusCd",
+                "modeCd",
+                "typeCd",
+                "writerCd",
+                "numberOfGroups",
+                "setEquation",
+                "lastUpdate",
+                "created",
+                "templateId",
+                "matchReportMemberSourceCd",
+                "setInputTypeCd",
+                "lineupCd",
+                "matchApproval"
+              ]
+            },
+            "participantHome": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "currentPosition": {
+                  "type": "string"
+                },
+                "paid": {
+                  "type": "boolean"
+                },
+                "present": {
+                  "type": "boolean"
+                },
+                "deregistered": {
+                  "type": "boolean"
+                },
+                "retired": {
+                  "type": "boolean"
+                },
+                "rankingPos": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "displayName",
+                "currentPosition",
+                "paid",
+                "present",
+                "deregistered",
+                "retired",
+                "rankingPos"
+              ]
+            },
+            "participantGuest": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "currentPosition": {
+                  "type": "string"
+                },
+                "paid": {
+                  "type": "boolean"
+                },
+                "present": {
+                  "type": "boolean"
+                },
+                "deregistered": {
+                  "type": "boolean"
+                },
+                "retired": {
+                  "type": "boolean"
+                },
+                "rankingPos": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "displayName",
+                "currentPosition",
+                "paid",
+                "present",
+                "deregistered",
+                "retired",
+                "rankingPos"
+              ]
+            },
+            "gameNr": {
+              "type": "integer"
+            },
+            "gameNrRound": {
+              "type": "integer"
+            },
+            "statusCd": {
+              "type": "string"
+            },
+            "matchmode": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "matchmodeCd": {
+                  "type": "string"
+                },
+                "matchmodeInCd": {
+                  "type": "string"
+                },
+                "matchmodeOutCd": {
+                  "type": "string"
+                },
+                "matchmodePoints": {
+                  "type": "integer"
+                },
+                "setsBestOf": {
+                  "type": "integer"
+                },
+                "setsTotal": {
+                  "type": "integer"
+                },
+                "legsBestOf": {
+                  "type": "integer"
+                },
+                "legsTotal": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "matchmodeCd",
+                "matchmodeInCd",
+                "matchmodeOutCd",
+                "matchmodePoints",
+                "setsBestOf",
+                "setsTotal",
+                "legsBestOf",
+                "legsTotal"
+              ]
+            },
+            "hasPerformances": {
+              "type": "boolean"
+            },
+            "active": {
+              "type": "boolean"
+            },
+            "byeHome": {
+              "type": "boolean"
+            },
+            "byeAway": {
+              "type": "boolean"
+            },
+            "datePlanned": {
+              "type": "string"
+            },
+            "matchReport": {
+              "type": "boolean"
+            },
+            "level": {
+              "type": "integer"
+            },
+            "ready": {
+              "type": "boolean"
+            },
+            "prioritize": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "id",
+            "eventId",
+            "event",
+            "round",
+            "phase",
+            "participantHome",
+            "participantGuest",
+            "gameNr",
+            "gameNrRound",
+            "statusCd",
+            "matchmode",
+            "hasPerformances",
+            "active",
+            "byeHome",
+            "byeAway",
+            "datePlanned",
+            "matchReport",
+            "level",
+            "ready",
+            "prioritize"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "eventId": {
+              "type": "integer"
+            },
+            "event": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "datetime": {
+                  "type": "string"
+                },
+                "statusCd": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "nameShort": {
+                  "type": "string"
+                },
+                "hasPerformancesDefined": {
+                  "type": "boolean"
+                },
+                "leagueLock": {
+                  "type": "boolean"
+                },
+                "hideDataLeagueSetup": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "datetime",
+                "statusCd",
+                "name",
+                "nameShort",
+                "hasPerformancesDefined",
+                "leagueLock",
+                "hideDataLeagueSetup"
+              ]
+            },
+            "round": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "index": {
+                  "type": "integer"
+                },
+                "typeCd": {
+                  "type": "string"
+                },
+                "groupCd": {
+                  "type": "string"
+                },
+                "matchmode": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "matchmodeCd": {
+                      "type": "string"
+                    },
+                    "matchmodeInCd": {
+                      "type": "string"
+                    },
+                    "matchmodeOutCd": {
+                      "type": "string"
+                    },
+                    "matchmodePoints": {
+                      "type": "integer"
+                    },
+                    "setsBestOf": {
+                      "type": "integer"
+                    },
+                    "setsTotal": {
+                      "type": "integer"
+                    },
+                    "legsBestOf": {
+                      "type": "integer"
+                    },
+                    "legsTotal": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "matchmodeCd",
+                    "matchmodeInCd",
+                    "matchmodeOutCd",
+                    "matchmodePoints",
+                    "setsBestOf",
+                    "setsTotal",
+                    "legsBestOf",
+                    "legsTotal"
+                  ]
+                },
+                "nameCd": {
+                  "type": "string"
+                },
+                "dateFrom": {
+                  "type": "string"
+                },
+                "dateTo": {
+                  "type": "string"
+                },
+                "waitForLastRound": {
+                  "type": "boolean"
+                },
+                "level": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "index",
+                "typeCd",
+                "groupCd",
+                "matchmode",
+                "nameCd",
+                "dateFrom",
+                "dateTo",
+                "waitForLastRound",
+                "level"
+              ]
+            },
+            "phase": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "index": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "statusCd": {
+                  "type": "string"
+                },
+                "modeCd": {
+                  "type": "string"
+                },
+                "typeCd": {
+                  "type": "string"
+                },
+                "writerCd": {
+                  "type": "string"
+                },
+                "numberOfGroups": {
+                  "type": "integer"
+                },
+                "setEquation": {
+                  "type": "boolean"
+                },
+                "lastUpdate": {
+                  "type": "string"
+                },
+                "created": {
+                  "type": "string"
+                },
+                "templateId": {
+                  "type": "integer"
+                },
+                "matchReportMemberSourceCd": {
+                  "type": "string"
+                },
+                "setInputTypeCd": {
+                  "type": "string"
+                },
+                "lineupCd": {
+                  "type": "string"
+                },
+                "matchApproval": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "index",
+                "name",
+                "statusCd",
+                "modeCd",
+                "typeCd",
+                "writerCd",
+                "numberOfGroups",
+                "setEquation",
+                "lastUpdate",
+                "created",
+                "templateId",
+                "matchReportMemberSourceCd",
+                "setInputTypeCd",
+                "lineupCd",
+                "matchApproval"
+              ]
+            },
+            "participantHome": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "currentPosition": {
+                  "type": "string"
+                },
+                "paid": {
+                  "type": "boolean"
+                },
+                "present": {
+                  "type": "boolean"
+                },
+                "deregistered": {
+                  "type": "boolean"
+                },
+                "retired": {
+                  "type": "boolean"
+                },
+                "rankingPos": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "displayName",
+                "currentPosition",
+                "paid",
+                "present",
+                "deregistered",
+                "retired",
+                "rankingPos"
+              ]
+            },
+            "participantGuest": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "currentPosition": {
+                  "type": "string"
+                },
+                "paid": {
+                  "type": "boolean"
+                },
+                "present": {
+                  "type": "boolean"
+                },
+                "deregistered": {
+                  "type": "boolean"
+                },
+                "retired": {
+                  "type": "boolean"
+                },
+                "rankingPos": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "displayName",
+                "currentPosition",
+                "paid",
+                "present",
+                "deregistered",
+                "retired",
+                "rankingPos"
+              ]
+            },
+            "gameNr": {
+              "type": "integer"
+            },
+            "gameNrRound": {
+              "type": "integer"
+            },
+            "statusCd": {
+              "type": "string"
+            },
+            "matchmode": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "matchmodeCd": {
+                  "type": "string"
+                },
+                "matchmodeInCd": {
+                  "type": "string"
+                },
+                "matchmodeOutCd": {
+                  "type": "string"
+                },
+                "matchmodePoints": {
+                  "type": "integer"
+                },
+                "setsBestOf": {
+                  "type": "integer"
+                },
+                "setsTotal": {
+                  "type": "integer"
+                },
+                "legsBestOf": {
+                  "type": "integer"
+                },
+                "legsTotal": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "matchmodeCd",
+                "matchmodeInCd",
+                "matchmodeOutCd",
+                "matchmodePoints",
+                "setsBestOf",
+                "setsTotal",
+                "legsBestOf",
+                "legsTotal"
+              ]
+            },
+            "hasPerformances": {
+              "type": "boolean"
+            },
+            "active": {
+              "type": "boolean"
+            },
+            "byeHome": {
+              "type": "boolean"
+            },
+            "byeAway": {
+              "type": "boolean"
+            },
+            "datePlanned": {
+              "type": "string"
+            },
+            "matchReport": {
+              "type": "boolean"
+            },
+            "level": {
+              "type": "integer"
+            },
+            "ready": {
+              "type": "boolean"
+            },
+            "prioritize": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "id",
+            "eventId",
+            "event",
+            "round",
+            "phase",
+            "participantHome",
+            "participantGuest",
+            "gameNr",
+            "gameNrRound",
+            "statusCd",
+            "matchmode",
+            "hasPerformances",
+            "active",
+            "byeHome",
+            "byeAway",
+            "datePlanned",
+            "matchReport",
+            "level",
+            "ready",
+            "prioritize"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "eventId": {
+              "type": "integer"
+            },
+            "event": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "datetime": {
+                  "type": "string"
+                },
+                "statusCd": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "nameShort": {
+                  "type": "string"
+                },
+                "hasPerformancesDefined": {
+                  "type": "boolean"
+                },
+                "leagueLock": {
+                  "type": "boolean"
+                },
+                "hideDataLeagueSetup": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "datetime",
+                "statusCd",
+                "name",
+                "nameShort",
+                "hasPerformancesDefined",
+                "leagueLock",
+                "hideDataLeagueSetup"
+              ]
+            },
+            "round": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "index": {
+                  "type": "integer"
+                },
+                "typeCd": {
+                  "type": "string"
+                },
+                "groupCd": {
+                  "type": "string"
+                },
+                "matchmode": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "matchmodeCd": {
+                      "type": "string"
+                    },
+                    "matchmodeInCd": {
+                      "type": "string"
+                    },
+                    "matchmodeOutCd": {
+                      "type": "string"
+                    },
+                    "matchmodePoints": {
+                      "type": "integer"
+                    },
+                    "setsBestOf": {
+                      "type": "integer"
+                    },
+                    "setsTotal": {
+                      "type": "integer"
+                    },
+                    "legsBestOf": {
+                      "type": "integer"
+                    },
+                    "legsTotal": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "matchmodeCd",
+                    "matchmodeInCd",
+                    "matchmodeOutCd",
+                    "matchmodePoints",
+                    "setsBestOf",
+                    "setsTotal",
+                    "legsBestOf",
+                    "legsTotal"
+                  ]
+                },
+                "nameCd": {
+                  "type": "string"
+                },
+                "dateFrom": {
+                  "type": "string"
+                },
+                "dateTo": {
+                  "type": "string"
+                },
+                "waitForLastRound": {
+                  "type": "boolean"
+                },
+                "level": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "index",
+                "typeCd",
+                "groupCd",
+                "matchmode",
+                "nameCd",
+                "dateFrom",
+                "dateTo",
+                "waitForLastRound",
+                "level"
+              ]
+            },
+            "phase": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "index": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "statusCd": {
+                  "type": "string"
+                },
+                "modeCd": {
+                  "type": "string"
+                },
+                "typeCd": {
+                  "type": "string"
+                },
+                "writerCd": {
+                  "type": "string"
+                },
+                "numberOfGroups": {
+                  "type": "integer"
+                },
+                "setEquation": {
+                  "type": "boolean"
+                },
+                "lastUpdate": {
+                  "type": "string"
+                },
+                "created": {
+                  "type": "string"
+                },
+                "templateId": {
+                  "type": "integer"
+                },
+                "matchReportMemberSourceCd": {
+                  "type": "string"
+                },
+                "setInputTypeCd": {
+                  "type": "string"
+                },
+                "lineupCd": {
+                  "type": "string"
+                },
+                "matchApproval": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "index",
+                "name",
+                "statusCd",
+                "modeCd",
+                "typeCd",
+                "writerCd",
+                "numberOfGroups",
+                "setEquation",
+                "lastUpdate",
+                "created",
+                "templateId",
+                "matchReportMemberSourceCd",
+                "setInputTypeCd",
+                "lineupCd",
+                "matchApproval"
+              ]
+            },
+            "participantHome": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "currentPosition": {
+                  "type": "string"
+                },
+                "paid": {
+                  "type": "boolean"
+                },
+                "present": {
+                  "type": "boolean"
+                },
+                "deregistered": {
+                  "type": "boolean"
+                },
+                "retired": {
+                  "type": "boolean"
+                },
+                "rankingPos": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "displayName",
+                "currentPosition",
+                "paid",
+                "present",
+                "deregistered",
+                "retired",
+                "rankingPos"
+              ]
+            },
+            "participantGuest": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "currentPosition": {
+                  "type": "string"
+                },
+                "paid": {
+                  "type": "boolean"
+                },
+                "present": {
+                  "type": "boolean"
+                },
+                "deregistered": {
+                  "type": "boolean"
+                },
+                "retired": {
+                  "type": "boolean"
+                },
+                "rankingPos": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "displayName",
+                "currentPosition",
+                "paid",
+                "present",
+                "deregistered",
+                "retired",
+                "rankingPos"
+              ]
+            },
+            "gameNr": {
+              "type": "integer"
+            },
+            "gameNrRound": {
+              "type": "integer"
+            },
+            "statusCd": {
+              "type": "string"
+            },
+            "matchmode": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "matchmodeCd": {
+                  "type": "string"
+                },
+                "matchmodeInCd": {
+                  "type": "string"
+                },
+                "matchmodeOutCd": {
+                  "type": "string"
+                },
+                "matchmodePoints": {
+                  "type": "integer"
+                },
+                "setsBestOf": {
+                  "type": "integer"
+                },
+                "setsTotal": {
+                  "type": "integer"
+                },
+                "legsBestOf": {
+                  "type": "integer"
+                },
+                "legsTotal": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "matchmodeCd",
+                "matchmodeInCd",
+                "matchmodeOutCd",
+                "matchmodePoints",
+                "setsBestOf",
+                "setsTotal",
+                "legsBestOf",
+                "legsTotal"
+              ]
+            },
+            "hasPerformances": {
+              "type": "boolean"
+            },
+            "active": {
+              "type": "boolean"
+            },
+            "byeHome": {
+              "type": "boolean"
+            },
+            "byeAway": {
+              "type": "boolean"
+            },
+            "datePlanned": {
+              "type": "string"
+            },
+            "matchReport": {
+              "type": "boolean"
+            },
+            "level": {
+              "type": "integer"
+            },
+            "ready": {
+              "type": "boolean"
+            },
+            "prioritize": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "id",
+            "eventId",
+            "event",
+            "round",
+            "phase",
+            "participantHome",
+            "participantGuest",
+            "gameNr",
+            "gameNrRound",
+            "statusCd",
+            "matchmode",
+            "hasPerformances",
+            "active",
+            "byeHome",
+            "byeAway",
+            "datePlanned",
+            "matchReport",
+            "level",
+            "ready",
+            "prioritize"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "eventId": {
+              "type": "integer"
+            },
+            "event": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "datetime": {
+                  "type": "string"
+                },
+                "statusCd": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "nameShort": {
+                  "type": "string"
+                },
+                "hasPerformancesDefined": {
+                  "type": "boolean"
+                },
+                "leagueLock": {
+                  "type": "boolean"
+                },
+                "hideDataLeagueSetup": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "datetime",
+                "statusCd",
+                "name",
+                "nameShort",
+                "hasPerformancesDefined",
+                "leagueLock",
+                "hideDataLeagueSetup"
+              ]
+            },
+            "round": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "index": {
+                  "type": "integer"
+                },
+                "typeCd": {
+                  "type": "string"
+                },
+                "groupCd": {
+                  "type": "string"
+                },
+                "matchmode": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "matchmodeCd": {
+                      "type": "string"
+                    },
+                    "matchmodeInCd": {
+                      "type": "string"
+                    },
+                    "matchmodeOutCd": {
+                      "type": "string"
+                    },
+                    "matchmodePoints": {
+                      "type": "integer"
+                    },
+                    "setsBestOf": {
+                      "type": "integer"
+                    },
+                    "setsTotal": {
+                      "type": "integer"
+                    },
+                    "legsBestOf": {
+                      "type": "integer"
+                    },
+                    "legsTotal": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "matchmodeCd",
+                    "matchmodeInCd",
+                    "matchmodeOutCd",
+                    "matchmodePoints",
+                    "setsBestOf",
+                    "setsTotal",
+                    "legsBestOf",
+                    "legsTotal"
+                  ]
+                },
+                "nameCd": {
+                  "type": "string"
+                },
+                "dateFrom": {
+                  "type": "string"
+                },
+                "dateTo": {
+                  "type": "string"
+                },
+                "waitForLastRound": {
+                  "type": "boolean"
+                },
+                "level": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "index",
+                "typeCd",
+                "groupCd",
+                "matchmode",
+                "nameCd",
+                "dateFrom",
+                "dateTo",
+                "waitForLastRound",
+                "level"
+              ]
+            },
+            "phase": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "index": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "statusCd": {
+                  "type": "string"
+                },
+                "modeCd": {
+                  "type": "string"
+                },
+                "typeCd": {
+                  "type": "string"
+                },
+                "writerCd": {
+                  "type": "string"
+                },
+                "numberOfGroups": {
+                  "type": "integer"
+                },
+                "setEquation": {
+                  "type": "boolean"
+                },
+                "lastUpdate": {
+                  "type": "string"
+                },
+                "created": {
+                  "type": "string"
+                },
+                "templateId": {
+                  "type": "integer"
+                },
+                "matchReportMemberSourceCd": {
+                  "type": "string"
+                },
+                "setInputTypeCd": {
+                  "type": "string"
+                },
+                "lineupCd": {
+                  "type": "string"
+                },
+                "matchApproval": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "index",
+                "name",
+                "statusCd",
+                "modeCd",
+                "typeCd",
+                "writerCd",
+                "numberOfGroups",
+                "setEquation",
+                "lastUpdate",
+                "created",
+                "templateId",
+                "matchReportMemberSourceCd",
+                "setInputTypeCd",
+                "lineupCd",
+                "matchApproval"
+              ]
+            },
+            "participantHome": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "currentPosition": {
+                  "type": "string"
+                },
+                "paid": {
+                  "type": "boolean"
+                },
+                "present": {
+                  "type": "boolean"
+                },
+                "deregistered": {
+                  "type": "boolean"
+                },
+                "retired": {
+                  "type": "boolean"
+                },
+                "rankingPos": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "displayName",
+                "currentPosition",
+                "paid",
+                "present",
+                "deregistered",
+                "retired",
+                "rankingPos"
+              ]
+            },
+            "participantGuest": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "currentPosition": {
+                  "type": "string"
+                },
+                "paid": {
+                  "type": "boolean"
+                },
+                "present": {
+                  "type": "boolean"
+                },
+                "deregistered": {
+                  "type": "boolean"
+                },
+                "retired": {
+                  "type": "boolean"
+                },
+                "rankingPos": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "displayName",
+                "currentPosition",
+                "paid",
+                "present",
+                "deregistered",
+                "retired",
+                "rankingPos"
+              ]
+            },
+            "gameNr": {
+              "type": "integer"
+            },
+            "gameNrRound": {
+              "type": "integer"
+            },
+            "statusCd": {
+              "type": "string"
+            },
+            "matchmode": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "matchmodeCd": {
+                  "type": "string"
+                },
+                "matchmodeInCd": {
+                  "type": "string"
+                },
+                "matchmodeOutCd": {
+                  "type": "string"
+                },
+                "matchmodePoints": {
+                  "type": "integer"
+                },
+                "setsBestOf": {
+                  "type": "integer"
+                },
+                "setsTotal": {
+                  "type": "integer"
+                },
+                "legsBestOf": {
+                  "type": "integer"
+                },
+                "legsTotal": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "matchmodeCd",
+                "matchmodeInCd",
+                "matchmodeOutCd",
+                "matchmodePoints",
+                "setsBestOf",
+                "setsTotal",
+                "legsBestOf",
+                "legsTotal"
+              ]
+            },
+            "hasPerformances": {
+              "type": "boolean"
+            },
+            "active": {
+              "type": "boolean"
+            },
+            "byeHome": {
+              "type": "boolean"
+            },
+            "byeAway": {
+              "type": "boolean"
+            },
+            "datePlanned": {
+              "type": "string"
+            },
+            "matchReport": {
+              "type": "boolean"
+            },
+            "level": {
+              "type": "integer"
+            },
+            "ready": {
+              "type": "boolean"
+            },
+            "prioritize": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "id",
+            "eventId",
+            "event",
+            "round",
+            "phase",
+            "participantHome",
+            "participantGuest",
+            "gameNr",
+            "gameNrRound",
+            "statusCd",
+            "matchmode",
+            "hasPerformances",
+            "active",
+            "byeHome",
+            "byeAway",
+            "datePlanned",
+            "matchReport",
+            "level",
+            "ready",
+            "prioritize"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "eventId": {
+              "type": "integer"
+            },
+            "event": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "datetime": {
+                  "type": "string"
+                },
+                "statusCd": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "nameShort": {
+                  "type": "string"
+                },
+                "hasPerformancesDefined": {
+                  "type": "boolean"
+                },
+                "leagueLock": {
+                  "type": "boolean"
+                },
+                "hideDataLeagueSetup": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "datetime",
+                "statusCd",
+                "name",
+                "nameShort",
+                "hasPerformancesDefined",
+                "leagueLock",
+                "hideDataLeagueSetup"
+              ]
+            },
+            "round": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "index": {
+                  "type": "integer"
+                },
+                "typeCd": {
+                  "type": "string"
+                },
+                "groupCd": {
+                  "type": "string"
+                },
+                "matchmode": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "matchmodeCd": {
+                      "type": "string"
+                    },
+                    "matchmodeInCd": {
+                      "type": "string"
+                    },
+                    "matchmodeOutCd": {
+                      "type": "string"
+                    },
+                    "matchmodePoints": {
+                      "type": "integer"
+                    },
+                    "setsBestOf": {
+                      "type": "integer"
+                    },
+                    "setsTotal": {
+                      "type": "integer"
+                    },
+                    "legsBestOf": {
+                      "type": "integer"
+                    },
+                    "legsTotal": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "matchmodeCd",
+                    "matchmodeInCd",
+                    "matchmodeOutCd",
+                    "matchmodePoints",
+                    "setsBestOf",
+                    "setsTotal",
+                    "legsBestOf",
+                    "legsTotal"
+                  ]
+                },
+                "nameCd": {
+                  "type": "string"
+                },
+                "dateFrom": {
+                  "type": "string"
+                },
+                "dateTo": {
+                  "type": "string"
+                },
+                "waitForLastRound": {
+                  "type": "boolean"
+                },
+                "level": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "index",
+                "typeCd",
+                "groupCd",
+                "matchmode",
+                "nameCd",
+                "dateFrom",
+                "dateTo",
+                "waitForLastRound",
+                "level"
+              ]
+            },
+            "phase": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "index": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "statusCd": {
+                  "type": "string"
+                },
+                "modeCd": {
+                  "type": "string"
+                },
+                "typeCd": {
+                  "type": "string"
+                },
+                "writerCd": {
+                  "type": "string"
+                },
+                "numberOfGroups": {
+                  "type": "integer"
+                },
+                "setEquation": {
+                  "type": "boolean"
+                },
+                "lastUpdate": {
+                  "type": "string"
+                },
+                "created": {
+                  "type": "string"
+                },
+                "templateId": {
+                  "type": "integer"
+                },
+                "matchReportMemberSourceCd": {
+                  "type": "string"
+                },
+                "setInputTypeCd": {
+                  "type": "string"
+                },
+                "lineupCd": {
+                  "type": "string"
+                },
+                "matchApproval": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "index",
+                "name",
+                "statusCd",
+                "modeCd",
+                "typeCd",
+                "writerCd",
+                "numberOfGroups",
+                "setEquation",
+                "lastUpdate",
+                "created",
+                "templateId",
+                "matchReportMemberSourceCd",
+                "setInputTypeCd",
+                "lineupCd",
+                "matchApproval"
+              ]
+            },
+            "participantHome": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "currentPosition": {
+                  "type": "string"
+                },
+                "paid": {
+                  "type": "boolean"
+                },
+                "present": {
+                  "type": "boolean"
+                },
+                "deregistered": {
+                  "type": "boolean"
+                },
+                "retired": {
+                  "type": "boolean"
+                },
+                "rankingPos": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "displayName",
+                "currentPosition",
+                "paid",
+                "present",
+                "deregistered",
+                "retired",
+                "rankingPos"
+              ]
+            },
+            "participantGuest": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "currentPosition": {
+                  "type": "string"
+                },
+                "paid": {
+                  "type": "boolean"
+                },
+                "present": {
+                  "type": "boolean"
+                },
+                "deregistered": {
+                  "type": "boolean"
+                },
+                "retired": {
+                  "type": "boolean"
+                },
+                "rankingPos": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "displayName",
+                "currentPosition",
+                "paid",
+                "present",
+                "deregistered",
+                "retired",
+                "rankingPos"
+              ]
+            },
+            "gameNr": {
+              "type": "integer"
+            },
+            "gameNrRound": {
+              "type": "integer"
+            },
+            "statusCd": {
+              "type": "string"
+            },
+            "matchmode": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "matchmodeCd": {
+                  "type": "string"
+                },
+                "matchmodeInCd": {
+                  "type": "string"
+                },
+                "matchmodeOutCd": {
+                  "type": "string"
+                },
+                "matchmodePoints": {
+                  "type": "integer"
+                },
+                "setsBestOf": {
+                  "type": "integer"
+                },
+                "setsTotal": {
+                  "type": "integer"
+                },
+                "legsBestOf": {
+                  "type": "integer"
+                },
+                "legsTotal": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "matchmodeCd",
+                "matchmodeInCd",
+                "matchmodeOutCd",
+                "matchmodePoints",
+                "setsBestOf",
+                "setsTotal",
+                "legsBestOf",
+                "legsTotal"
+              ]
+            },
+            "hasPerformances": {
+              "type": "boolean"
+            },
+            "active": {
+              "type": "boolean"
+            },
+            "byeHome": {
+              "type": "boolean"
+            },
+            "byeAway": {
+              "type": "boolean"
+            },
+            "datePlanned": {
+              "type": "string"
+            },
+            "matchReport": {
+              "type": "boolean"
+            },
+            "level": {
+              "type": "integer"
+            },
+            "ready": {
+              "type": "boolean"
+            },
+            "prioritize": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "id",
+            "eventId",
+            "event",
+            "round",
+            "phase",
+            "participantHome",
+            "participantGuest",
+            "gameNr",
+            "gameNrRound",
+            "statusCd",
+            "matchmode",
+            "hasPerformances",
+            "active",
+            "byeHome",
+            "byeAway",
+            "datePlanned",
+            "matchReport",
+            "level",
+            "ready",
+            "prioritize"
+          ]
+        }
+      ]
+    },
+    "participantIds": {
+      "type": "array",
+      "items": [
+        {
+          "type": "integer"
+        }
+      ]
+    },
+    "calenderActive": {
+      "type": "boolean"
+    },
+    "showMemberStatusActive": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "participant",
+    "matches",
+    "participantIds",
+    "calenderActive",
+    "showMemberStatusActive"
+  ]
+}

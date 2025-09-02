@@ -1,0 +1,42 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ParticipantData from '../components/ParticipantData.astro';
+---
+
+<Layout title="Fuelltreffer - 2k Software Dashboard">
+  <main class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto">
+      <header class="text-center mb-8">
+        <h1 class="text-4xl font-bold text-gray-900 mb-2">Fuelltreffer</h1>
+        <p class="text-lg text-gray-600">Team Dashboard - 2k Software API</p>
+        <p class="text-sm text-gray-500 mt-1">Lädt automatisch die aktuellen Team-Daten</p>
+      </header>
+
+      <div class="grid gap-8">
+        <ParticipantData />
+        
+        <div class="bg-white rounded-lg shadow p-6">
+          <h2 class="text-2xl font-bold mb-4">System Information</h2>
+          <div class="space-y-3 text-sm">
+            <div>
+              <span class="font-medium">Backend URL:</span>
+              <code class="ml-2 px-2 py-1 bg-gray-100 rounded">http://localhost:3001</code>
+            </div>
+            <div>
+              <span class="font-medium">Standard Team ID:</span>
+              <code class="ml-2 px-2 py-1 bg-gray-100 rounded">308868</code>
+            </div>
+            <div>
+              <span class="font-medium">API Endpoint:</span>
+              <code class="ml-2 px-2 py-1 bg-gray-100 rounded">/api/participant/&#123;id&#125;</code>
+            </div>
+            <div>
+              <span class="font-medium">Auto-Load:</span>
+              <span class="ml-2 text-green-600">✓ Aktiviert</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>

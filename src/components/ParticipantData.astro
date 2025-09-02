@@ -1,0 +1,652 @@
+---
+import type { ApiResponse, ApiError, Participant, Match, TeamSeason } from '../types/api';
+---
+
+<div id="participant-data" class="space-y-6">
+  <!-- Search Section -->
+  <div class="bg-white rounded-lg shadow p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-2xl font-bold text-gray-900">Team Dashboard</h2>
+      <button 
+        id="toggle-search" 
+        class="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
+      >
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+        Erweiterte Suche
+      </button>
+    </div>
+
+    <div class="mb-4">
+      <p class="text-gray-600 text-sm">
+        Lädt automatisch die Daten für Teilnehmer <span class="font-mono bg-gray-100 px-2 py-1 rounded">308868</span>
+      </p>
+    </div>
+    
+    <div id="search-panel" class="hidden">
+      <div class="border-t border-gray-200 pt-4">
+        <label for="participant-id" class="block text-sm font-medium text-gray-700 mb-2">
+          Andere Teilnehmer ID laden:
+        </label>
+        <div class="flex gap-2">
+          <input 
+            type="number" 
+            id="participant-id" 
+            value="308868"
+            class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Teilnehmer ID eingeben"
+          />
+          <button 
+            id="load-data" 
+            class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            Laden
+          </button>
+        </div>
+        <div class="mt-2 text-xs text-gray-500">
+          Bekannte IDs: 308868 (Standard), 308860, 308859, 308865, 308863, 308866, 308864, 308862
+        </div>
+      </div>
+    </div>
+
+    <div id="loading" class="hidden">
+      <div class="flex items-center justify-center py-8">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <span class="ml-2 text-gray-600">Lade Team-Daten...</span>
+      </div>
+    </div>
+
+    <div id="error" class="hidden bg-red-50 border border-red-200 rounded-md p-4 mb-4">
+      <div class="flex">
+        <div class="flex-shrink-0">
+          <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <div class="ml-3">
+          <h3 class="text-sm font-medium text-red-800">Fehler beim Laden der Daten</h3>
+          <p id="error-message" class="mt-1 text-sm text-red-700"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Participant Info Section -->
+  <div id="participant-info" class="hidden bg-white rounded-lg shadow overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <button id="toggle-participant-info" class="flex items-center justify-between w-full text-left">
+        <h3 class="text-lg font-semibold text-gray-900">Teilnehmer Information</h3>
+        <svg id="participant-info-icon" class="h-5 w-5 text-gray-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+    </div>
+    <div id="participant-info-content" class="hidden p-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+        <!-- Will be filled by JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Team Info Section -->
+  <div id="team-info" class="hidden bg-white rounded-lg shadow overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <button id="toggle-team-info" class="flex items-center justify-between w-full text-left">
+        <h3 class="text-lg font-semibold text-gray-900">Team Information</h3>
+        <svg id="team-info-icon" class="h-5 w-5 text-gray-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+    </div>
+    <div id="team-info-content" class="hidden p-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+        <!-- Will be filled by JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Matches Section -->
+  <div id="matches-section" class="hidden bg-white rounded-lg shadow overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <h3 class="text-lg font-semibold text-gray-900">Matches</h3>
+    </div>
+    <div class="p-6">
+      <div id="matches-container" class="space-y-4">
+        <!-- Will be filled by JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Team Members Section -->
+  <div id="team-members-section" class="hidden bg-white rounded-lg shadow overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <div class="flex items-center justify-between">
+        <h3 class="text-lg font-semibold text-gray-900">Team Mitglieder</h3>
+        <button id="toggle-status-info" class="text-sm text-blue-600 hover:text-blue-800">
+          Status-Info anzeigen
+        </button>
+      </div>
+      <div id="status-info" class="hidden mt-3 p-3 bg-blue-50 rounded-lg text-sm">
+        <h4 class="font-medium text-blue-900 mb-2">Status-Erklärung:</h4>
+        <div class="space-y-1 text-blue-800">
+          <div><strong>✓ Bezahlt / ○ Beitrag offen:</strong> Mitgliedsbeitrag für die Saison</div>
+          <div><strong>✓ Anwesend / ○ Abwesend:</strong> Aktuelle Anwesenheit bei Veranstaltungen</div>
+          <div><strong>⊘ Zurückgetreten:</strong> Spieler hat sich zurückgezogen</div>
+          <div><strong>⊘ Abgemeldet:</strong> Spieler wurde vom Team abgemeldet</div>
+        </div>
+      </div>
+    </div>
+    <div class="p-6">
+      <div id="team-members-container">
+        <!-- Will be filled by JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Raw Data Section (Collapsible) -->
+  <div id="raw-data-section" class="hidden bg-white rounded-lg shadow overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200">
+      <button id="toggle-raw-data" class="flex items-center justify-between w-full text-left">
+        <h3 class="text-lg font-semibold text-gray-900">Rohdaten (JSON)</h3>
+        <svg id="raw-data-icon" class="h-5 w-5 text-gray-500 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+    </div>
+    <div id="raw-data-content" class="hidden p-6">
+      <pre id="raw-data-display" class="text-sm overflow-x-auto bg-gray-50 p-4 rounded border text-gray-800"></pre>
+    </div>
+  </div>
+</div>
+
+<script>
+  import type { ApiResponse, ApiError, Participant, Match, TeamSeason, TeamMember } from '../types/api';
+
+  const API_BASE_URL = 'http://localhost:3001';
+
+  // DOM Elements
+  const participantIdInput = document.getElementById('participant-id') as HTMLInputElement;
+  const loadButton = document.getElementById('load-data') as HTMLButtonElement;
+  const loadingDiv = document.getElementById('loading') as HTMLDivElement;
+  const errorDiv = document.getElementById('error') as HTMLDivElement;
+  const errorMessage = document.getElementById('error-message') as HTMLParagraphElement;
+  
+  const participantInfo = document.getElementById('participant-info') as HTMLDivElement;
+  const teamInfo = document.getElementById('team-info') as HTMLDivElement;
+  const matchesSection = document.getElementById('matches-section') as HTMLDivElement;
+  const teamMembersSection = document.getElementById('team-members-section') as HTMLDivElement;
+  const rawDataSection = document.getElementById('raw-data-section') as HTMLDivElement;
+  const rawDataContent = document.getElementById('raw-data-content') as HTMLDivElement;
+  const rawDataDisplay = document.getElementById('raw-data-display') as HTMLPreElement;
+  const toggleRawDataBtn = document.getElementById('toggle-raw-data') as HTMLButtonElement;
+  const rawDataIcon = document.getElementById('raw-data-icon') as HTMLOrSVGElement;
+  const toggleStatusInfoBtn = document.getElementById('toggle-status-info') as HTMLButtonElement;
+  const statusInfo = document.getElementById('status-info') as HTMLDivElement;
+  const toggleSearchBtn = document.getElementById('toggle-search') as HTMLButtonElement;
+  const searchPanel = document.getElementById('search-panel') as HTMLDivElement;
+  
+  const toggleParticipantInfoBtn = document.getElementById('toggle-participant-info') as HTMLButtonElement;
+  const participantInfoContent = document.getElementById('participant-info-content') as HTMLDivElement;
+  const participantInfoIcon = document.getElementById('participant-info-icon') as HTMLOrSVGElement;
+  
+  const toggleTeamInfoBtn = document.getElementById('toggle-team-info') as HTMLButtonElement;
+  const teamInfoContent = document.getElementById('team-info-content') as HTMLDivElement;
+  const teamInfoIcon = document.getElementById('team-info-icon') as HTMLOrSVGElement;
+
+  function showLoading() {
+    loadingDiv.classList.remove('hidden');
+    hideError();
+    hideAllSections();
+    loadButton.disabled = true;
+  }
+
+  function hideLoading() {
+    loadingDiv.classList.add('hidden');
+    loadButton.disabled = false;
+  }
+
+  function showError(message: string) {
+    errorMessage.textContent = message;
+    errorDiv.classList.remove('hidden');
+  }
+
+  function hideError() {
+    errorDiv.classList.add('hidden');
+  }
+
+  function hideAllSections() {
+    participantInfo.classList.add('hidden');
+    teamInfo.classList.add('hidden');
+    matchesSection.classList.add('hidden');
+    teamMembersSection.classList.add('hidden');
+    rawDataSection.classList.add('hidden');
+  }
+
+  function formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    const weekdays = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+    const weekday = weekdays[date.getDay()];
+    const formatted = date.toLocaleString('de-DE', {
+      day: '2-digit',
+      month: '2-digit', 
+      year: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    return `${weekday}. ${formatted}`;
+  }
+
+  function getStatusBadge(status: string): string {
+    const statusMap: Record<string, { color: string; text: string }> = {
+      'ACTIVE': { color: 'bg-green-100 text-green-800', text: 'Aktiv' },
+      'FINISHED': { color: 'bg-blue-100 text-blue-800', text: 'Beendet' },
+      'PLANNED': { color: 'bg-yellow-100 text-yellow-800', text: 'Geplant' },
+      'CANCELLED': { color: 'bg-red-100 text-red-800', text: 'Abgesagt' }
+    };
+    
+    const statusInfo = statusMap[status] || { color: 'bg-gray-100 text-gray-800', text: status };
+    return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusInfo.color}">${statusInfo.text}</span>`;
+  }
+
+  function renderParticipantInfo(participant: Participant) {
+    const container = participantInfoContent.querySelector('.grid') as HTMLDivElement;
+    
+    container.innerHTML = `
+      <div class="bg-gray-50 p-4 rounded-lg">
+        <dt class="text-sm font-medium text-gray-500">Name</dt>
+        <dd class="mt-1 text-lg font-semibold text-gray-900">${participant.displayName}</dd>
+      </div>
+      <div class="bg-gray-50 p-4 rounded-lg">
+        <dt class="text-sm font-medium text-gray-500">Position</dt>
+        <dd class="mt-1 text-lg font-semibold text-gray-900">${participant.currentPosition}</dd>
+      </div>
+      <div class="bg-gray-50 p-4 rounded-lg">
+        <dt class="text-sm font-medium text-gray-500">Ranking Position</dt>
+        <dd class="mt-1 text-lg font-semibold text-gray-900">#${participant.rankingPos}</dd>
+      </div>
+      <div class="bg-gray-50 p-4 rounded-lg">
+        <dt class="text-sm font-medium text-gray-500">Status</dt>
+        <dd class="mt-1 space-x-2">
+          ${participant.paid ? '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">✓ Bezahlt</span>' : '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">○ Beitrag offen</span>'}
+          ${participant.present ? '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">✓ Anwesend</span>' : '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">○ Abwesend</span>'}
+        </dd>
+      </div>
+      <div class="bg-gray-50 p-4 rounded-lg">
+        <dt class="text-sm font-medium text-gray-500">ID</dt>
+        <dd class="mt-1 text-lg font-semibold text-gray-900">${participant.id}</dd>
+      </div>
+      <div class="bg-gray-50 p-4 rounded-lg">
+        <dt class="text-sm font-medium text-gray-500">Weitere Status</dt>
+        <dd class="mt-1 space-x-2">
+          ${participant.retired ? '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">⊘ Zurückgetreten</span>' : ''}
+          ${participant.deregistered ? '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">⊘ Abgemeldet</span>' : ''}
+          ${!participant.retired && !participant.deregistered ? '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">✓ Aktiv</span>' : ''}
+        </dd>
+      </div>
+    `;
+    
+    participantInfo.classList.remove('hidden');
+  }
+
+  function renderTeamInfo(teamSeason: TeamSeason) {
+    const container = teamInfoContent.querySelector('.grid') as HTMLDivElement;
+    
+    const weekdays = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
+    
+    container.innerHTML = `
+      <div class="space-y-4">
+        <h4 class="font-semibold text-gray-900">Team Details</h4>
+        <dl class="space-y-3">
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Team Name</dt>
+            <dd class="mt-1 text-sm text-gray-900">${teamSeason.name}</dd>
+          </div>
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Spieltag</dt>
+            <dd class="mt-1 text-sm text-gray-900">${weekdays[teamSeason.weekdayMatch]} um ${teamSeason.throwoffTime}</dd>
+          </div>
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Wettkampf Typ</dt>
+            <dd class="mt-1 text-sm text-gray-900">${teamSeason.weekTypeCdMatch}</dd>
+          </div>
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Meisterschaft</dt>
+            <dd class="mt-1">
+              ${teamSeason.competitionChampionship ? 
+                '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Ja</span>' : 
+                '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">Nein</span>'
+              }
+            </dd>
+          </div>
+        </dl>
+      </div>
+      <div class="space-y-4">
+        <h4 class="font-semibold text-gray-900">Spielort</h4>
+        <dl class="space-y-3">
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Name</dt>
+            <dd class="mt-1 text-sm text-gray-900">${teamSeason.playingVenue.name}</dd>
+          </div>
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Adresse</dt>
+            <dd class="mt-1 text-sm text-gray-900">
+              ${teamSeason.playingVenue.locationStreet}<br>
+              ${teamSeason.playingVenue.locationPostalCode} ${teamSeason.playingVenue.locationCity}
+            </dd>
+          </div>
+          <div>
+            <dt class="text-sm font-medium text-gray-500">Status</dt>
+            <dd class="mt-1">
+              ${teamSeason.playingVenue.isActive ? 
+                '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Aktiv</span>' : 
+                '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">Inaktiv</span>'
+              }
+            </dd>
+          </div>
+        </dl>
+      </div>
+    `;
+    
+    teamInfo.classList.remove('hidden');
+  }
+
+  function renderMatches(matches: Match[]) {
+    const container = document.getElementById('matches-container') as HTMLDivElement;
+    const matchesHeader = matchesSection.querySelector('h3') as HTMLHeadingElement;
+    
+    // Header mit Anzahl und allgemeinen Infos aktualisieren
+    if (matches.length > 0) {
+      const firstMatch = matches[0];
+      const leagueName = firstMatch.event.name;
+      const matchMode = firstMatch.matchmode.matchmodeCd;
+      const bestOf = firstMatch.matchmode.legsBestOf;
+      
+      matchesHeader.innerHTML = `
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <span>Matches (${matches.length})</span>
+          <div class="text-sm font-normal text-gray-500">
+            ${leagueName} • ${matchMode} • Best of ${bestOf} Legs
+          </div>
+        </div>
+      `;
+    } else {
+      matchesHeader.textContent = 'Matches (0)';
+    }
+    
+    if (matches.length === 0) {
+      container.innerHTML = '<p class="text-gray-500 text-center py-8">Keine Matches gefunden.</p>';
+    } else {
+      // Sortiere Matches nach Datum
+      const sortedMatches = matches.sort((a, b) => {
+        const dateA = new Date(a.datePlanned).getTime();
+        const dateB = new Date(b.datePlanned).getTime();
+        return dateA - dateB;
+      });
+
+      container.innerHTML = sortedMatches.map(match => `
+        <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center space-x-3">
+              <span class="text-sm font-medium text-gray-500">${match.round.name}</span>
+              ${getStatusBadge(match.statusCd)}
+            </div>
+            <div class="text-sm text-gray-500">
+              ${formatDate(match.datePlanned)}
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-4">
+            <div class="text-center">
+              <div class="font-medium text-gray-900">${match.participantHome.displayName}</div>
+              <div class="text-sm text-gray-500">Position: ${match.participantHome.currentPosition}</div>
+              <div class="text-sm text-gray-500">Ranking: #${match.participantHome.rankingPos}</div>
+            </div>
+            
+            <div class="text-center">
+              <div class="text-lg font-bold text-gray-600">VS</div>
+              <div class="text-xs text-gray-500">Spiel ${match.gameNrRound}</div>
+            </div>
+            
+            <div class="text-center">
+              <div class="font-medium text-gray-900">${match.participantGuest.displayName}</div>
+              <div class="text-sm text-gray-500">Position: ${match.participantGuest.currentPosition}</div>
+              <div class="text-sm text-gray-500">Ranking: #${match.participantGuest.rankingPos}</div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      // Match-Statistik hinzufügen
+      const activeMatches = matches.filter(m => m.active).length;
+      const finishedMatches = matches.filter(m => m.statusCd === 'FINISHED').length;
+      const plannedMatches = matches.filter(m => m.statusCd === 'PLANNED').length;
+
+      container.innerHTML += `
+        <div class="mt-6 bg-gray-50 rounded-lg p-4">
+          <h4 class="font-semibold text-gray-900 mb-3">Match-Statistik</h4>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 text-center">
+            <div>
+              <div class="text-2xl font-bold text-blue-600">${matches.length}</div>
+              <div class="text-sm text-gray-500">Gesamt</div>
+            </div>
+            <div>
+              <div class="text-2xl font-bold text-green-600">${finishedMatches}</div>
+              <div class="text-sm text-gray-500">Beendet</div>
+            </div>
+            <div>
+              <div class="text-2xl font-bold text-yellow-600">${plannedMatches}</div>
+              <div class="text-sm text-gray-500">Geplant</div>
+            </div>
+            <div>
+              <div class="text-2xl font-bold text-purple-600">${activeMatches}</div>
+              <div class="text-sm text-gray-500">Aktiv</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    
+    matchesSection.classList.remove('hidden');
+  }
+
+  function renderTeamMembers(teamMembers: TeamMember[]) {
+    const container = document.getElementById('team-members-container') as HTMLDivElement;
+    
+    if (teamMembers.length === 0) {
+      container.innerHTML = '<p class="text-gray-500 text-center py-8">Keine Team-Mitglieder gefunden.</p>';
+    } else {
+      container.innerHTML = `
+        <div class="block md:hidden space-y-4">
+          ${teamMembers.map(member => `
+            <div class="bg-gray-50 rounded-lg p-4">
+              <div class="font-medium text-gray-900 mb-2">${member.displayName}</div>
+              <div class="text-sm text-gray-500 mb-2">ID: ${member.id}</div>
+              <div class="grid grid-cols-2 gap-2 text-sm mb-3">
+                <div>
+                  <span class="font-medium text-gray-700">Position:</span>
+                  <div class="text-gray-900">${member.currentPosition || 'Nicht definiert'}</div>
+                </div>
+                <div>
+                  <span class="font-medium text-gray-700">Ranking:</span>
+                  <div class="text-gray-900">${member.rankingPos ? `#${member.rankingPos}` : 'Nicht definiert'}</div>
+                </div>
+              </div>
+              <div class="flex flex-wrap gap-1">
+                ${member.paid ? 
+                  '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">✓ Bezahlt</span>' : 
+                  '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">○ Beitrag offen</span>'
+                }
+                ${member.present ? 
+                  '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">✓ Anwesend</span>' : 
+                  '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">○ Abwesend</span>'
+                }
+                ${member.retired ? 
+                  '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">⊘ Zurückgetreten</span>' : 
+                  ''
+                }
+                ${member.deregistered ? 
+                  '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">⊘ Abgemeldet</span>' : 
+                  ''
+                }
+              </div>
+            </div>
+          `).join('')}
+        </div>
+        <table class="hidden md:table min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+              <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Position</th>
+              <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ranking</th>
+              <th class="px-3 lg:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            ${teamMembers.map(member => `
+              <tr class="hover:bg-gray-50">
+                <td class="px-3 lg:px-6 py-4">
+                  <div class="text-sm font-medium text-gray-900">${member.displayName}</div>
+                  <div class="text-sm text-gray-500">ID: ${member.id}</div>
+                </td>
+                <td class="px-3 lg:px-6 py-4 text-sm text-gray-900">
+                  ${member.currentPosition || 'Nicht definiert'}
+                </td>
+                <td class="px-3 lg:px-6 py-4 text-sm text-gray-900">
+                  ${member.rankingPos ? `#${member.rankingPos}` : 'Nicht definiert'}
+                </td>
+                <td class="px-3 lg:px-6 py-4 text-sm text-gray-500">
+                  <div class="flex flex-wrap gap-1">
+                    ${member.paid ? 
+                      '<span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">✓ Bezahlt</span>' : 
+                      '<span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">○ Offen</span>'
+                    }
+                    ${member.present ? 
+                      '<span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">✓ Da</span>' : 
+                      '<span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">○ Weg</span>'
+                    }
+                    ${member.retired ? 
+                      '<span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">⊘ Zurück</span>' : 
+                      ''
+                    }
+                    ${member.deregistered ? 
+                      '<span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">⊘ Abgemeldet</span>' : 
+                      ''
+                    }
+                  </div>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+    
+    teamMembersSection.classList.remove('hidden');
+  }
+
+  function renderData(data: ApiResponse) {
+    // Render all sections
+    renderParticipantInfo(data.participant);
+    renderTeamInfo(data.participant.teamSeason);
+    renderMatches(data.matches);
+    renderTeamMembers(data.participant.teamSeason.teamMembers);
+    
+    // Show raw data
+    rawDataDisplay.textContent = JSON.stringify(data, null, 2);
+    rawDataSection.classList.remove('hidden');
+  }
+
+  async function loadParticipantData(id: string) {
+    if (!id) {
+      showError('Bitte gib eine gültige Teilnehmer ID ein.');
+      return;
+    }
+
+    showLoading();
+    hideError();
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/participant/${id}`);
+      
+      if (!response.ok) {
+        const errorData: ApiError = await response.json();
+        throw new Error(errorData.message || `HTTP ${response.status}`);
+      }
+
+      const data: ApiResponse = await response.json();
+      renderData(data);
+      
+    } catch (error) {
+      console.error('Error loading participant data:', error);
+      if (error instanceof Error) {
+        showError(error.message);
+      } else {
+        showError('Ein unbekannter Fehler ist aufgetreten.');
+      }
+    } finally {
+      hideLoading();
+    }
+  }
+
+  // Event Listeners
+  loadButton.addEventListener('click', () => {
+    const id = participantIdInput.value.trim();
+    loadParticipantData(id);
+  });
+
+  participantIdInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      const id = participantIdInput.value.trim();
+      loadParticipantData(id);
+    }
+  });
+
+  toggleRawDataBtn.addEventListener('click', () => {
+    const isHidden = rawDataContent.classList.contains('hidden');
+    rawDataContent.classList.toggle('hidden');
+    (rawDataIcon as HTMLElement).style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+  });
+
+  toggleStatusInfoBtn.addEventListener('click', () => {
+    const isHidden = statusInfo.classList.contains('hidden');
+    statusInfo.classList.toggle('hidden');
+    toggleStatusInfoBtn.textContent = isHidden ? 'Status-Info ausblenden' : 'Status-Info anzeigen';
+  });
+
+  toggleSearchBtn.addEventListener('click', () => {
+    const isHidden = searchPanel.classList.contains('hidden');
+    searchPanel.classList.toggle('hidden');
+    toggleSearchBtn.textContent = isHidden ? 'Erweiterte Suche ausblenden' : 'Erweiterte Suche';
+  });
+
+  toggleParticipantInfoBtn.addEventListener('click', () => {
+    const isHidden = participantInfoContent.classList.contains('hidden');
+    participantInfoContent.classList.toggle('hidden');
+    (participantInfoIcon as HTMLElement).style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+  });
+
+  toggleTeamInfoBtn.addEventListener('click', () => {
+    const isHidden = teamInfoContent.classList.contains('hidden');
+    teamInfoContent.classList.toggle('hidden');
+    (teamInfoIcon as HTMLElement).style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+  });
+
+  // Automatisches Laden beim Seitenstart
+  document.addEventListener('DOMContentLoaded', () => {
+    const defaultId = '308868';
+    console.log('Lade automatisch Team-Daten für ID:', defaultId);
+    loadParticipantData(defaultId);
+  });
+
+  // Lade sofort, falls DOMContentLoaded bereits gefeuert wurde
+  if (document.readyState === 'loading') {
+    // DOM wird noch geladen, warte auf DOMContentLoaded
+  } else {
+    // DOM ist bereits geladen
+    const defaultId = '308868';
+    console.log('Lade sofort Team-Daten für ID:', defaultId);
+    loadParticipantData(defaultId);
+  }
+</script>
