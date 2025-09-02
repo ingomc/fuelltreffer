@@ -9,8 +9,3 @@ services:
       - HOST=0.0.0.0
       - PORT=4000
       - TWOK_SOFTWARE_API_URL=${TWOK_SOFTWARE_API_URL:-https://backend4.2k-dart-software.com/2k-backend4/api/v1/frontend}
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:4000/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3

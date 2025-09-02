@@ -30,10 +30,6 @@ RUN chmod +x ./start.sh
 # Expose port
 EXPOSE 4000
 
-# Health check - wichtig für Dokploy Health Monitoring
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://0.0.0.0:4000/ || exit 1
-
 # Set environment variables for proper host binding
 ENV HOST=0.0.0.0
 ENV PORT=4000
