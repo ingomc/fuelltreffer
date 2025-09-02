@@ -17,11 +17,12 @@ RUN npm run build
 FROM node:20-alpine AS production
 WORKDIR /app
 
-# Copy built application and start script
+# Copy built application and scripts
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY start.sh ./start.sh
+COPY server-wrapper.js ./server-wrapper.js
 
 # Make start script executable
 RUN chmod +x ./start.sh
@@ -37,5 +38,5 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 ENV HOST=0.0.0.0
 ENV PORT=4000
 
-# Start Astro SSR server with explicit host binding
-CMD ["./start.sh"]
+# Start with Node.js wrapper that forces 0.0.0.0 binding
+CMD ["node", "server-wrapper.js"]

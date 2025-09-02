@@ -9,11 +9,7 @@ export default defineConfig({
   adapter: node({
     mode: 'standalone'
   }),
-  server: {
-    port: 4000,
-    host: '0.0.0.0'
-  },
-  // Wichtig für Reverse-Proxy (Dokploy)
+  // Entferne server config - wird für SSR ignoriert
   vite: {
     server: {
       hmr: {
