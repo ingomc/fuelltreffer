@@ -25,6 +25,30 @@ Ein Astro Frontend mit Express.js Backend, das als Proxy für die 2k Software AP
 - Node.js 20+
 - npm
 
+### Port-Konfiguration
+
+**Einfach:** Nutze das Setup-Script für einheitliche Port-Verwaltung:
+
+```bash
+./setup-ports.sh
+```
+
+Wähle zwischen:
+- **Development:** Frontend 4321, Backend 4001
+- **Production:** Frontend 3000, Backend 3001  
+- **Custom:** Eigene Ports definieren
+
+**Manuell:** Ports in `.env` Datei setzen:
+
+```bash
+# .env
+FRONTEND_PORT=4321
+BACKEND_PORT=4001
+FRONTEND_URL=http://localhost:4321
+BACKEND_URL=http://localhost:4001
+PUBLIC_BACKEND_URL=http://localhost:4001
+```
+
 ### Installation
 
 ```bash
@@ -42,15 +66,15 @@ cd backend && npm install
 npm run dev:all
 
 # Oder einzeln:
-npm run dev          # Frontend (Port 4321)
-npm run dev:backend  # Backend (Port 3001)
+npm run dev          # Frontend (Port aus .env)
+npm run dev:backend  # Backend (Port aus .env)
 ```
 
 ### URLs
 
-- Frontend: http://localhost:4321
-- Backend API: http://localhost:3001
-- Health Check: http://localhost:3001/health
+- Frontend: http://localhost:${FRONTEND_PORT}
+- Backend API: http://localhost:${BACKEND_PORT}
+- Health Check: http://localhost:${BACKEND_PORT}/health
 
 ## 🐳 Docker Deployment
 
@@ -92,12 +116,33 @@ const data = await response.json();
 
 ## 🔧 Konfiguration
 
+### Port-Management
+
+Alle Ports werden zentral über Environment Variables verwaltet:
+
+```bash
+# Development (.env)
+FRONTEND_PORT=4321
+BACKEND_PORT=4001
+PUBLIC_BACKEND_URL=http://localhost:4001
+
+# Production (docker-compose.yml oder Dokploy)
+FRONTEND_PORT=3000
+BACKEND_PORT=3001
+PUBLIC_BACKEND_URL=https://your-domain.com:3001
+```
+
+**Setup-Script verwenden:**
+```bash
+./setup-ports.sh  # Interaktive Port-Konfiguration
+```
+
 ### Environment Variables (Backend)
 
 ```bash
-# .env in backend/ Ordner
-PORT=3001
-FRONTEND_URL=http://localhost:4321
+# backend/.env
+PORT=4001                          # Backend Server Port
+FRONTEND_URL=http://localhost:4321  # CORS Origin
 
 # Für Production
 FRONTEND_URL=https://your-domain.com
@@ -128,13 +173,20 @@ Das Projekt ist für Dokploy optimiert:
 3. **Port Mapping**: 3000 (Frontend), 3001 (Backend API)
 4. **Environment Configuration**: Einfache Konfiguration über Umgebungsvariablen
 
-### Dokploy Setup
+### Für Dokploy
 
 1. Repository verknüpfen
-2. Dockerfile deployment wählen
-3. Ports konfigurieren: `3000:3000,3001:3001`
-4. Domain auf Port 3000 zeigen lassen
-5. API-Calls über Port 3001
+2. **Environment Variables setzen:**
+   ```
+   FRONTEND_PORT=3000
+   BACKEND_PORT=3001
+   FRONTEND_URL=https://your-domain.com
+   BACKEND_URL=https://your-domain.com:3001
+   PUBLIC_BACKEND_URL=https://your-domain.com:3001
+   ```
+3. Dockerfile deployment wählen
+4. Ports konfigurieren: `${FRONTEND_PORT}:3000,${BACKEND_PORT}:3001`
+5. Domain auf Frontend Port zeigen lassen
 
 ## 🔍 Troubleshooting
 

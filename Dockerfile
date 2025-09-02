@@ -41,11 +41,11 @@ COPY docker-entrypoint.sh ./
 RUN chmod +x docker-entrypoint.sh
 
 # Expose ports
-EXPOSE 3000 3001
+EXPOSE 4000 4001
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:3001/health || exit 1
+  CMD curl -f http://localhost:4001/health || exit 1
 
 # Start both services
 CMD ["./docker-entrypoint.sh"]

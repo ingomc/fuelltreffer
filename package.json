@@ -3,10 +3,10 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "astro dev",
-    "start": "astro dev",
+    "dev": "astro dev --port ${FRONTEND_PORT:-4000}",
+    "start": "astro dev --port ${FRONTEND_PORT:-4000}",
     "build": "astro check && astro build",
-    "preview": "astro preview",
+    "preview": "astro preview --port ${FRONTEND_PORT:-4000}",
     "astro": "astro",
     "dev:backend": "cd backend && npm run dev",
     "dev:all": "concurrently \"npm run dev\" \"npm run dev:backend\"",

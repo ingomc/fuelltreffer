@@ -1,5 +1,12 @@
 ---
 import type { ApiResponse, ApiError, Participant, Match, TeamSeason } from '../types/api';
+import { config } from '../config';
+
+// Serverseitige Konfiguration für das Frontend-Script verfügbar machen
+const frontendConfig = {
+  API_BASE_URL: config.API_BASE_URL,
+  DEFAULT_PARTICIPANT_ID: config.DEFAULT_PARTICIPANT_ID
+};
 ---
 
 <div id="participant-data" class="space-y-6">
@@ -161,39 +168,39 @@ import type { ApiResponse, ApiError, Participant, Match, TeamSeason } from '../t
   </div>
 </div>
 
-<script>
-  import type { ApiResponse, ApiError, Participant, Match, TeamSeason, TeamMember } from '../types/api';
-
-  const API_BASE_URL = 'http://localhost:3001';
+<script define:vars={{ frontendConfig }}>
+  // Konfiguration vom Server übernommen
+  const API_BASE_URL = frontendConfig.API_BASE_URL;
+  const DEFAULT_PARTICIPANT_ID = frontendConfig.DEFAULT_PARTICIPANT_ID;
 
   // DOM Elements
-  const participantIdInput = document.getElementById('participant-id') as HTMLInputElement;
-  const loadButton = document.getElementById('load-data') as HTMLButtonElement;
-  const loadingDiv = document.getElementById('loading') as HTMLDivElement;
-  const errorDiv = document.getElementById('error') as HTMLDivElement;
-  const errorMessage = document.getElementById('error-message') as HTMLParagraphElement;
+  const participantIdInput = document.getElementById('participant-id');
+  const loadButton = document.getElementById('load-data');
+  const loadingDiv = document.getElementById('loading');
+  const errorDiv = document.getElementById('error');
+  const errorMessage = document.getElementById('error-message');
   
-  const participantInfo = document.getElementById('participant-info') as HTMLDivElement;
-  const teamInfo = document.getElementById('team-info') as HTMLDivElement;
-  const matchesSection = document.getElementById('matches-section') as HTMLDivElement;
-  const teamMembersSection = document.getElementById('team-members-section') as HTMLDivElement;
-  const rawDataSection = document.getElementById('raw-data-section') as HTMLDivElement;
-  const rawDataContent = document.getElementById('raw-data-content') as HTMLDivElement;
-  const rawDataDisplay = document.getElementById('raw-data-display') as HTMLPreElement;
-  const toggleRawDataBtn = document.getElementById('toggle-raw-data') as HTMLButtonElement;
-  const rawDataIcon = document.getElementById('raw-data-icon') as HTMLOrSVGElement;
-  const toggleStatusInfoBtn = document.getElementById('toggle-status-info') as HTMLButtonElement;
-  const statusInfo = document.getElementById('status-info') as HTMLDivElement;
-  const toggleSearchBtn = document.getElementById('toggle-search') as HTMLButtonElement;
-  const searchPanel = document.getElementById('search-panel') as HTMLDivElement;
+  const participantInfo = document.getElementById('participant-info');
+  const teamInfo = document.getElementById('team-info');
+  const matchesSection = document.getElementById('matches-section');
+  const teamMembersSection = document.getElementById('team-members-section');
+  const rawDataSection = document.getElementById('raw-data-section');
+  const rawDataContent = document.getElementById('raw-data-content');
+  const rawDataDisplay = document.getElementById('raw-data-display');
+  const toggleRawDataBtn = document.getElementById('toggle-raw-data');
+  const rawDataIcon = document.getElementById('raw-data-icon');
+  const toggleStatusInfoBtn = document.getElementById('toggle-status-info');
+  const statusInfo = document.getElementById('status-info');
+  const toggleSearchBtn = document.getElementById('toggle-search');
+  const searchPanel = document.getElementById('search-panel');
   
-  const toggleParticipantInfoBtn = document.getElementById('toggle-participant-info') as HTMLButtonElement;
-  const participantInfoContent = document.getElementById('participant-info-content') as HTMLDivElement;
-  const participantInfoIcon = document.getElementById('participant-info-icon') as HTMLOrSVGElement;
+  const toggleParticipantInfoBtn = document.getElementById('toggle-participant-info');
+  const participantInfoContent = document.getElementById('participant-info-content');
+  const participantInfoIcon = document.getElementById('participant-info-icon');
   
-  const toggleTeamInfoBtn = document.getElementById('toggle-team-info') as HTMLButtonElement;
-  const teamInfoContent = document.getElementById('team-info-content') as HTMLDivElement;
-  const teamInfoIcon = document.getElementById('team-info-icon') as HTMLOrSVGElement;
+  const toggleTeamInfoBtn = document.getElementById('toggle-team-info');
+  const teamInfoContent = document.getElementById('team-info-content');
+  const teamInfoIcon = document.getElementById('team-info-icon');
 
   function showLoading() {
     loadingDiv.classList.remove('hidden');
@@ -207,7 +214,7 @@ import type { ApiResponse, ApiError, Participant, Match, TeamSeason } from '../t
     loadButton.disabled = false;
   }
 
-  function showError(message: string) {
+  function showError(message) {
     errorMessage.textContent = message;
     errorDiv.classList.remove('hidden');
   }
@@ -224,7 +231,7 @@ import type { ApiResponse, ApiError, Participant, Match, TeamSeason } from '../t
     rawDataSection.classList.add('hidden');
   }
 
-  function formatDate(dateString: string): string {
+  function formatDate(dateString) {
     const date = new Date(dateString);
     const weekdays = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
     const weekday = weekdays[date.getDay()];
@@ -238,8 +245,8 @@ import type { ApiResponse, ApiError, Participant, Match, TeamSeason } from '../t
     return `${weekday}. ${formatted}`;
   }
 
-  function getStatusBadge(status: string): string {
-    const statusMap: Record<string, { color: string; text: string }> = {
+  function getStatusBadge(status) {
+    const statusMap = {
       'ACTIVE': { color: 'bg-green-100 text-green-800', text: 'Aktiv' },
       'FINISHED': { color: 'bg-blue-100 text-blue-800', text: 'Beendet' },
       'PLANNED': { color: 'bg-yellow-100 text-yellow-800', text: 'Geplant' },
@@ -250,8 +257,8 @@ import type { ApiResponse, ApiError, Participant, Match, TeamSeason } from '../t
     return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusInfo.color}">${statusInfo.text}</span>`;
   }
 
-  function renderParticipantInfo(participant: Participant) {
-    const container = participantInfoContent.querySelector('.grid') as HTMLDivElement;
+  function renderParticipantInfo(participant) {
+    const container = participantInfoContent.querySelector('.grid');
     
     container.innerHTML = `
       <div class="bg-gray-50 p-4 rounded-lg">
@@ -290,8 +297,8 @@ import type { ApiResponse, ApiError, Participant, Match, TeamSeason } from '../t
     participantInfo.classList.remove('hidden');
   }
 
-  function renderTeamInfo(teamSeason: TeamSeason) {
-    const container = teamInfoContent.querySelector('.grid') as HTMLDivElement;
+  function renderTeamInfo(teamSeason) {
+    const container = teamInfoContent.querySelector('.grid');
     
     const weekdays = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
     
@@ -352,9 +359,9 @@ import type { ApiResponse, ApiError, Participant, Match, TeamSeason } from '../t
     teamInfo.classList.remove('hidden');
   }
 
-  function renderMatches(matches: Match[]) {
-    const container = document.getElementById('matches-container') as HTMLDivElement;
-    const matchesHeader = matchesSection.querySelector('h3') as HTMLHeadingElement;
+  function renderMatches(matches) {
+    const container = document.getElementById('matches-container');
+    const matchesHeader = matchesSection.querySelector('h3');
     
     // Header mit Anzahl und allgemeinen Infos aktualisieren
     if (matches.length > 0) {
@@ -406,7 +413,6 @@ import type { ApiResponse, ApiError, Participant, Match, TeamSeason } from '../t
             
             <div class="text-center">
               <div class="text-lg font-bold text-gray-600">VS</div>
-              <div class="text-xs text-gray-500">Spiel ${match.gameNrRound}</div>
             </div>
             
             <div class="text-center">
@@ -451,8 +457,8 @@ import type { ApiResponse, ApiError, Participant, Match, TeamSeason } from '../t
     matchesSection.classList.remove('hidden');
   }
 
-  function renderTeamMembers(teamMembers: TeamMember[]) {
-    const container = document.getElementById('team-members-container') as HTMLDivElement;
+  function renderTeamMembers(teamMembers) {
+    const container = document.getElementById('team-members-container');
     
     if (teamMembers.length === 0) {
       container.innerHTML = '<p class="text-gray-500 text-center py-8">Keine Team-Mitglieder gefunden.</p>';
@@ -546,7 +552,7 @@ import type { ApiResponse, ApiError, Participant, Match, TeamSeason } from '../t
     teamMembersSection.classList.remove('hidden');
   }
 
-  function renderData(data: ApiResponse) {
+  function renderData(data) {
     // Render all sections
     renderParticipantInfo(data.participant);
     renderTeamInfo(data.participant.teamSeason);
@@ -558,7 +564,7 @@ import type { ApiResponse, ApiError, Participant, Match, TeamSeason } from '../t
     rawDataSection.classList.remove('hidden');
   }
 
-  async function loadParticipantData(id: string) {
+  async function loadParticipantData(id) {
     if (!id) {
       showError('Bitte gib eine gültige Teilnehmer ID ein.');
       return;
@@ -571,11 +577,11 @@ import type { ApiResponse, ApiError, Participant, Match, TeamSeason } from '../t
       const response = await fetch(`${API_BASE_URL}/api/participant/${id}`);
       
       if (!response.ok) {
-        const errorData: ApiError = await response.json();
+        const errorData = await response.json();
         throw new Error(errorData.message || `HTTP ${response.status}`);
       }
 
-      const data: ApiResponse = await response.json();
+      const data = await response.json();
       renderData(data);
       
     } catch (error) {
@@ -606,7 +612,7 @@ import type { ApiResponse, ApiError, Participant, Match, TeamSeason } from '../t
   toggleRawDataBtn.addEventListener('click', () => {
     const isHidden = rawDataContent.classList.contains('hidden');
     rawDataContent.classList.toggle('hidden');
-    (rawDataIcon as HTMLElement).style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+    rawDataIcon.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
   });
 
   toggleStatusInfoBtn.addEventListener('click', () => {
@@ -624,18 +630,18 @@ import type { ApiResponse, ApiError, Participant, Match, TeamSeason } from '../t
   toggleParticipantInfoBtn.addEventListener('click', () => {
     const isHidden = participantInfoContent.classList.contains('hidden');
     participantInfoContent.classList.toggle('hidden');
-    (participantInfoIcon as HTMLElement).style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+    participantInfoIcon.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
   });
 
   toggleTeamInfoBtn.addEventListener('click', () => {
     const isHidden = teamInfoContent.classList.contains('hidden');
     teamInfoContent.classList.toggle('hidden');
-    (teamInfoIcon as HTMLElement).style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+    teamInfoIcon.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
   });
 
   // Automatisches Laden beim Seitenstart
   document.addEventListener('DOMContentLoaded', () => {
-    const defaultId = '308868';
+    const defaultId = DEFAULT_PARTICIPANT_ID;
     console.log('Lade automatisch Team-Daten für ID:', defaultId);
     loadParticipantData(defaultId);
   });
@@ -645,7 +651,7 @@ import type { ApiResponse, ApiError, Participant, Match, TeamSeason } from '../t
     // DOM wird noch geladen, warte auf DOMContentLoaded
   } else {
     // DOM ist bereits geladen
-    const defaultId = '308868';
+    const defaultId = DEFAULT_PARTICIPANT_ID;
     console.log('Lade sofort Team-Daten für ID:', defaultId);
     loadParticipantData(defaultId);
   }

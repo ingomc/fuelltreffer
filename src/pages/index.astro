@@ -1,6 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import ParticipantData from '../components/ParticipantData.astro';
+import { config } from '../config';
+
+const defaultParticipantId = import.meta.env.PUBLIC_DEFAULT_PARTICIPANT_ID || '308868';
 ---
 
 <Layout title="Fuelltreffer - 2k Software Dashboard">
@@ -20,11 +23,11 @@ import ParticipantData from '../components/ParticipantData.astro';
           <div class="space-y-3 text-sm">
             <div>
               <span class="font-medium">Backend URL:</span>
-              <code class="ml-2 px-2 py-1 bg-gray-100 rounded">http://localhost:3001</code>
+              <code class="ml-2 px-2 py-1 bg-gray-100 rounded">{config.API_BASE_URL}</code>
             </div>
             <div>
               <span class="font-medium">Standard Team ID:</span>
-              <code class="ml-2 px-2 py-1 bg-gray-100 rounded">308868</code>
+              <code class="ml-2 px-2 py-1 bg-gray-100 rounded">{defaultParticipantId}</code>
             </div>
             <div>
               <span class="font-medium">API Endpoint:</span>

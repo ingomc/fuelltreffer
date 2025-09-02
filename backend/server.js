@@ -6,12 +6,12 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 4001;
 const API_BASE_URL = 'https://backend4.2k-dart-software.com/2k-backend4/api/v1/frontend';
 
 // Middleware
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:4321',
+  origin: process.env.FRONTEND_URL || 'http://localhost:4000',
   credentials: true
 }));
 app.use(express.json());
