@@ -1,9 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import ParticipantData from '../components/ParticipantData.astro';
-import { config } from '../config';
 
-const defaultParticipantId = import.meta.env.PUBLIC_DEFAULT_PARTICIPANT_ID || '308868';
+const defaultParticipantId = '308868';
+const apiBaseUrl = Astro.url.origin;
 ---
 
 <Layout title="Fuelltreffer - 2k Software Dashboard">
@@ -22,8 +22,8 @@ const defaultParticipantId = import.meta.env.PUBLIC_DEFAULT_PARTICIPANT_ID || '3
           <h2 class="text-2xl font-bold mb-4">System Information</h2>
           <div class="space-y-3 text-sm">
             <div>
-              <span class="font-medium">Backend URL:</span>
-              <code class="ml-2 px-2 py-1 bg-gray-100 rounded">{config.API_BASE_URL}</code>
+              <span class="font-medium">API Base URL:</span>
+              <code class="ml-2 px-2 py-1 bg-gray-100 rounded">{apiBaseUrl}</code>
             </div>
             <div>
               <span class="font-medium">Standard Team ID:</span>
@@ -34,8 +34,12 @@ const defaultParticipantId = import.meta.env.PUBLIC_DEFAULT_PARTICIPANT_ID || '3
               <code class="ml-2 px-2 py-1 bg-gray-100 rounded">/api/participant/&#123;id&#125;</code>
             </div>
             <div>
+              <span class="font-medium">Architecture:</span>
+              <span class="ml-2 text-blue-600">Astro SSR</span>
+            </div>
+            <div>
               <span class="font-medium">Auto-Load:</span>
-              <span class="ml-2 text-green-600">✓ Aktiviert</span>
+              <span class="ml-2 text-green-600">✓ Server-Side Rendering</span>
             </div>
           </div>
         </div>

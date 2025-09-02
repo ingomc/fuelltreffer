@@ -1,51 +1,33 @@
-# Multi-stage build for Astro frontend and Express backend
+# Single-stage build for Astro SSR application
 
-# Stage 1: Build Astro frontend
-FROM node:20-alpine AS frontend-builder
+FROM node:20-alpine AS builder
 WORKDIR /app
 
-# Copy frontend package files
+# Copy package files
 COPY package*.json ./
 RUN npm ci
 
-# Copy frontend source
+# Copy source code
 COPY . .
 
-# Build Astro app
+# Build Astro SSR app
 RUN npm run build
 
-# Stage 2: Backend setup
-FROM node:20-alpine AS backend-builder
-WORKDIR /app/backend
-
-# Copy backend package files
-COPY backend/package*.json ./
-RUN npm ci --only=production
-
-# Stage 3: Production image
+# Production stage
 FROM node:20-alpine AS production
 WORKDIR /app
 
-# Install serve to serve the static frontend
-RUN npm install -g serve
+# Copy built application
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/node_modules ./node_modules
 
-# Copy built frontend
-COPY --from=frontend-builder /app/dist ./frontend/dist
-
-# Copy backend
-COPY --from=backend-builder /app/backend/node_modules ./backend/node_modules
-COPY backend ./backend
-
-# Copy startup script
-COPY docker-entrypoint.sh ./
-RUN chmod +x docker-entrypoint.sh
-
-# Expose ports
-EXPOSE 4000 4001
+# Expose port
+EXPOSE 4000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:4001/health || exit 1
+  CMD curl -f http://localhost:4000/ || exit 1
 
-# Start both services
-CMD ["./docker-entrypoint.sh"]
+# Start Astro SSR server
+CMD ["node", "./dist/server/entry.mjs"]

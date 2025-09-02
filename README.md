@@ -1,211 +1,245 @@
-# Fuelltreffer
+# Fuelltreffer - 2k Software Dashboard
 
-Ein Astro Frontend mit Express.js Backend, das als Proxy für die 2k Software API dient. Optimiert für Deployment auf Dokploy.
+A modern Astro SSR application that provides a dashboard interface for 2k dart software APIs, specifically designed for Dokploy deployment.
 
-## 🚀 Architektur
+## 🚀 Architecture
 
-- **Frontend**: Astro (statisch) mit Client-side Fetching
-- **Backend**: Express.js API Proxy Server  
-- **Deployment**: Docker Container für Dokploy
+- **Frontend & Backend**: Single Astro SSR application with built-in API routes
+- **Server-Side Rendering**: Fast initial load with dynamic data fetching
+- **API Proxy**: Internal Astro API routes proxy requests to 2k software backend
+- **Deployment**: Docker container optimized for Dokploy
 
-## 📋 Features
+## ✨ Features
 
-- ✅ Astro Frontend mit Tailwind CSS
-- ✅ Express.js Backend API Proxy
-- ✅ Client-side Data Fetching (kein SSR)
-- ✅ Docker Setup für einfaches Deployment
-- ✅ CORS-konfiguiert für sichere API-Calls
-- ✅ Fehlerbehandlung und Loading States
-- ✅ TypeScript Support
+- 📊 Real-time team dashboard with participant data
+- 📱 Fully responsive design (mobile-first)
+- 🎯 Collapsible sections for organized data display
+- 🔍 Advanced search functionality for different participants
+- 📈 Match statistics and team member management
+- 🔄 Server-side rendering for fast initial loads
+- 🐳 Docker-ready for easy deployment
 
-## 🛠️ Entwicklung
+## 🛠 Tech Stack
 
-### Voraussetzungen
+- **Framework**: Astro 4.15+ with SSR
+- **Adapter**: @astrojs/node for Node.js deployment
+- **Styling**: Tailwind CSS
+- **Language**: TypeScript
+- **Container**: Docker with Node.js Alpine
+- **Deployment**: Dokploy-optimized
 
-- Node.js 20+
-- npm
-
-### Port-Konfiguration
-
-**Einfach:** Nutze das Setup-Script für einheitliche Port-Verwaltung:
-
-```bash
-./setup-ports.sh
-```
-
-Wähle zwischen:
-- **Development:** Frontend 4321, Backend 4001
-- **Production:** Frontend 3000, Backend 3001  
-- **Custom:** Eigene Ports definieren
-
-**Manuell:** Ports in `.env` Datei setzen:
+## 📦 Installation
 
 ```bash
-# .env
-FRONTEND_PORT=4321
-BACKEND_PORT=4001
-FRONTEND_URL=http://localhost:4321
-BACKEND_URL=http://localhost:4001
-PUBLIC_BACKEND_URL=http://localhost:4001
-```
+# Clone the repository
+git clone <repository-url>
+cd fuelltreffer
 
-### Installation
-
-```bash
-# Hauptprojekt Dependencies
+# Install dependencies
 npm install
 
-# Backend Dependencies  
-cd backend && npm install
+# Start development server
+npm run dev
 ```
 
-### Entwicklung starten
+## 🔧 Configuration
+
+Create a `.env` file:
+
+```env
+# Port configuration
+FRONTEND_PORT=4000
+
+# 2k Software API
+TWOK_SOFTWARE_API_URL=https://backend4.2k-dart-software.com/2k-backend4/api/v1/frontend
+
+# Default participant for testing
+DEFAULT_PARTICIPANT_ID=308868
+```
+
+## 🚀 Development
 
 ```bash
-# Beide Services gleichzeitig starten
-npm run dev:all
+# Start development server
+npm run dev
 
-# Oder einzeln:
-npm run dev          # Frontend (Port aus .env)
-npm run dev:backend  # Backend (Port aus .env)
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+
+# Type checking
+npm run astro check
 ```
-
-### URLs
-
-- Frontend: http://localhost:${FRONTEND_PORT}
-- Backend API: http://localhost:${BACKEND_PORT}
-- Health Check: http://localhost:${BACKEND_PORT}/health
 
 ## 🐳 Docker Deployment
 
-### Lokal testen
+### Local Testing
 
 ```bash
-# Docker Image bauen
+# Build Docker image
 docker build -t fuelltreffer .
 
-# Container starten
-docker run -p 3000:3000 -p 3001:3001 fuelltreffer
-
-# Oder mit Docker Compose
-docker-compose up --build
+# Run container
+docker run -p 4000:4000 \
+  -e TWOK_SOFTWARE_API_URL=https://backend4.2k-dart-software.com/2k-backend4/api/v1/frontend \
+  fuelltreffer
 ```
 
-### Für Dokploy
-
-1. Repository auf Dokploy verlinken
-2. Build Command: `docker build -t fuelltreffer .`
-3. Ports: 3000 (Frontend), 3001 (Backend)
-4. Environment Variables nach Bedarf setzen
-
-## 📡 API Endpoints
-
-### Backend Proxy
-
-- `GET /api/participant/:id` - Teilnehmer Daten laden
-- `GET /api/proxy/*` - Allgemeine Proxy-Anfragen
-- `GET /health` - Health Check
-
-### Beispiel API Call
-
-```javascript
-// Teilnehmer 308868 laden
-const response = await fetch('http://localhost:3001/api/participant/308868');
-const data = await response.json();
-```
-
-## 🔧 Konfiguration
-
-### Port-Management
-
-Alle Ports werden zentral über Environment Variables verwaltet:
+### Docker Compose
 
 ```bash
-# Development (.env)
-FRONTEND_PORT=4321
-BACKEND_PORT=4001
-PUBLIC_BACKEND_URL=http://localhost:4001
+# Start with docker-compose
+docker-compose up -d
 
-# Production (docker-compose.yml oder Dokploy)
-FRONTEND_PORT=3000
-BACKEND_PORT=3001
-PUBLIC_BACKEND_URL=https://your-domain.com:3001
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
 ```
 
-**Setup-Script verwenden:**
-```bash
-./setup-ports.sh  # Interaktive Port-Konfiguration
+## 🌐 Dokploy Deployment
+
+1. **Create new project** in Dokploy
+2. **Connect Git repository**
+3. **Configure environment variables**:
+   - `TWOK_SOFTWARE_API_URL`: Your 2k software API URL
+   - `FRONTEND_PORT`: 4000 (default)
+4. **Deploy** using the included Dockerfile
+
+### Dokploy Environment Variables
+
+```env
+NODE_ENV=production
+TWOK_SOFTWARE_API_URL=https://backend4.2k-dart-software.com/2k-backend4/api/v1/frontend
+FRONTEND_PORT=4000
 ```
 
-### Environment Variables (Backend)
-
-```bash
-# backend/.env
-PORT=4001                          # Backend Server Port
-FRONTEND_URL=http://localhost:4321  # CORS Origin
-
-# Für Production
-FRONTEND_URL=https://your-domain.com
-```
-
-## 📁 Projekt Struktur
+## 📁 Project Structure
 
 ```
 fuelltreffer/
-├── src/                    # Astro Frontend
+├── src/
+│   ├── components/
+│   │   └── ParticipantData.astro    # Main dashboard component
 │   ├── layouts/
+│   │   └── Layout.astro             # Base page layout
 │   ├── pages/
-│   └── components/
-├── backend/                # Express.js Backend
-│   ├── server.js
-│   └── package.json
-├── Dockerfile             # Multi-stage Docker Build
-├── docker-compose.yml     # Lokale Container Orchestrierung
-└── package.json           # Hauptprojekt Dependencies
+│   │   ├── index.astro              # Homepage
+│   │   └── api/
+│   │       └── participant/
+│   │           └── [id].js          # API route for participant data
+│   └── types/
+│       └── api.ts                   # TypeScript type definitions
+├── astro.config.mjs                 # Astro configuration (SSR mode)
+├── Dockerfile                       # Single-stage Docker build
+├── docker-compose.yml               # Simplified container setup
+└── package.json                     # Dependencies and scripts
 ```
 
-## 🚀 Production Deployment
+## 🔗 API Endpoints
 
-Das Projekt ist für Dokploy optimiert:
+### Internal API Routes
 
-1. **Single Container**: Frontend und Backend in einem Docker Image
-2. **Health Checks**: Automatische Überwachung der Services
-3. **Port Mapping**: 3000 (Frontend), 3001 (Backend API)
-4. **Environment Configuration**: Einfache Konfiguration über Umgebungsvariablen
+- `GET /api/participant/{id}` - Fetch participant data
+  - Proxies to: `{TWOK_SOFTWARE_API_URL}/participant/{id}`
+  - Returns: Complete participant data with team info and matches
 
-### Für Dokploy
+### Frontend Routes
 
-1. Repository verknüpfen
-2. **Environment Variables setzen:**
-   ```
-   FRONTEND_PORT=3000
-   BACKEND_PORT=3001
-   FRONTEND_URL=https://your-domain.com
-   BACKEND_URL=https://your-domain.com:3001
-   PUBLIC_BACKEND_URL=https://your-domain.com:3001
-   ```
-3. Dockerfile deployment wählen
-4. Ports konfigurieren: `${FRONTEND_PORT}:3000,${BACKEND_PORT}:3001`
-5. Domain auf Frontend Port zeigen lassen
+- `/` - Main dashboard with auto-loaded participant data
 
-## 🔍 Troubleshooting
+## 🧪 Testing Known Participant IDs
 
-### CORS Errors
-- Backend CORS ist für `http://localhost:4321` (dev) konfiguriert
-- Für Production: `FRONTEND_URL` Environment Variable setzen
+- `308868` (default)
+- `308860`, `308859`, `308865`
+- `308863`, `308866`, `308864`, `308862`
 
-### API Timeouts
-- Standard Timeout: 10 Sekunden
-- Bei langsamen Verbindungen in `backend/server.js` anpassen
+## 🔍 Features Overview
 
-### Docker Build Issues
-- Multi-stage Build benötigt Node.js 20+
-- Bei Problemen: `docker system prune` ausführen
+### Dashboard Sections
 
-## 📝 TODO
+1. **Participant Information** - Personal details and status
+2. **Team Information** - Team details and playing venue
+3. **Matches** - Schedule, results, and statistics
+4. **Team Members** - Complete team roster with status
+5. **Raw Data** - JSON output for debugging
 
-- [ ] Bessere UI für Teilnehmer-Daten
-- [ ] Authentifizierung hinzufügen
-- [ ] Caching für API-Anfragen
-- [ ] Monitoring und Logging
-- [ ] Tests schreiben
+### Responsive Design
+
+- Mobile-first approach
+- Collapsible sections for better mobile UX
+- Responsive tables that convert to cards on mobile
+- Touch-friendly interface elements
+
+## 🐛 Troubleshooting
+
+### Build Issues
+
+```bash
+# Clear node modules and reinstall
+rm -rf node_modules package-lock.json
+npm install
+
+# Check for TypeScript errors
+npm run astro check
+```
+
+### Docker Issues
+
+```bash
+# Check container logs
+docker logs <container-id>
+
+# Debug inside container
+docker exec -it <container-id> sh
+```
+
+### API Connection Issues
+
+- Verify `TWOK_SOFTWARE_API_URL` environment variable
+- Check network connectivity to 2k software backend
+- Monitor browser console for JavaScript errors
+
+## 📝 Development Notes
+
+- SSR enabled for fast initial loads
+- API routes handle server-side data fetching
+- Client-side JavaScript handles interactivity
+- TypeScript provides type safety
+- Environment variables configure different deployments
+
+## 🎯 Performance
+
+- Server-side rendering for optimal initial load
+- Minimal JavaScript bundle size
+- Efficient API proxy with error handling
+- Docker image optimized for production
+
+## 🔄 Migration from Dual-Service Architecture
+
+This project was converted from a dual-service architecture (Astro static + Express backend) to a single Astro SSR application:
+
+### Before
+- Separate Astro frontend (static)
+- Separate Express.js backend
+- Client-side API calls to external backend
+- Complex Docker setup with multiple services
+
+### After  
+- Single Astro SSR application
+- Built-in API routes replace Express backend
+- Server-side rendering with initial data loading
+- Simplified Docker deployment
+
+### Benefits
+- Reduced deployment complexity
+- Better performance with SSR
+- Simplified development workflow
+- Single service to maintain
+
+---
+
+**Built with Astro SSR for Dokploy deployment** 🚀

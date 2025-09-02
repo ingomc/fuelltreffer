@@ -8,14 +8,13 @@
     "build": "astro check && astro build",
     "preview": "astro preview --port ${FRONTEND_PORT:-4000}",
     "astro": "astro",
-    "dev:backend": "cd backend && npm run dev",
-    "dev:all": "concurrently \"npm run dev\" \"npm run dev:backend\"",
     "build:docker": "docker build -t fuelltreffer ."
   },
   "dependencies": {
-    "astro": "^4.15.0",
     "@astrojs/check": "^0.9.0",
+    "@astrojs/node": "^8.3.4",
     "@astrojs/tailwind": "^5.1.0",
+    "astro": "^4.15.0",
     "tailwindcss": "^3.4.0",
     "typescript": "^5.5.0"
   },

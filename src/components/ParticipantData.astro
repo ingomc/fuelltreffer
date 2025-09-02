@@ -1,11 +1,29 @@
 ---
-import type { ApiResponse, ApiError, Participant, Match, TeamSeason } from '../types/api';
-import { config } from '../config';
+import type { ApiResponse } from '../types/api';
 
-// Serverseitige Konfiguration für das Frontend-Script verfügbar machen
+// SSR: Load default participant data server-side
+const DEFAULT_PARTICIPANT_ID = '308868';
+let participantData: ApiResponse | null = null;
+let error: string | null = null;
+
+try {
+  // Server-side fetch during SSR
+  const response = await fetch(`${Astro.url.origin}/api/participant/${DEFAULT_PARTICIPANT_ID}`);
+  
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  
+  participantData = await response.json();
+} catch (err) {
+  console.error('Error fetching participant data:', err);
+  error = err instanceof Error ? err.message : 'Unknown error occurred';
+}
+
+// Configuration for client-side JavaScript
 const frontendConfig = {
-  API_BASE_URL: config.API_BASE_URL,
-  DEFAULT_PARTICIPANT_ID: config.DEFAULT_PARTICIPANT_ID
+  API_BASE_URL: Astro.url.origin, // Use same origin for API calls
+  DEFAULT_PARTICIPANT_ID: DEFAULT_PARTICIPANT_ID
 };
 ---
 
@@ -168,10 +186,14 @@ const frontendConfig = {
   </div>
 </div>
 
-<script define:vars={{ frontendConfig }}>
-  // Konfiguration vom Server übernommen
+<script is:inline define:vars={{ frontendConfig, participantData, error }}>
+  // Configuration from server
   const API_BASE_URL = frontendConfig.API_BASE_URL;
   const DEFAULT_PARTICIPANT_ID = frontendConfig.DEFAULT_PARTICIPANT_ID;
+  
+  // Initial data loaded via SSR
+  let initialData = participantData;
+  let initialError = error;
 
   // DOM Elements
   const participantIdInput = document.getElementById('participant-id');
@@ -639,20 +661,32 @@ const frontendConfig = {
     teamInfoIcon.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
   });
 
-  // Automatisches Laden beim Seitenstart
+  // Initialize with SSR data or auto-load
   document.addEventListener('DOMContentLoaded', () => {
-    const defaultId = DEFAULT_PARTICIPANT_ID;
-    console.log('Lade automatisch Team-Daten für ID:', defaultId);
-    loadParticipantData(defaultId);
+    if (initialError) {
+      showError(initialError);
+    } else if (initialData) {
+      console.log('Using SSR-loaded data for ID:', DEFAULT_PARTICIPANT_ID);
+      renderData(initialData);
+    } else {
+      console.log('Loading data client-side for ID:', DEFAULT_PARTICIPANT_ID);
+      loadParticipantData(DEFAULT_PARTICIPANT_ID);
+    }
   });
 
-  // Lade sofort, falls DOMContentLoaded bereits gefeuert wurde
+  // If DOM is already loaded, initialize immediately
   if (document.readyState === 'loading') {
-    // DOM wird noch geladen, warte auf DOMContentLoaded
+    // DOM is still loading, wait for DOMContentLoaded
   } else {
-    // DOM ist bereits geladen
-    const defaultId = DEFAULT_PARTICIPANT_ID;
-    console.log('Lade sofort Team-Daten für ID:', defaultId);
-    loadParticipantData(defaultId);
+    // DOM is already loaded
+    if (initialError) {
+      showError(initialError);
+    } else if (initialData) {
+      console.log('Using SSR-loaded data immediately for ID:', DEFAULT_PARTICIPANT_ID);
+      renderData(initialData);
+    } else {
+      console.log('Loading data client-side immediately for ID:', DEFAULT_PARTICIPANT_ID);
+      loadParticipantData(DEFAULT_PARTICIPANT_ID);
+    }
   }
 </script>
