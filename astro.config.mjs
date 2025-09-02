@@ -11,6 +11,14 @@ export default defineConfig({
   }),
   server: {
     port: 4000,
-    host: true
+    host: '0.0.0.0'
+  },
+  // Wichtig für Reverse-Proxy (Dokploy)
+  vite: {
+    server: {
+      hmr: {
+        port: 4000
+      }
+    }
   }
 });

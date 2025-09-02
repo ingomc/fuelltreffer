@@ -25,9 +25,13 @@ COPY --from=builder /app/node_modules ./node_modules
 # Expose port
 EXPOSE 4000
 
-# Health check
+# Health check - wichtig für Dokploy Health Monitoring
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:4000/ || exit 1
+  CMD curl -f http://0.0.0.0:4000/ || exit 1
 
-# Start Astro SSR server
+# Set environment variables for proper host binding
+ENV HOST=0.0.0.0
+ENV PORT=4000
+
+# Start Astro SSR server with proper host binding
 CMD ["node", "./dist/server/entry.mjs"]
