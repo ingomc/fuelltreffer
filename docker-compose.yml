@@ -1,9 +1,7 @@
 services:
   fuelltreffer:
     build: .
-    ports:
-      - "${FRONTEND_PORT:-4000}:4000"  # Frontend
-      - "${BACKEND_PORT:-4001}:4001"  # Backend API
+    network_mode: host
     environment:
       - NODE_ENV=production
       - PORT=${BACKEND_PORT:-4001}
