@@ -107,10 +107,10 @@
       <TabNav {tabs} bind:activeTab />
     </div>
 
-        <!-- Tab Content -->
+    <!-- Tab Content -->
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 min-h-[400px] transition-colors duration-200">
       {#if activeTab === 'matches'}
-        <MatchesList matches={data?.matches || []} {currentParticipantId} />
+        <MatchesList matches={data?.matches || []} {currentParticipantId} {apiBaseUrl} />
       {:else if activeTab === 'team'}
         <TeamOverview 
           participant={data.participant} 

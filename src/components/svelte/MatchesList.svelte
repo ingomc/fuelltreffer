@@ -1,8 +1,15 @@
 <script>
+  import MatchDetailsOverlay from './MatchDetailsOverlay.svelte';
+  
   export let matches = [];
   export let currentParticipantId = null; // ID des aktuell ausgewählten Teams
+  export let apiBaseUrl = '';
 
   let hoveredTeamId = null; // ID des aktuell gehoverten Teams
+  let showMatchDetails = false;
+  let selectedMatchEventId = null;
+  let selectedMatchId = null;
+  let selectedMatchData = null; // Store original match data
 
   function formatDate(dateString) {
     const date = new Date(dateString);
@@ -35,6 +42,22 @@
       url.searchParams.set('team', teamId.toString());
       window.location.href = url.toString();
     }
+  }
+
+  function showMatchDetailsOverlay(eventId, matchId, matchData) {
+    selectedMatchEventId = eventId;
+    selectedMatchId = matchId;
+    selectedMatchData = matchData; // Store original match data
+    showMatchDetails = true;
+    document.body.classList.add('modal-open');
+  }
+
+  function closeMatchDetails() {
+    showMatchDetails = false;
+    selectedMatchEventId = null;
+    selectedMatchId = null;
+    selectedMatchData = null;
+    document.body.classList.remove('modal-open');
   }
 
   // Sort matches by date
@@ -101,12 +124,22 @@
                 <span class="text-xs font-medium text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full transition-colors duration-200">🏠</span>
               {/if}
             </div>
-            <div class="flex items-center gap-2 rounded-full text-xs px-2 py-1 font-bold bg-{status.color}-100 dark:bg-{status.color}-900 text-{status.color}-800 dark:text-{status.color}-300 transition-colors duration-200">
-              <span class="inline-flex items-center">
-                {status.icon}
-              </span>
-              <div class="font-bold text-xs">
-                {formatDate(match.datePlanned)}
+            <div class="flex items-center gap-2">
+              <button
+                type="button"
+                on:click={() => showMatchDetailsOverlay(match.eventId, match.id, match)}
+                class="px-2 py-1 text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 bg-blue-100 dark:bg-blue-900 hover:bg-blue-200 dark:hover:bg-blue-800 rounded-full transition-colors duration-200"
+                title="Match-Details anzeigen"
+              >
+                📊 Details
+              </button>
+              <div class="flex items-center gap-2 rounded-full text-xs px-2 py-1 font-bold bg-{status.color}-100 dark:bg-{status.color}-900 text-{status.color}-800 dark:text-{status.color}-300 transition-colors duration-200">
+                <span class="inline-flex items-center">
+                  {status.icon}
+                </span>
+                <div class="font-bold text-xs">
+                  {formatDate(match.datePlanned)}
+                </div>
               </div>
             </div>
           </div>
@@ -179,3 +212,13 @@
     </div>
   {/if}
 </div>
+
+<!-- Match Details Overlay -->
+<MatchDetailsOverlay 
+  bind:isVisible={showMatchDetails}
+  eventId={selectedMatchEventId}
+  matchId={selectedMatchId}
+  originalMatchData={selectedMatchData}
+  {apiBaseUrl}
+  on:close={closeMatchDetails}
+/>
