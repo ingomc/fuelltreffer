@@ -1,4 +1,6 @@
 <script>
+  import ClickTooltip from './ClickTooltip.svelte';
+  
   export let participant;
   export let teamSeason;
   export let members = [];
@@ -111,19 +113,25 @@
                 <td class="px-2 py-2">
                   <div class="flex gap-1">
                     {#if member.tc1}
-                      <span class="text-xs px-1 py-0.5 rounded bg-green-100 text-green-800">
-                        👑 1
-                      </span>
+                      <ClickTooltip text="Team-Kapitän 1" position="top">
+                        <span class="text-xs px-1 py-0.5 rounded bg-green-100 text-green-800 cursor-help">
+                          👑 1
+                        </span>
+                      </ClickTooltip>
                     {/if}
                     {#if member.tc2}
-                      <span class="text-xs px-1 py-0.5 rounded bg-yellow-100 text-yellow-800">
-                        👑 2
-                      </span>
+                      <ClickTooltip text="Team-Kapitän 2" position="top">
+                        <span class="text-xs px-1 py-0.5 rounded bg-yellow-100 text-yellow-800 cursor-help">
+                          👑 2
+                        </span>
+                      </ClickTooltip>
                     {/if}
                     {#if member.dateTo && new Date(member.dateTo) < new Date()}
-                      <span class="text-xs px-1 py-0.5 rounded bg-red-100 text-red-800">
-                        Inaktiv
-                      </span>
+                      <ClickTooltip text="Aus dem Team ausgetreten" position="top">
+                        <span class="text-xs px-1 py-0.5 rounded bg-red-100 text-red-800 cursor-help">
+                          Inaktiv
+                        </span>
+                      </ClickTooltip>
                     {/if}
                   </div>
                 </td>
@@ -149,19 +157,25 @@
               
               <div class="flex items-center gap-1 ml-2">
                 {#if member.tc1}
-                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    👑 1
-                  </span>
+                  <ClickTooltip text="Team-Kapitän 1" position="top">
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 cursor-help">
+                      👑 1
+                    </span>
+                  </ClickTooltip>
                 {/if}
                 {#if member.tc2}
-                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                    👑 2
-                  </span>
+                  <ClickTooltip text="Team-Kapitän 2" position="top">
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 cursor-help">
+                      👑 2
+                    </span>
+                  </ClickTooltip>
                 {/if}
                 {#if member.dateTo && new Date(member.dateTo) < new Date()}
-                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                    Inaktiv
-                  </span>
+                  <ClickTooltip text="Aus dem Team ausgetreten" position="top">
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 cursor-help">
+                      Inaktiv
+                    </span>
+                  </ClickTooltip>
                 {/if}
               </div>
             </div>

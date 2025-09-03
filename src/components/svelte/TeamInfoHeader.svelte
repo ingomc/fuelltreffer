@@ -1,4 +1,6 @@
 <script>
+  import ClickTooltip from './ClickTooltip.svelte';
+  
   export let teamData = null;
 
   const weekdays = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
@@ -33,12 +35,16 @@
               <span class="hidden sm:inline">•</span>
               <span class="hidden sm:inline">{participant.currentPosition || 'Position N/A'}</span>
               <span class="sm:hidden">•</span>
-              <span class="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                {participant.paid ? '✓' : '○'}
-              </span>
-              <span class="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                {participant.present ? '✓' : '○'}
-              </span>
+              <ClickTooltip text="Beitrag bezahlt" position="bottom">
+                <span class="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  {participant.paid ? '✓' : '○'}
+                </span>
+              </ClickTooltip>
+              <ClickTooltip text="Anwesend beim Training" position="bottom">
+                <span class="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  {participant.present ? '✓' : '○'}
+                </span>
+              </ClickTooltip>
             </div>
           </div>
         </div>
