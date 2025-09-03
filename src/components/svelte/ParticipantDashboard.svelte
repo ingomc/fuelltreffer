@@ -4,6 +4,7 @@
   import TeamOverview from './TeamOverview.svelte';
   import MatchesList from './MatchesList.svelte';
   import TeamInfoHeader from './TeamInfoHeader.svelte';
+  import LeagueTable from './LeagueTable.svelte';
 
   // Props
   export let initialData = null;
@@ -17,11 +18,12 @@
   let error = null;
   let currentParticipantId = defaultParticipantId; // Track current participant
 
-  // Tab configuration - Matches zuerst, dann Team-Overview
+  // Tab configuration - Matches zuerst, dann Team-Overview, dann Liga-Tabelle
   $: teamMembersCount = data?.participant?.teamSeason?.teamMembers?.length || 0;
   $: tabs = [
     { id: 'matches', label: 'Matches', icon: '🎯' },
-    { id: 'team', label: `Team (${teamMembersCount})`, icon: '👥' }
+    { id: 'team', label: `Team (${teamMembersCount})`, icon: '👥' },
+    { id: 'table', label: 'Tabelle', icon: '🏆' }
   ];
 
   // Load participant data
@@ -53,7 +55,7 @@
     const tabFromUrl = urlParams.get('tab');
     
     // Set activeTab from URL if valid, otherwise keep default
-    if (tabFromUrl && ['matches', 'team'].includes(tabFromUrl)) {
+    if (tabFromUrl && ['matches', 'team', 'table'].includes(tabFromUrl)) {
       activeTab = tabFromUrl;
     }
     
@@ -116,6 +118,11 @@
           participant={data.participant} 
           teamSeason={data.participant.teamSeason} 
           members={data.participant.teamSeason.teamMembers || []} 
+        />
+      {:else if activeTab === 'table'}
+        <LeagueTable 
+          {currentParticipantId}
+          {apiBaseUrl}
         />
       {/if}
     </div>
