@@ -84,11 +84,11 @@
           <!-- Kompakter Match Header -->
           <div class="flex items-center justify-between mb-2">
             <span class="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded">{match.round.name}</span>
-            <div class="flex items-center gap-2">
-              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-{status.color}-100 text-{status.color}-800">
+            <div class="flex items-center gap-2 rounded-full text-xs  px-2 py-1 font-medium bg-{status.color}-100 text-{status.color}-800">
+              <span class="inline-flex items-center">
                 {status.icon}
               </span>
-              <div class="text-xs text-gray-500">
+              <div>
                 {formatDate(match.datePlanned)}
               </div>
             </div>
