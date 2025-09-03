@@ -194,17 +194,12 @@
                   <div class="flex gap-1">
                     {#if member.tc1}
                       <span class="text-xs px-1 py-0.5 rounded bg-green-100 text-green-800">
-                        K1
+                        👑 1
                       </span>
                     {/if}
                     {#if member.tc2}
                       <span class="text-xs px-1 py-0.5 rounded bg-yellow-100 text-yellow-800">
-                        K2
-                      </span>
-                    {/if}
-                    {#if !member.tc1 && !member.tc2}
-                      <span class="text-xs px-1 py-0.5 rounded bg-blue-100 text-blue-800">
-                        Spieler
+                        👑 2
                       </span>
                     {/if}
                     {#if member.dateTo && new Date(member.dateTo) < new Date()}
@@ -231,26 +226,18 @@
                 </div>
                 <div class="min-w-0 flex-1">
                   <div class="font-medium text-gray-900 text-sm truncate">{member.displayName}</div>
-                  <div class="text-xs text-gray-500">
-                    Member • ID: {member.id}
-                  </div>
                 </div>
               </div>
               
               <div class="flex items-center gap-1 ml-2">
                 {#if member.tc1}
                   <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    Kapitän 1
+                    👑 1
                   </span>
                 {/if}
                 {#if member.tc2}
                   <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                    Kapitän 2
-                  </span>
-                {/if}
-                {#if !member.tc1 && !member.tc2}
-                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    Spieler
+                    👑 2
                   </span>
                 {/if}
                 {#if member.dateTo && new Date(member.dateTo) < new Date()}
@@ -271,16 +258,12 @@
         <h4 class="text-xs font-medium text-gray-900 mb-2">Team Rollen:</h4>
         <div class="grid grid-cols-2 gap-1 text-xs text-gray-700">
           <div class="flex items-center gap-1">
-            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">K1</span>
+            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">👑 1</span>
             <span>Kapitän 1</span>
           </div>
           <div class="flex items-center gap-1">
-            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">K2</span>
+            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">👑 2</span>
             <span>Kapitän 2</span>
-          </div>
-          <div class="flex items-center gap-1">
-            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Spieler</span>
-            <span>Team-Mitglied</span>
           </div>
           <div class="flex items-center gap-1">
             <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">Inaktiv</span>

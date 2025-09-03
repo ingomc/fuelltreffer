@@ -1,5 +1,6 @@
 <script>
   export let matches = [];
+  export let currentParticipantId = null; // ID des aktuell ausgewählten Teams
 
   function formatDate(dateString) {
     const date = new Date(dateString);
@@ -80,15 +81,21 @@
     <div class="space-y-2">
       {#each sortedMatches as match}
         {@const status = getStatusBadge(match.statusCd)}
-        <div class="border border-gray-200 rounded-lg p-3 bg-white">
+        {@const isHomeMatch = currentParticipantId && match.participantHome.id.toString() === currentParticipantId.toString()}
+        <div class="border border-gray-300 rounded-lg p-3 bg-white">
           <!-- Kompakter Match Header -->
           <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded">{match.round.name}</span>
-            <div class="flex items-center gap-2 rounded-full text-xs  px-2 py-1 font-medium bg-{status.color}-100 text-{status.color}-800">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded-full">{match.round.name}</span>
+              {#if isHomeMatch}
+                <span class="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded-full">🏠</span>
+              {/if}
+            </div>
+            <div class="flex items-center gap-2 rounded-full text-xs px-2 py-1 font-bold bg-{status.color}-100 text-{status.color}-800">
               <span class="inline-flex items-center">
                 {status.icon}
               </span>
-              <div>
+              <div class="font-bold text-xs">
                 {formatDate(match.datePlanned)}
               </div>
             </div>
@@ -99,14 +106,14 @@
             <!-- Home vs Guest in einer Zeile -->
             <div class="flex items-center justify-between bg-gray-50 rounded-lg p-2">
               <div class="flex-1 text-center">
-                <div class="font-medium text-sm text-gray-900">{match.participantHome.displayName}</div>
+                <div class="font-bold text-sm text-gray-900">{match.participantHome.displayName}</div>
                 <div class="text-xs text-gray-500">#{match.participantHome.rankingPos || 'N/A'}</div>
               </div>
               <div class="px-3">
                 <span class="text-sm font-bold text-gray-400">VS</span>
               </div>
               <div class="flex-1 text-center">
-                <div class="font-medium text-sm text-gray-900">{match.participantGuest.displayName}</div>
+                <div class="font-bold text-sm text-gray-900">{match.participantGuest.displayName}</div>
                 <div class="text-xs text-gray-500">#{match.participantGuest.rankingPos || 'N/A'}</div>
               </div>
             </div>

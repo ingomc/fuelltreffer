@@ -14,6 +14,7 @@
   let data = initialData;
   let loading = false;
   let error = null;
+  let currentParticipantId = defaultParticipantId; // Track current participant
 
   // Tab configuration - Matches zuerst, dann Team-Overview
   const tabs = [
@@ -25,6 +26,7 @@
   async function loadParticipantData(participantId) {
     loading = true;
     error = null;
+    currentParticipantId = participantId; // Update current participant ID
 
     try {
       const response = await fetch(`${apiBaseUrl}/api/participant/${participantId}`);
@@ -88,20 +90,17 @@
       <TabNav {tabs} bind:activeTab />
     </div>
 
-    <!-- Tab Content -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-      <!-- Fixed container to prevent layout shifts -->
-      <div class="w-full">
-        {#if activeTab === 'matches'}
-          <MatchesList matches={data.matches} />
-        {:else if activeTab === 'team'}
-          <TeamOverview 
-            participant={data.participant} 
-            teamSeason={data.participant.teamSeason} 
-            members={data.participant.teamSeason.teamMembers} 
-          />
-        {/if}
-      </div>
+        <!-- Tab Content -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 min-h-[400px]">
+      {#if activeTab === 'matches'}
+        <MatchesList matches={data?.matches || []} {currentParticipantId} />
+      {:else if activeTab === 'team'}
+        <TeamOverview 
+          participant={data.participant} 
+          teamSeason={data.participant.teamSeason} 
+          members={data.participant.teamSeason.teamMembers || []} 
+        />
+      {/if}
     </div>
   {/if}
 
