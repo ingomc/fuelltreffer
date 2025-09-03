@@ -3,6 +3,7 @@
   import TabNav from './TabNav.svelte';
   import TeamOverview from './TeamOverview.svelte';
   import MatchesList from './MatchesList.svelte';
+  import TeamInfoHeader from './TeamInfoHeader.svelte';
 
   // Props
   export let initialData = null;
@@ -17,9 +18,10 @@
   let currentParticipantId = defaultParticipantId; // Track current participant
 
   // Tab configuration - Matches zuerst, dann Team-Overview
-  const tabs = [
+  $: teamMembersCount = data?.participant?.teamSeason?.teamMembers?.length || 0;
+  $: tabs = [
     { id: 'matches', label: 'Matches', icon: '🎯' },
-    { id: 'team', label: 'Team', icon: '👥' }
+    { id: 'team', label: `Team (${teamMembersCount})`, icon: '👥' }
   ];
 
   // Load participant data
@@ -61,14 +63,20 @@
   });
 </script>
 
-<div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-  <!-- Loading State -->
-  {#if loading}
-    <div class="flex items-center justify-center py-12">
-      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      <span class="ml-3 text-gray-600">Lade Daten...</span>
-    </div>
+<div class="w-full">
+  <!-- Team Info Header -->
+  {#if data && !loading}
+    <TeamInfoHeader teamData={data} />
   {/if}
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+    <!-- Loading State -->
+    {#if loading}
+      <div class="flex items-center justify-center py-12">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <span class="ml-3 text-gray-600">Lade Daten...</span>
+      </div>
+    {/if}
 
   <!-- Error State -->
   {#if error}
@@ -104,26 +112,27 @@
     </div>
   {/if}
 
-  <!-- Kleiner Footer -->
-  <footer class="mt-8 pb-6">
-    <div class="text-center">
-      <div class="border-t border-gray-200 pt-4">
-        <p class="text-xs text-gray-500">
-          🎯 Fülltreffer Dashboard
-        </p>
-        <p class="text-xs text-gray-400 mt-1 flex items-center justify-center gap-1">
-          Made with ❤️ by 
-          <a 
-            href="https://andre-bellmann.de" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            class="inline-flex items-center gap-1 text-blue-500 hover:text-blue-700 transition-colors"
-          >
-            <span class="text-xs">👨‍💻</span>
-            Andre Bellmann
-          </a>
-        </p>
+    <!-- Kleiner Footer -->
+    <footer class="mt-8 pb-6">
+      <div class="text-center">
+        <div class="border-t border-gray-200 pt-4">
+          <p class="text-xs text-gray-500">
+            🎯 Fülltreffer Dashboard
+          </p>
+          <p class="text-xs text-gray-400 mt-1 flex items-center justify-center gap-1">
+            Made with ❤️ by 
+            <a 
+              href="https://andre-bellmann.de" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1 text-blue-500 hover:text-blue-700 transition-colors"
+            >
+              <span class="text-xs">👨‍💻</span>
+              Andre Bellmann
+            </a>
+          </p>
+        </div>
       </div>
-    </div>
-  </footer>
+    </footer>
+  </div>
 </div>

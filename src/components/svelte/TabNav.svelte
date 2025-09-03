@@ -24,7 +24,7 @@
         on:click={() => setActiveTab(tab.id)}
       >
         <span class="text-lg">{tab.icon}</span>
-        <span class="hidden sm:inline">{tab.label}</span>
+        <span>{tab.label}</span>
       </button>
     {/each}
   </div>

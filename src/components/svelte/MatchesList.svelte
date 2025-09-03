@@ -2,6 +2,8 @@
   export let matches = [];
   export let currentParticipantId = null; // ID des aktuell ausgewählten Teams
 
+  let hoveredTeamId = null; // ID des aktuell gehoverten Teams
+
   function formatDate(dateString) {
     const date = new Date(dateString);
     const weekdays = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
@@ -25,6 +27,14 @@
     };
     
     return statusMap[status] || { color: 'gray', text: status, icon: '' };
+  }
+
+  function navigateToTeam(teamId) {
+    if (teamId && teamId.toString() !== currentParticipantId?.toString()) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('team', teamId.toString());
+      window.location.href = url.toString();
+    }
   }
 
   // Sort matches by date
@@ -106,14 +116,44 @@
             <!-- Home vs Guest in einer Zeile -->
             <div class="flex items-center justify-between bg-gray-50 rounded-lg p-2">
               <div class="flex-1 text-center">
-                <div class="font-bold text-sm text-gray-900">{match.participantHome.displayName}</div>
+                <div 
+                  class="font-bold text-sm transition-colors duration-200 cursor-pointer"
+                  class:text-blue-600={match.participantHome.id.toString() === currentParticipantId?.toString()}
+                  class:bg-blue-100={match.participantHome.id.toString() === currentParticipantId?.toString()}
+                  class:text-purple-600={hoveredTeamId && match.participantHome.id.toString() === hoveredTeamId.toString()}
+                  class:bg-purple-100={hoveredTeamId && match.participantHome.id.toString() === hoveredTeamId.toString()}
+                  class:text-gray-900={!hoveredTeamId && match.participantHome.id.toString() !== currentParticipantId?.toString()}
+                  class:hover:text-purple-600={match.participantHome.id.toString() !== currentParticipantId?.toString()}
+                  class:hover:bg-purple-50={match.participantHome.id.toString() !== currentParticipantId?.toString()}
+                  on:mouseenter={() => hoveredTeamId = match.participantHome.id}
+                  on:mouseleave={() => hoveredTeamId = null}
+                  on:click={() => navigateToTeam(match.participantHome.id)}
+                  title={match.participantHome.id.toString() !== currentParticipantId?.toString() ? 'Klicke um zu diesem Team zu wechseln' : 'Aktuell ausgewähltes Team'}
+                >
+                  {match.participantHome.displayName}
+                </div>
                 <div class="text-xs text-gray-500">#{match.participantHome.rankingPos || 'N/A'}</div>
               </div>
               <div class="px-3">
                 <span class="text-sm font-bold text-gray-400">VS</span>
               </div>
               <div class="flex-1 text-center">
-                <div class="font-bold text-sm text-gray-900">{match.participantGuest.displayName}</div>
+                <div 
+                  class="font-bold text-sm transition-colors duration-200 cursor-pointer"
+                  class:text-blue-600={match.participantGuest.id.toString() === currentParticipantId?.toString()}
+                  class:bg-blue-100={match.participantGuest.id.toString() === currentParticipantId?.toString()}
+                  class:text-purple-600={hoveredTeamId && match.participantGuest.id.toString() === hoveredTeamId.toString()}
+                  class:bg-purple-100={hoveredTeamId && match.participantGuest.id.toString() === hoveredTeamId.toString()}
+                  class:text-gray-900={!hoveredTeamId && match.participantGuest.id.toString() !== currentParticipantId?.toString()}
+                  class:hover:text-purple-600={match.participantGuest.id.toString() !== currentParticipantId?.toString()}
+                  class:hover:bg-purple-50={match.participantGuest.id.toString() !== currentParticipantId?.toString()}
+                  on:mouseenter={() => hoveredTeamId = match.participantGuest.id}
+                  on:mouseleave={() => hoveredTeamId = null}
+                  on:click={() => navigateToTeam(match.participantGuest.id)}
+                  title={match.participantGuest.id.toString() !== currentParticipantId?.toString() ? 'Klicke um zu diesem Team zu wechseln' : 'Aktuell ausgewähltes Team'}
+                >
+                  {match.participantGuest.displayName}
+                </div>
                 <div class="text-xs text-gray-500">#{match.participantGuest.rankingPos || 'N/A'}</div>
               </div>
             </div>

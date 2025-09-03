@@ -2,13 +2,17 @@
 import type { ApiResponse } from '../types/api';
 import ParticipantDashboard from './svelte/ParticipantDashboard.svelte';
 
-// SSR: Load default participant data server-side
-const DEFAULT_PARTICIPANT_ID = '308868';
+// Get team ID from props or use default
+export interface Props {
+  teamId?: string;
+}
+
+const { teamId = '308868' } = Astro.props;
 let participantData: ApiResponse | null = null;
 
 try {
-  // Server-side fetch during SSR
-  const response = await fetch(`${Astro.url.origin}/api/participant/${DEFAULT_PARTICIPANT_ID}`);
+  // Server-side fetch during SSR with selected team
+  const response = await fetch(`${Astro.url.origin}/api/participant/${teamId}`);
   
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
@@ -21,8 +25,8 @@ try {
 
 // Configuration for client-side JavaScript
 const frontendConfig = {
-  API_BASE_URL: Astro.url.origin, // Use same origin for API calls
-  DEFAULT_PARTICIPANT_ID: DEFAULT_PARTICIPANT_ID
+  API_BASE_URL: Astro.url.origin,
+  DEFAULT_PARTICIPANT_ID: teamId
 };
 ---
 

@@ -1,0 +1,85 @@
+<script>
+  export let teamData = null;
+
+  const weekdays = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
+  
+  $: teamSeason = teamData?.participant?.teamSeason;
+  $: participant = teamData?.participant;
+  $: playingVenue = teamSeason?.playingVenue;
+  
+  function openMaps(venue) {
+    if (venue) {
+      const address = `${venue.locationStreet}, ${venue.locationPostalCode} ${venue.locationCity}`;
+      const encodedAddress = encodeURIComponent(address);
+      window.open(`https://www.google.com/maps/search/?api=1&query=${encodedAddress}`, '_blank');
+    }
+  }
+</script>
+
+{#if teamData && teamSeason}
+  <!-- Team Info Header -->
+  <div class="bg-gradient-to-r from-blue-50 to-purple-50 border-b border-gray-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 sm:py-4">
+      <!-- Team Name & Info -->
+      <div class="flex items-center justify-between mb-2 sm:mb-3">
+        <div class="flex items-center space-x-2 sm:space-x-3">
+          <div class="w-8 h-8 sm:w-12 sm:h-12 bg-blue-500 rounded-full flex items-center justify-center">
+            <span class="text-white font-bold text-sm sm:text-lg">🎯</span>
+          </div>
+          <div>
+            <h1 class="text-lg sm:text-xl font-bold text-gray-900">{teamSeason.name}</h1>
+            <div class="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-gray-600 flex-wrap">
+              <span>#{participant.rankingPos || 'N/A'}</span>
+              <span class="hidden sm:inline">•</span>
+              <span class="hidden sm:inline">{participant.currentPosition || 'Position N/A'}</span>
+              <span class="sm:hidden">•</span>
+              <span class="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                {participant.paid ? '✓' : '○'}
+              </span>
+              <span class="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                {participant.present ? '✓' : '○'}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Spieltag & Zeit & Ort - 50/50 Layout immer -->
+      <div class="grid grid-cols-2 gap-2 sm:gap-4">
+        <!-- Spieltag & Zeit -->
+        <div class="bg-white rounded-lg p-2 sm:p-3 shadow-sm">
+          <div class="flex items-center space-x-1 sm:space-x-2 mb-1">
+            <span class="text-sm sm:text-lg">📅</span>
+            <span class="font-semibold text-gray-900 text-sm sm:text-base">Spieltag</span>
+          </div>
+          <div class="text-xs sm:text-sm text-gray-600">
+            <span class="font-medium">{weekdays[teamSeason.weekdayMatch] || 'N/A'}</span>
+            <span class="ml-2 text-gray-500">{teamSeason.throwoffTime?.slice(0, 5) || 'N/A'} Uhr</span>
+          </div>
+        </div>
+        
+        <!-- Spielort -->
+        <div class="bg-white rounded-lg p-2 sm:p-3 shadow-sm">
+          <div class="flex items-center space-x-1 sm:space-x-2 mb-1">
+            <span class="text-sm sm:text-lg">📍</span>
+            <span class="font-semibold text-gray-900 text-sm sm:text-base">Spielort</span>
+          </div>
+          {#if playingVenue}
+            <div class="text-xs sm:text-sm">
+              <div class="font-medium text-gray-900 truncate">{playingVenue.name}</div>
+              <button 
+                class="text-blue-600 hover:text-blue-800 hover:underline text-xs transition-colors text-left mt-1 line-clamp-2"
+                on:click={() => openMaps(playingVenue)}
+                title="In Google Maps öffnen"
+              >
+                {playingVenue.locationStreet}, {playingVenue.locationPostalCode} {playingVenue.locationCity}
+              </button>
+            </div>
+          {:else}
+            <div class="text-xs sm:text-sm text-gray-500">Kein Spielort definiert</div>
+          {/if}
+        </div>
+      </div>
+    </div>
+  </div>
+{/if}

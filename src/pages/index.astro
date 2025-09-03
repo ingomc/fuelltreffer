@@ -1,6 +1,22 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import ParticipantData from '../components/ParticipantData.astro';
+
+// Get team ID from URL parameter or use default
+const urlParams = new URLSearchParams(Astro.url.search);
+const selectedTeamId = urlParams.get('team') || '308868';
+
+// Liga-Teams basierend auf den Matches von Fülltreffer
+const ligaTeams = [
+  { id: '308863', name: 'VFB Einberg 2' },
+  { id: '308864', name: 'ESV Darter' },
+  { id: '308865', name: '1. DC DownFillCreek 2' },
+  { id: '308866', name: 'DC Fire and Ice' },
+  { id: '308867', name: 'LTV Gauerstadt' },
+  { id: '308868', name: 'SCO-Darts Team Fülltreffer' },
+  { id: '308869', name: 'TSG 2005 Bamberg 2' },
+  { id: '308870', name: 'Erlauer SV' }
+];
 ---
 
 <Layout 
@@ -12,7 +28,13 @@ import ParticipantData from '../components/ParticipantData.astro';
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-12">
         <div class="flex items-center space-x-3">
-          <span class="text-xl font-bold text-blue-600">🎯Fülltreffer</span>
+          <a 
+            href="/" 
+            class="text-xl font-bold text-blue-600 hover:text-blue-800 transition-colors cursor-pointer"
+            title="Zur Startseite"
+          >
+            🎯Fülltreffer
+          </a>
         </div>
         
         <!-- Team-Auswahl Dropdown -->
@@ -23,14 +45,11 @@ import ParticipantData from '../components/ParticipantData.astro';
               id="header-team-select" 
               class="text-sm border border-gray-300 rounded-md px-3 py-1 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
-              <option value="308868">Fülltreffer</option>
-              <option value="308860">Schottenstein 2</option>
-              <option value="308859">Golden Village 2</option>
-              <option value="308865">DownFillCreek 2</option>
-              <option value="308863">Einberg 2</option>
-              <option value="308866">Fire and Ice</option>
-              <option value="308864">ESV Darter</option>
-              <option value="308862">Bamberg 1</option>
+              {ligaTeams.map(team => (
+                <option value={team.id} selected={team.id === selectedTeamId}>
+                  {team.name}
+                </option>
+              ))}
             </select>
           </div>
         </div>
@@ -39,6 +58,24 @@ import ParticipantData from '../components/ParticipantData.astro';
   </div>
 
   <main class="min-h-screen bg-gray-50">
-    <ParticipantData />
+    <ParticipantData teamId={selectedTeamId} />
   </main>
+
+  <script>
+    // Handle team selection change
+    document.addEventListener('DOMContentLoaded', () => {
+      const select = document.getElementById('header-team-select');
+      if (select) {
+        select.addEventListener('change', (event) => {
+          const selectedTeamId = (event.target as HTMLSelectElement).value;
+          if (selectedTeamId) {
+            // Navigate to URL with team parameter
+            const url = new URL(window.location.href);
+            url.searchParams.set('team', selectedTeamId);
+            window.location.href = url.toString();
+          }
+        });
+      }
+    });
+  </script>
 </Layout>
