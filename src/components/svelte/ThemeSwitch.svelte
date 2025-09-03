@@ -59,7 +59,7 @@
         title={themeOption.description}
       >
         <span class="text-sm">{themeOption.icon}</span>
-        <span class="hidden sm:inline">{themeOption.label}</span>
+        <span>{themeOption.label}</span>
       </button>
     {/each}
   </div>

@@ -89,7 +89,7 @@
           on:click={() => updateView(false)}
         >
           <span class="text-sm">🎴</span>
-          <span class="hidden sm:inline">Karten</span>
+          <span>Karten</span>
         </button>
         <button
           class="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-md transition-all"
@@ -103,7 +103,7 @@
           on:click={() => updateView(true)}
         >
           <span class="text-sm">📋</span>
-          <span class="hidden sm:inline">Tabelle</span>
+          <span>Tabelle</span>
         </button>
       </div>
     </div>
