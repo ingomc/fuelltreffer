@@ -1,38 +1,34 @@
-# Single-stage build for Astro SSR application
+# Multi-stage build for Astro SSR application inspired by official Astro documentation
 
-FROM node:20-alpine AS builder
+FROM node:lts AS base
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# By copying only the package.json and package-lock.json here, we ensure that the following `-deps` steps are independent of the source code.
+# Therefore, the `-deps` steps will be skipped if only the source code changes.
+COPY package.json package-lock.json ./
+
+FROM base AS prod-deps
+RUN npm ci --omit=dev --only=production
+
+FROM base AS build-deps
 RUN npm ci
 
-# Copy source code
+FROM build-deps AS build
 COPY . .
-
-# Build Astro SSR app
 RUN npm run build
 
-# Production stage
-FROM node:20-alpine AS production
-WORKDIR /app
-
-# Copy built application and scripts
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/node_modules ./node_modules
-COPY start.sh ./start.sh
-COPY server-wrapper.js ./server-wrapper.js
-
-# Make start script executable
-RUN chmod +x ./start.sh
-
-# Expose port
-EXPOSE 4000
+FROM base AS runtime
+# Copy production dependencies
+COPY --from=prod-deps /app/node_modules ./node_modules
+# Copy built application
+COPY --from=build /app/dist ./dist
 
 # Set environment variables for proper host binding
 ENV HOST=0.0.0.0
 ENV PORT=4000
 
-# Start with Node.js wrapper that forces 0.0.0.0 binding
-CMD ["node", "server-wrapper.js"]
+# Expose port
+EXPOSE 4000
+
+# Start Astro server directly
+CMD ["node", "./dist/server/entry.mjs"]
