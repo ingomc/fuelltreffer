@@ -7,43 +7,38 @@ const apiBaseUrl = Astro.url.origin;
 ---
 
 <Layout title="Fuelltreffer - 2k Software Dashboard">
-  <main class="container mx-auto px-4 py-8">
-    <div class="max-w-4xl mx-auto">
-      <header class="text-center mb-8">
-        <h1 class="text-4xl font-bold text-gray-900 mb-2">Fuelltreffer</h1>
-        <p class="text-lg text-gray-600">Team Dashboard - 2k Software API</p>
-        <p class="text-sm text-gray-500 mt-1">Lädt automatisch die aktuellen Team-Daten</p>
-      </header>
-
-      <div class="grid gap-8">
-        <ParticipantData />
+  <!-- Sticky Header mit Team-Auswahl -->
+  <div class="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-12">
+        <div class="flex items-center space-x-3">
+          <span class="text-xl font-bold text-blue-600">🎯Fülltreffer</span>
+        </div>
         
-        <div class="bg-white rounded-lg shadow p-6">
-          <h2 class="text-2xl font-bold mb-4">System Information</h2>
-          <div class="space-y-3 text-sm">
-            <div>
-              <span class="font-medium">API Base URL:</span>
-              <code class="ml-2 px-2 py-1 bg-gray-100 rounded">{apiBaseUrl}</code>
-            </div>
-            <div>
-              <span class="font-medium">Standard Team ID:</span>
-              <code class="ml-2 px-2 py-1 bg-gray-100 rounded">{defaultParticipantId}</code>
-            </div>
-            <div>
-              <span class="font-medium">API Endpoint:</span>
-              <code class="ml-2 px-2 py-1 bg-gray-100 rounded">/api/participant/&#123;id&#125;</code>
-            </div>
-            <div>
-              <span class="font-medium">Architecture:</span>
-              <span class="ml-2 text-blue-600">Astro SSR</span>
-            </div>
-            <div>
-              <span class="font-medium">Auto-Load:</span>
-              <span class="ml-2 text-green-600">✓ Server-Side Rendering</span>
-            </div>
+        <!-- Team-Auswahl Dropdown -->
+        <div class="relative">
+          <div id="team-selector" class="flex items-center">
+            <span class="text-sm text-gray-600 mr-2 hidden sm:inline">🏆</span>
+            <select 
+              id="header-team-select" 
+              class="text-sm border border-gray-300 rounded-md px-3 py-1 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="308868">Fülltreffer</option>
+              <option value="308860">Schottenstein 2</option>
+              <option value="308859">Golden Village 2</option>
+              <option value="308865">DownFillCreek 2</option>
+              <option value="308863">Einberg 2</option>
+              <option value="308866">Fire and Ice</option>
+              <option value="308864">ESV Darter</option>
+              <option value="308862">Bamberg 1</option>
+            </select>
           </div>
         </div>
       </div>
     </div>
+  </div>
+
+  <main class="min-h-screen bg-gray-50">
+    <ParticipantData />
   </main>
 </Layout>
