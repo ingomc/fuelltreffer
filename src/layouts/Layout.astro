@@ -13,6 +13,9 @@ const {
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.url.origin);
 const socialImageURL = new URL(image, Astro.url.origin);
+
+// Ensure absolute URL for social sharing
+const absoluteImageURL = socialImageURL.toString();
 ---
 
 <!doctype html>
@@ -41,18 +44,28 @@ const socialImageURL = new URL(image, Astro.url.origin);
     <meta property="og:url" content={Astro.url} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={socialImageURL} />
+    <meta property="og:image" content={absoluteImageURL} />
+    <meta property="og:image:secure_url" content={absoluteImageURL} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="2816" />
+    <meta property="og:image:height" content="1536" />
     <meta property="og:image:alt" content="Fülltreffer Dashboard - Dart Team Management" />
     <meta property="og:site_name" content="Fülltreffer Dashboard" />
     <meta property="og:locale" content="de_DE" />
     
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content={Astro.url} />
-    <meta property="twitter:title" content={title} />
-    <meta property="twitter:description" content={description} />
-    <meta property="twitter:image" content={socialImageURL} />
-    <meta property="twitter:image:alt" content="Fülltreffer Dashboard - Dart Team Management" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={Astro.url} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={absoluteImageURL} />
+    <meta name="twitter:image:alt" content="Fülltreffer Dashboard - Dart Team Management" />
+    <meta name="twitter:creator" content="@ingomc" />
+    <meta name="twitter:site" content="@ingomc" />
+    
+    <!-- WhatsApp optimized -->
+    <meta property="og:image:url" content={absoluteImageURL} />
+    <meta name="thumbnail" content={absoluteImageURL} />
     
     <!-- Theme -->
     <meta name="theme-color" content="#1e40af" />
