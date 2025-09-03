@@ -3,92 +3,10 @@
   export let teamSeason;
   export let members = [];
 
-  let showStatusInfo = false;
   let showMembersTable = false;
-
-  const weekdays = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
-
-  // Status badges
-  function getStatusBadge(condition, trueText, falseText, trueColor = 'green', falseColor = 'red') {
-    return {
-      text: condition ? trueText : falseText,
-      color: condition ? trueColor : falseColor
-    };
-  }
-
-  $: paidStatus = getStatusBadge(participant.paid, '✓ Bezahlt', '○ Offen');
-  $: presentStatus = getStatusBadge(participant.present, '✓ Anwesend', '○ Abwesend', 'green', 'yellow');
 </script>
 
 <div class="p-3 space-y-4 min-h-[600px]">
-  <!-- Kompakte Spieler & Team Info Section -->
-  <div>
-    <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-4">
-      <!-- Kompakter Spieler Header -->
-      <div class="flex items-center space-x-3 mb-4">
-        <div class="flex-1 min-w-0">
-          <h3 class="text-lg font-bold text-gray-900 truncate">{participant.displayName}</h3>
-        </div>
-      </div>
-
-      <!-- Kompakte Info-Grid -->
-      <div class="grid grid-cols-2 gap-2 mb-3">
-        <!-- Ranking -->
-        <div class="bg-white rounded-lg p-3 text-center">
-          <div class="text-xl font-bold text-blue-600">#{participant.rankingPos || 'N/A'}</div>
-          <div class="text-xs text-gray-500">Ranking</div>
-        </div>
-        
-        <!-- Position -->
-        <div class="bg-white rounded-lg p-3 text-center">
-          <div class="text-sm font-semibold text-gray-900">{participant.currentPosition || 'N/A'}</div>
-          <div class="text-xs text-gray-500">Position</div>
-        </div>
-      </div>
-      
-      <!-- Kompakte Spielzeit & Status -->
-      <div class="space-y-2">
-        <div class="bg-white rounded-lg p-3">
-          <div class="flex items-center justify-between">
-            <div>
-              <div class="text-sm font-semibold text-gray-900">{weekdays[teamSeason.weekdayMatch]}</div>
-              <div class="text-xs text-gray-500">{teamSeason.throwoffTime?.slice(0, 5) || 'N/A'} Uhr</div>
-            </div>
-            <div class="flex gap-1">
-              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-{paidStatus.color}-100 text-{paidStatus.color}-800">
-                {paidStatus.text.includes('✓') ? '✓' : '○'}
-              </span>
-              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-{presentStatus.color}-100 text-{presentStatus.color}-800">
-                {presentStatus.text.includes('✓') ? '✓' : '○'}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Kompakter Spielort -->
-        <div class="bg-white rounded-lg p-3">
-          <div class="flex items-start">
-            <span class="text-base mr-2 mt-0.5">📍</span>
-            <div class="flex-1 min-w-0">
-              <div class="font-medium text-gray-900 text-sm">{teamSeason.playingVenue.name}</div>
-              <button 
-                class="text-blue-600 hover:text-blue-800 hover:underline text-xs transition-colors text-left"
-                on:click={() => {
-                  const address = `${teamSeason.playingVenue.locationStreet}, ${teamSeason.playingVenue.locationPostalCode} ${teamSeason.playingVenue.locationCity}`;
-                  const encodedAddress = encodeURIComponent(address);
-                  window.open(`https://www.google.com/maps/search/?api=1&query=${encodedAddress}`, '_blank');
-                }}
-              >
-                {teamSeason.playingVenue.locationStreet}, <br />
-                {teamSeason.playingVenue.locationPostalCode} {teamSeason.playingVenue.locationCity}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- Kompakte Team Members Section -->
   <div>
     <div class="flex items-center justify-between mb-3">
