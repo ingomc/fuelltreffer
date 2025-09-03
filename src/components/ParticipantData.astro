@@ -5,7 +5,6 @@ import ParticipantDashboard from './svelte/ParticipantDashboard.svelte';
 // SSR: Load default participant data server-side
 const DEFAULT_PARTICIPANT_ID = '308868';
 let participantData: ApiResponse | null = null;
-let error: string | null = null;
 
 try {
   // Server-side fetch during SSR
@@ -18,7 +17,6 @@ try {
   participantData = await response.json();
 } catch (err) {
   console.error('Error fetching participant data:', err);
-  error = err instanceof Error ? err.message : 'Unknown error occurred';
 }
 
 // Configuration for client-side JavaScript
