@@ -1,5 +1,6 @@
 <script>
   import { onMount } from 'svelte';
+  import SectionHeader from './SectionHeader.svelte';
 
   export let currentParticipantId = '';
   export let apiBaseUrl = '';
@@ -148,10 +149,11 @@
 
 <div class="p-4 sm:p-6">
   <!-- Header -->
-  <div class="mb-6">
-    <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Liga-Tabelle</h2>
-    <p class="text-sm text-gray-600 dark:text-gray-400">Liga E • Saison 2025-2</p>
-  </div>
+  <SectionHeader 
+    title="Liga-Tabelle" 
+    subtitle="Liga E • Saison 2025-2" 
+    size="large" 
+  />
 
   <!-- Loading State -->
   {#if loading}
