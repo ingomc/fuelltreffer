@@ -165,7 +165,7 @@
       <table class="min-w-full">
         <!-- Table Header -->
         <thead>
-          <tr class="bg-orange-400 text-white">
+          <tr class="bg-gray-600 dark:bg-gray-700 text-white">
             <th class="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider">Pl.</th>
             <th class="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider">Mannschaft</th>
             <th class="px-3 py-3 text-center text-xs font-medium uppercase tracking-wider">Spiele</th>
@@ -179,18 +179,20 @@
         </thead>
         <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
           {#each tableData as team}
-            <tr class="bg-gray-800 hover:bg-gray-700 transition-colors duration-150"
-                class:bg-blue-900={team.isCurrentTeam}
-                class:hover:bg-blue-800={team.isCurrentTeam}>
-              <td class="px-3 py-4 whitespace-nowrap text-sm text-white">{team.position}.</td>
-              <td class="px-3 py-4 text-sm text-white font-medium">{team.team}</td>
-              <td class="px-3 py-4 whitespace-nowrap text-sm text-center text-white">{team.games}</td>
-              <td class="px-3 py-4 whitespace-nowrap text-sm text-center text-white">{team.wins}</td>
-              <td class="px-3 py-4 whitespace-nowrap text-sm text-center text-white">{team.draws}</td>
-              <td class="px-3 py-4 whitespace-nowrap text-sm text-center text-white">{team.losses}</td>
-              <td class="px-3 py-4 whitespace-nowrap text-sm text-center text-white font-semibold">{team.points}</td>
-              <td class="px-3 py-4 whitespace-nowrap text-sm text-center text-white">{team.legs}</td>
-              <td class="px-3 py-4 whitespace-nowrap text-sm text-center text-white">{team.legDiff}</td>
+            <tr class="bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors duration-150"
+                class:bg-blue-50={team.isCurrentTeam}
+                class:dark:bg-blue-900={team.isCurrentTeam}
+                class:hover:bg-blue-100={team.isCurrentTeam}
+                class:dark:hover:bg-blue-800={team.isCurrentTeam}>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{team.position}.</td>
+              <td class="px-3 py-4 text-sm text-gray-900 dark:text-white font-medium">{team.team}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-center text-gray-900 dark:text-white">{team.games}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-center text-gray-900 dark:text-white">{team.wins}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-center text-gray-900 dark:text-white">{team.draws}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-center text-gray-900 dark:text-white">{team.losses}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-center text-gray-900 dark:text-white font-semibold">{team.points}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-center text-gray-900 dark:text-white">{team.legs}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-center text-gray-900 dark:text-white">{team.legDiff}</td>
             </tr>
           {/each}
         </tbody>
@@ -200,29 +202,31 @@
     <!-- Mobile Cards -->
     <div class="sm:hidden space-y-3">
       {#each tableData as team}
-        <div class="bg-gray-800 rounded-lg p-4 border border-gray-700"
-             class:bg-blue-900={team.isCurrentTeam}
-             class:border-blue-600={team.isCurrentTeam}>
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700"
+             class:bg-blue-50={team.isCurrentTeam}
+             class:dark:bg-blue-900={team.isCurrentTeam}
+             class:border-blue-200={team.isCurrentTeam}
+             class:dark:border-blue-600={team.isCurrentTeam}>
           <div class="flex items-center justify-between mb-3">
             <div class="flex items-center space-x-3">
-              <span class="text-lg font-bold text-white">{team.position}.</span>
-              <span class="text-white font-medium">{team.team}</span>
+              <span class="text-lg font-bold text-gray-900 dark:text-white">{team.position}.</span>
+              <span class="text-gray-900 dark:text-white font-medium">{team.team}</span>
             </div>
-            <span class="text-white font-bold text-lg">{team.points}</span>
+            <span class="text-gray-900 dark:text-white font-bold text-lg">{team.points}</span>
           </div>
           
           <div class="grid grid-cols-3 gap-4 text-sm">
             <div class="text-center">
-              <div class="text-gray-400">Spiele</div>
-              <div class="text-white font-medium">{team.games}</div>
+              <div class="text-gray-500 dark:text-gray-400">Spiele</div>
+              <div class="text-gray-900 dark:text-white font-medium">{team.games}</div>
             </div>
             <div class="text-center">
-              <div class="text-gray-400">S/U/N</div>
-              <div class="text-white font-medium">{team.wins}/{team.draws}/{team.losses}</div>
+              <div class="text-gray-500 dark:text-gray-400">S/U/N</div>
+              <div class="text-gray-900 dark:text-white font-medium">{team.wins}/{team.draws}/{team.losses}</div>
             </div>
             <div class="text-center">
-              <div class="text-gray-400">Legs</div>
-              <div class="text-white font-medium">{team.legs}</div>
+              <div class="text-gray-500 dark:text-gray-400">Legs</div>
+              <div class="text-gray-900 dark:text-white font-medium">{team.legs}</div>
             </div>
           </div>
         </div>
