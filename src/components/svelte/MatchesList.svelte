@@ -116,8 +116,9 @@
             <!-- Home vs Guest in einer Zeile -->
             <div class="flex items-center justify-between bg-gray-50 rounded-lg p-2">
               <div class="flex-1 text-center">
-                <div 
-                  class="font-bold text-sm transition-colors duration-200 cursor-pointer"
+                <button 
+                  type="button"
+                  class="font-bold text-sm transition-colors duration-200 cursor-pointer rounded-md px-2 py-1 border-none bg-transparent w-full"
                   class:text-blue-600={match.participantHome.id.toString() === currentParticipantId?.toString()}
                   class:bg-blue-100={match.participantHome.id.toString() === currentParticipantId?.toString()}
                   class:text-purple-600={hoveredTeamId && match.participantHome.id.toString() === hoveredTeamId.toString()}
@@ -131,15 +132,16 @@
                   title={match.participantHome.id.toString() !== currentParticipantId?.toString() ? 'Klicke um zu diesem Team zu wechseln' : 'Aktuell ausgewähltes Team'}
                 >
                   {match.participantHome.displayName}
-                </div>
+                </button>
                 <div class="text-xs text-gray-500">#{match.participantHome.rankingPos || 'N/A'}</div>
               </div>
               <div class="px-3">
                 <span class="text-sm font-bold text-gray-400">VS</span>
               </div>
               <div class="flex-1 text-center">
-                <div 
-                  class="font-bold text-sm transition-colors duration-200 cursor-pointer"
+                <button 
+                  type="button"
+                  class="font-bold text-sm transition-colors duration-200 cursor-pointer rounded-md px-2 py-1 border-none bg-transparent w-full"
                   class:text-blue-600={match.participantGuest.id.toString() === currentParticipantId?.toString()}
                   class:bg-blue-100={match.participantGuest.id.toString() === currentParticipantId?.toString()}
                   class:text-purple-600={hoveredTeamId && match.participantGuest.id.toString() === hoveredTeamId.toString()}
@@ -153,7 +155,7 @@
                   title={match.participantGuest.id.toString() !== currentParticipantId?.toString() ? 'Klicke um zu diesem Team zu wechseln' : 'Aktuell ausgewähltes Team'}
                 >
                   {match.participantGuest.displayName}
-                </div>
+                </button>
                 <div class="text-xs text-gray-500">#{match.participantGuest.rankingPos || 'N/A'}</div>
               </div>
             </div>

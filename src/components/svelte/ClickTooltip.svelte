@@ -51,15 +51,14 @@
 </script>
 
 <div class="relative inline-block">
-  <div 
-    class="cursor-help inline-block"
+  <button 
+    type="button"
+    class="cursor-help inline-block border-none bg-transparent p-0 m-0"
     on:click={handleClick}
-    role="button"
-    tabindex="0"
     on:keydown={(e) => e.key === 'Enter' && handleClick(e)}
   >
     <slot></slot>
-  </div>
+  </button>
   
   {#if showTooltip}
     <div 
