@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://fuelltreffer.com/sitemap.xml
+Sitemap: https://fuelltreffer.andre-bellmann.de/sitemap.xml
