@@ -102,9 +102,9 @@
     tabindex="-1"
   >
     <!-- Modal Content -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto transition-colors duration-200">
-      <!-- Header -->
-      <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden transition-colors duration-200 flex flex-col">
+      <!-- Sticky Header -->
+      <div class="sticky top-0 z-10 flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
         <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100">🎯 Match Details</h2>
         <button 
           on:click={closeOverlay}
@@ -115,8 +115,8 @@
         </button>
       </div>
       
-      <!-- Content -->
-      <div class="p-6">
+      <!-- Scrollable Content -->
+      <div class="flex-1 overflow-y-auto p-6">
         {#if loading}
           <div class="flex items-center justify-center py-12">
             <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
