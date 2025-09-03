@@ -1,4 +1,5 @@
 <script>
+  import { onMount } from 'svelte';
   import ClickTooltip from './ClickTooltip.svelte';
   
   export let participant;
@@ -6,6 +7,36 @@
   export let members = [];
 
   let showMembersTable = false;
+  
+  function updateView(isTable) {
+    showMembersTable = isTable;
+    updateURL(isTable);
+  }
+  
+  function updateURL(isTable) {
+    const url = new URL(window.location.href);
+    if (isTable) {
+      url.searchParams.set('view', 'table');
+    } else {
+      // Remove view parameter for default (cards) view to keep URL clean
+      url.searchParams.delete('view');
+    }
+    
+    // Update URL without page reload
+    window.history.replaceState({}, '', url.toString());
+  }
+  
+  onMount(() => {
+    // Read view from URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const viewFromUrl = urlParams.get('view');
+    
+    // Set showMembersTable from URL if valid
+    if (viewFromUrl === 'table') {
+      showMembersTable = true;
+    }
+    // Default is cards (showMembersTable = false), no URL parameter needed
+  });
 </script>
 
 <div class="p-3 space-y-4 min-h-[600px]">
@@ -53,7 +84,7 @@
           class:shadow-sm={!showMembersTable}
           class:text-gray-700={showMembersTable}
           class:hover:bg-gray-50={showMembersTable}
-          on:click={() => showMembersTable = false}
+          on:click={() => updateView(false)}
         >
           <span class="text-sm">🎴</span>
           <span class="hidden sm:inline">Karten</span>
@@ -65,7 +96,7 @@
           class:shadow-sm={showMembersTable}
           class:text-gray-700={!showMembersTable}
           class:hover:bg-gray-50={!showMembersTable}
-          on:click={() => showMembersTable = true}
+          on:click={() => updateView(true)}
         >
           <span class="text-sm">📋</span>
           <span class="hidden sm:inline">Tabelle</span>

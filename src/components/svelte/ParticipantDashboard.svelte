@@ -48,6 +48,15 @@
   }
 
   onMount(() => {
+    // Read tab from URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const tabFromUrl = urlParams.get('tab');
+    
+    // Set activeTab from URL if valid, otherwise keep default
+    if (tabFromUrl && ['matches', 'team'].includes(tabFromUrl)) {
+      activeTab = tabFromUrl;
+    }
+    
     // If no initial data, load default participant
     if (!data && !error) {
       loadParticipantData(defaultParticipantId);

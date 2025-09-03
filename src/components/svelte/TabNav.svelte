@@ -1,10 +1,32 @@
 <script>
+  import { onMount } from 'svelte';
+  
   export let tabs = [];
   export let activeTab = '';
 
   function setActiveTab(tabId) {
     activeTab = tabId;
+    updateURL(tabId);
   }
+  
+  function updateURL(tabId) {
+    const url = new URL(window.location.href);
+    url.searchParams.set('tab', tabId);
+    
+    // Update URL without page reload
+    window.history.replaceState({}, '', url.toString());
+  }
+  
+  onMount(() => {
+    // Read tab from URL on component mount
+    const urlParams = new URLSearchParams(window.location.search);
+    const tabFromUrl = urlParams.get('tab');
+    
+    // If valid tab from URL and different from current, update activeTab
+    if (tabFromUrl && tabs.some(tab => tab.id === tabFromUrl) && tabFromUrl !== activeTab) {
+      activeTab = tabFromUrl;
+    }
+  });
 </script>
 
 <!-- Mobile-first tab navigation -->

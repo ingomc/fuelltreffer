@@ -69,9 +69,10 @@ const ligaTeams = [
         select.addEventListener('change', (event) => {
           const selectedTeamId = (event.target as HTMLSelectElement).value;
           if (selectedTeamId) {
-            // Navigate to URL with team parameter
+            // Navigate to URL with team parameter, preserve existing tab parameter
             const url = new URL(window.location.href);
             url.searchParams.set('team', selectedTeamId);
+            // Keep existing tab parameter if present
             window.location.href = url.toString();
           }
         });
