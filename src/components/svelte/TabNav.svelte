@@ -30,19 +30,25 @@
 </script>
 
 <!-- Mobile-first tab navigation -->
-<div class="border-b border-gray-200">
+<div class="border-b border-gray-200 dark:border-gray-700 transition-colors duration-200">
   <!-- Mobile: Horizontal scrollable tabs -->
   <div class="flex overflow-x-auto scrollbar-hide space-x-1 sm:space-x-2 px-1">
     {#each tabs as tab}
       <button
         class="flex-shrink-0 flex items-center space-x-2 px-3 py-2 sm:px-4 sm:py-3 text-sm font-medium rounded-t-lg transition-colors whitespace-nowrap"
         class:bg-blue-100={activeTab === tab.id}
+        class:dark:bg-blue-900={activeTab === tab.id}
         class:text-blue-700={activeTab === tab.id}
+        class:dark:text-blue-300={activeTab === tab.id}
         class:border-b-2={activeTab === tab.id}
         class:border-blue-500={activeTab === tab.id}
+        class:dark:border-blue-400={activeTab === tab.id}
         class:text-gray-500={activeTab !== tab.id}
+        class:dark:text-gray-400={activeTab !== tab.id}
         class:hover:text-gray-700={activeTab !== tab.id}
+        class:dark:hover:text-gray-200={activeTab !== tab.id}
         class:hover:bg-gray-50={activeTab !== tab.id}
+        class:dark:hover:bg-gray-800={activeTab !== tab.id}
         on:click={() => setActiveTab(tab.id)}
       >
         <span class="text-lg">{tab.icon}</span>

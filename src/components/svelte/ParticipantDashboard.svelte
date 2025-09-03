@@ -4,6 +4,7 @@
   import TeamOverview from './TeamOverview.svelte';
   import MatchesList from './MatchesList.svelte';
   import TeamInfoHeader from './TeamInfoHeader.svelte';
+  import ThemeSwitch from './ThemeSwitch.svelte';
 
   // Props
   export let initialData = null;
@@ -82,19 +83,19 @@
     <!-- Loading State -->
     {#if loading}
       <div class="flex items-center justify-center py-12">
-        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <span class="ml-3 text-gray-600">Lade Daten...</span>
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 dark:border-blue-400"></div>
+        <span class="ml-3 text-gray-600 dark:text-gray-300">Lade Daten...</span>
       </div>
     {/if}
 
   <!-- Error State -->
   {#if error}
-    <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+    <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
       <div class="flex">
         <span class="text-red-400 text-xl mr-3">⚠️</span>
         <div>
-          <h3 class="text-sm font-medium text-red-800">Fehler</h3>
-          <p class="mt-1 text-sm text-red-700">{error}</p>
+          <h3 class="text-sm font-medium text-red-800 dark:text-red-200">Fehler</h3>
+          <p class="mt-1 text-sm text-red-700 dark:text-red-300">{error}</p>
         </div>
       </div>
     </div>
@@ -108,7 +109,7 @@
     </div>
 
         <!-- Tab Content -->
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 min-h-[400px]">
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 min-h-[400px] transition-colors duration-200">
       {#if activeTab === 'matches'}
         <MatchesList matches={data?.matches || []} {currentParticipantId} />
       {:else if activeTab === 'team'}
@@ -121,18 +122,18 @@
     </div>
   {/if}
 
-    <!-- Cooler Footer mit Avatar -->
+    <!-- Cooler Footer mit Avatar und Theme Switch -->
     <footer class="mt-8 pb-6">
-      <div class="border-t border-gray-200 pt-6">
-        <div class="flex items-center justify-center gap-6">
+      <div class="border-t border-gray-200 dark:border-gray-700 pt-6 transition-colors duration-200">
+        <div class="flex items-center justify-center gap-6 mb-4">
           <!-- Größerer Avatar Kreis mit transparentem Bild -->
           <div class="relative">
             <!-- Äußerer Ring mit Glow-Effekt -->
-            <div class="w-20 h-20 rounded-full bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 p-0.5 shadow-lg">
+            <div class="w-20 h-20 rounded-full bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 dark:from-blue-500 dark:via-blue-600 dark:to-blue-700 p-0.5 shadow-lg transition-colors duration-200">
               <!-- Innerer weißer Ring -->
-              <div class="w-full h-full rounded-full bg-white p-1">
+              <div class="w-full h-full rounded-full bg-white dark:bg-gray-800 p-1 transition-colors duration-200">
                 <!-- Avatar Container -->
-                <div class="relative w-full h-full rounded-full overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+                <div class="relative w-full h-full rounded-full overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 transition-colors duration-200">
                   <!-- Bild mit leichter Transparenz und coolem Hover-Effekt -->
                   <img 
                     src="/andre-emoji.png" 
@@ -140,34 +141,39 @@
                     class="w-full h-full object-cover rounded-full opacity-90 hover:opacity-100 hover:scale-110 transition-all duration-300 ease-out"
                   />
                   <!-- Subtiler Overlay für mehr Style -->
-                  <div class="absolute inset-0 rounded-full bg-gradient-to-t from-black/5 to-transparent"></div>
+                  <div class="absolute inset-0 rounded-full bg-gradient-to-t from-black/5 to-transparent dark:from-black/20"></div>
                 </div>
               </div>
             </div>
             <!-- Pulsierender Ring beim Hover -->
-            <div class="absolute inset-0 rounded-full bg-blue-400/30 scale-110 opacity-0 hover:opacity-100 transition-all duration-500 ease-out animate-pulse"></div>
+            <div class="absolute inset-0 rounded-full bg-blue-400/30 dark:bg-blue-500/30 scale-110 opacity-0 hover:opacity-100 transition-all duration-500 ease-out animate-pulse"></div>
           </div>
           
           <!-- Footer Info linksbündig mit 3 Zeilen -->
           <div class="text-left">
-            <p class="text-sm font-medium text-gray-900 mb-1">
+            <p class="text-sm font-medium text-gray-900 dark:text-gray-100 mb-1 transition-colors duration-200">
               🎯 Fülltreffer Dashboard
             </p>
-            <p class="text-xs text-gray-500 flex items-center gap-1 mb-1">
+            <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1 mb-1 transition-colors duration-200">
               Made with ❤️ by 
               <a 
                 href="https://andre-bellmann.de" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                class="font-medium text-blue-500 hover:text-blue-700 transition-colors hover:underline"
+                class="font-medium text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors hover:underline"
               >
                 Andre Bellmann
               </a>
             </p>
-            <p class="text-xs text-gray-400">
+            <p class="text-xs text-gray-400 dark:text-gray-500 transition-colors duration-200">
               © {new Date().getFullYear()}
             </p>
           </div>
+        </div>
+        
+        <!-- Theme Switch zentriert unter dem Avatar/Info -->
+        <div class="flex justify-center">
+          <ThemeSwitch />
         </div>
       </div>
     </footer>

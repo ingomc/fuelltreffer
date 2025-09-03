@@ -24,13 +24,13 @@ const ligaTeams = [
   description="Verfolge deine Dart-Matches, Team-Statistiken und Spielerprofil mit dem Fülltreffer Dashboard. Integriert mit 2k Software für aktuelle Liga-Daten."
 >
   <!-- Sticky Header mit Team-Auswahl -->
-  <div class="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+  <div class="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm transition-colors duration-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-12">
         <div class="flex items-center space-x-3">
           <a 
             href="/" 
-            class="text-xl font-bold text-blue-600 hover:text-blue-800 transition-colors"
+            class="text-xl font-bold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
             title="Zur Startseite"
           >
             🎯Fülltreffer
@@ -40,10 +40,10 @@ const ligaTeams = [
         <!-- Team-Auswahl Dropdown -->
         <div class="relative">
           <div id="team-selector" class="flex items-center">
-            <span class="text-sm text-gray-600 mr-2 hidden sm:inline">🏆</span>
+            <span class="text-sm text-gray-600 dark:text-gray-400 mr-2 hidden sm:inline transition-colors duration-200">🏆</span>
             <select 
               id="header-team-select" 
-              class="text-sm border border-gray-300 rounded-md px-3 py-1 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              class="text-sm border border-gray-300 dark:border-gray-600 rounded-md px-3 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-colors duration-200"
             >
               {ligaTeams.map(team => (
                 <option value={team.id} selected={team.id === selectedTeamId}>
@@ -57,7 +57,7 @@ const ligaTeams = [
     </div>
   </div>
 
-  <main class="min-h-screen bg-gray-50">
+  <main class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
     <ParticipantData teamId={selectedTeamId} />
   </main>
 

@@ -69,9 +69,21 @@ const absoluteImageURL = socialImageURL.toString();
     
     <!-- Theme -->
     <meta name="theme-color" content="#1e40af" />
-    <meta name="color-scheme" content="light" />
+    <meta name="color-scheme" content="light dark" />
+    
+    <!-- Theme initialization script - runs before page renders -->
+    <script is:inline>
+      // Initialize theme before page renders to prevent flash
+      (function() {
+        const theme = localStorage.getItem('theme') || 'system';
+        const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (isDark) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
   </head>
-  <body class="bg-gray-50 min-h-screen">
+  <body class="bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-200">
     <slot />
   </body>
 </html>
