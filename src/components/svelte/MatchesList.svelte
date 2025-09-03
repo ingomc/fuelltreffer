@@ -111,43 +111,33 @@
       <p class="text-gray-500 dark:text-gray-400 mt-2 text-sm transition-colors duration-200">Keine Matches gefunden</p>
     </div>
   {:else}
-    <div class="space-y-2">
+    <div class="space-y-4">
       {#each sortedMatches as match}
         {@const status = getStatusBadge(match.statusCd)}
         {@const isHomeMatch = currentParticipantId && match.participantHome.id.toString() === currentParticipantId.toString()}
-        <div class="border border-gray-300 dark:border-gray-600 rounded-lg p-3 bg-white dark:bg-gray-800 transition-colors duration-200">
+        <div class="border border-gray-300 dark:border-gray-600 rounded-lg p-4 bg-white dark:bg-gray-800 transition-colors duration-200">
           <!-- Kompakter Match Header -->
-          <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center justify-between mb-3">
             <div class="flex items-center gap-2">
               <span class="text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full transition-colors duration-200">{match.round.name}</span>
               {#if isHomeMatch}
                 <span class="text-xs font-medium text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full transition-colors duration-200">🏠</span>
               {/if}
             </div>
-            <div class="flex items-center gap-2">
-              <button
-                type="button"
-                on:click={() => showMatchDetailsOverlay(match.eventId, match.id, match)}
-                class="px-2 py-1 text-xs font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 bg-blue-100 dark:bg-blue-900 hover:bg-blue-200 dark:hover:bg-blue-800 rounded-full transition-colors duration-200"
-                title="Match-Details anzeigen"
-              >
-                📊 Details
-              </button>
-              <div class="flex items-center gap-2 rounded-full text-xs px-2 py-1 font-bold bg-{status.color}-100 dark:bg-{status.color}-900 text-{status.color}-800 dark:text-{status.color}-300 transition-colors duration-200">
-                <span class="inline-flex items-center">
-                  {status.icon}
-                </span>
-                <div class="font-bold text-xs">
-                  {formatDate(match.datePlanned)}
-                </div>
+            <div class="flex items-center gap-2 rounded-full text-xs px-2 py-1 font-bold bg-{status.color}-100 dark:bg-{status.color}-900 text-{status.color}-800 dark:text-{status.color}-300 transition-colors duration-200">
+              <span class="inline-flex items-center">
+                {status.icon}
+              </span>
+              <div class="font-bold text-xs">
+                {formatDate(match.datePlanned)}
               </div>
             </div>
           </div>
           
-          <!-- Mobile-optimierte Player Info -->
-          <div class="space-y-2">
+          <!-- Mobile-optimierte Player Info mit Details Button -->
+          <div class="space-y-3">
             <!-- Home vs Guest in einer Zeile -->
-            <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-700 rounded-lg p-2 transition-colors duration-200">
+            <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-700 rounded-lg p-3 transition-colors duration-200">
               <div class="flex-1 text-center">
                 <button 
                   type="button"
@@ -205,6 +195,18 @@
                 </button>
                 <div class="text-xs text-gray-500">#{match.participantGuest.rankingPos || 'N/A'}</div>
               </div>
+            </div>
+
+            <!-- Details Button - Zentriert unter dem Match -->
+            <div class="flex justify-center">
+              <button
+                type="button"
+                on:click={() => showMatchDetailsOverlay(match.eventId, match.id, match)}
+                class="px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 bg-blue-100 dark:bg-blue-900 hover:bg-blue-200 dark:hover:bg-blue-800 rounded-lg transition-colors duration-200 flex items-center gap-2"
+                title="Match-Details anzeigen"
+              >
+                📊 <span>Match-Details</span>
+              </button>
             </div>
           </div>
         </div>
