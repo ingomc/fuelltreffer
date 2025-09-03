@@ -1,19 +1,62 @@
 ---
 export interface Props {
   title: string;
+  description?: string;
+  image?: string;
 }
 
-const { title } = Astro.props;
+const { 
+  title, 
+  description = "Fülltreffer Dashboard - Dein persönliches Dart-Team Management mit 2k Software Integration. Verfolge Matches, Team-Stats und mehr.",
+  image = "/og-image.png"
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.url.origin);
+const socialImageURL = new URL(image, Astro.url.origin);
 ---
 
 <!doctype html>
 <html lang="de">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content="Fuelltreffer - 2k Software Dashboard" />
+    <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    
+    <!-- SEO -->
     <title>{title}</title>
+    <link rel="canonical" href={canonicalURL} />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="Fülltreffer Team" />
+    <meta name="keywords" content="Darts, Dashboard, Team Management, 2k Software, Fülltreffer, Dart Liga, Dart Verein" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={Astro.url} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={socialImageURL} />
+    <meta property="og:image:alt" content="Fülltreffer Dashboard - Dart Team Management" />
+    <meta property="og:site_name" content="Fülltreffer Dashboard" />
+    <meta property="og:locale" content="de_DE" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={Astro.url} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={socialImageURL} />
+    <meta property="twitter:image:alt" content="Fülltreffer Dashboard - Dart Team Management" />
+    
+    <!-- Theme -->
+    <meta name="theme-color" content="#1e40af" />
+    <meta name="color-scheme" content="light" />
   </head>
   <body class="bg-gray-50 min-h-screen">
     <slot />

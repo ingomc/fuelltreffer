@@ -111,8 +111,17 @@
         <p class="text-xs text-gray-500">
           🎯 Fülltreffer Dashboard
         </p>
-        <p class="text-xs text-gray-400 mt-1">
-          Made with ❤️
+        <p class="text-xs text-gray-400 mt-1 flex items-center justify-center gap-1">
+          Made with ❤️ by 
+          <a 
+            href="https://andre-bellmann.de" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-1 text-blue-500 hover:text-blue-700 transition-colors"
+          >
+            <span class="text-xs">👨‍💻</span>
+            Andre Bellmann
+          </a>
         </p>
       </div>
     </div>
