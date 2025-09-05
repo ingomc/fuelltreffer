@@ -10,7 +10,15 @@ export default defineConfig({
   adapter: node({
     mode: 'standalone'
   }),
-  // Entferne server config - wird für SSR ignoriert
+  // HTML-Kompression aktivieren (Standard seit Astro v3)
+  compressHTML: true,
+  // Server-Konfiguration für Performance-Header
+  server: {
+    headers: {
+      'Vary': 'Accept-Encoding',
+      'Cache-Control': 'public, max-age=3600'
+    }
+  },
   vite: {
     server: {
       hmr: {
