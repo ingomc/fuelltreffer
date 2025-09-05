@@ -1,0 +1,15 @@
+services:
+  fuelltreffer:
+    build: .
+    ports:
+      - "${FRONTEND_PORT:-4000}:4000"
+    labels:
+      - traefik.http.middlewares.fuelltreffer-compress.compress=true
+      - traefik.http.routers.darts-2k-w1ibtr-62-websecure.middlewares=fuelltreffer-compress
+
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - HOST=0.0.0.0
+      - PORT=4000
+      - TWOK_SOFTWARE_API_URL=${TWOK_SOFTWARE_API_URL:-https://backend4.2k-dart-software.com/2k-backend4/api/v1/frontend}
