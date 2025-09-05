@@ -1,8 +1,14 @@
 import { AccessToken } from 'livekit-server-sdk';
 import { config } from 'dotenv';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
-// Lade .env explizit
-config();
+// Versuche .env zu laden (für Development und Docker)
+try {
+  config();
+} catch (e) {
+  console.log('No .env file found, using system environment variables');
+}
 
 export async function GET({ url }) {
   const searchParams = new URLSearchParams(url.search);
@@ -20,16 +26,20 @@ export async function GET({ url }) {
   }
 
   try {
-    // Klassischer process.env Zugriff
+    // Environment variables laden mit besserer Fehlerbehandlung
     const apiKey = process.env.LIVEKIT_API_KEY;
     const apiSecret = process.env.LIVEKIT_API_SECRET;
     const wsUrl = process.env.LIVEKIT_URL;
     const participantPrefix = process.env.LIVEKIT_PARTICIPANT_PREFIX || 'ft-';
 
-    console.log('LiveKit Config Check:', {
-      apiKey: apiKey ? 'SET' : 'MISSING',
-      apiSecret: apiSecret ? 'SET' : 'MISSING', 
-      wsUrl: wsUrl ? 'SET' : 'MISSING',
+    // Debug-Information für Docker/Production
+    console.log('Environment Debug:', {
+      NODE_ENV: process.env.NODE_ENV,
+      PWD: process.env.PWD,
+      availableEnvs: Object.keys(process.env).filter(key => key.startsWith('LIVEKIT_')),
+      apiKey: apiKey ? `${apiKey.substring(0, 6)}...` : 'MISSING',
+      apiSecret: apiSecret ? `${apiSecret.substring(0, 6)}...` : 'MISSING',
+      wsUrl: wsUrl || 'MISSING',
       roomName,
       participantName,
       isStreamer
@@ -42,6 +52,8 @@ export async function GET({ url }) {
       if (!wsUrl) missing.push('LIVEKIT_URL');
       
       console.error('Missing LiveKit credentials:', missing);
+      console.error('All env vars:', Object.keys(process.env).sort());
+      
       throw new Error(`Missing LiveKit credentials: ${missing.join(', ')}`);
     }
 

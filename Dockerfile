@@ -22,6 +22,8 @@ FROM base AS runtime
 COPY --from=prod-deps /app/node_modules ./node_modules
 # Copy built application
 COPY --from=build /app/dist ./dist
+# Copy .env file for dotenv loading
+COPY --from=build /app/.env ./.env
 
 # Set environment variables for proper host binding
 ENV HOST=0.0.0.0
