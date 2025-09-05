@@ -11,10 +11,12 @@
   let participantName = '';
   let hasActiveStream = false;
   let isConnecting = false;
+  let isStartingStream = false;
   let participantCount = 0;
   let participants = [];
   let showNewParticipantBlink = false;
   let showCountBlink = false;
+  let expandedParticipant = null;
 
   // DOM elements
   let localVideo;
@@ -27,6 +29,10 @@
       // Auto-connect für Viewer
       participantName = `Viewer-${Date.now()}`;
       connectAsViewer();
+    } else {
+      // Auto-connect für Streamer (ohne Kamera)
+      participantName = `Streamer-${Date.now()}`;
+      connectAsStreamer();
     }
   });
 
@@ -53,16 +59,47 @@
     }
   }
 
+  async function connectAsStreamer() {
+    if (!isStreamer || isConnecting) return;
+    
+    isConnecting = true;
+    status = '🔍 Verbinde zum Stream-Room...';
+
+    try {
+      await connectToRoom();
+      status = '✅ Verbunden! Bereit zum Streamen.';
+    } catch (error) {
+      console.error('Streamer connection failed:', error);
+      status = '❌ Verbindung fehlgeschlagen';
+    } finally {
+      isConnecting = false;
+    }
+  }
+
   async function startStream() {
     if (!participantName.trim()) return;
     
-    isConnecting = true;
-    await connectToRoom();
+    if (!isConnected) {
+      // Falls noch nicht verbunden, erst verbinden
+      isConnecting = true;
+      await connectToRoom();
+      isConnecting = false;
+      return; // Stopp hier - keine Kamera starten
+    }
     
     if (isStreamer && isConnected) {
-      await setupCamera();
+      isStartingStream = true;
+      status = '📹 Starte Kamera...';
+      try {
+        await setupCamera();
+        status = '✅ Stream läuft!';
+      } catch (error) {
+        console.error('Camera setup failed:', error);
+        status = '❌ Kamera-Fehler';
+      } finally {
+        isStartingStream = false;
+      }
     }
-    isConnecting = false;
   }
 
   async function connectToRoom() {
@@ -202,8 +239,48 @@
     participants = allParticipants.map(p => ({
       identity: p.identity,
       isLocal: p === room.localParticipant,
-      hasVideo: Array.from(p.videoTrackPublications.values()).some(pub => pub.isSubscribed || pub.track),
-      hasAudio: Array.from(p.audioTrackPublications.values()).some(pub => pub.isSubscribed || pub.track)
+      // Alle verfügbaren Participant-Infos sammeln
+      sid: p.sid,
+      connectionState: p.connectionState,
+      joinedAt: p.joinedAt,
+      metadata: p.metadata,
+      name: p.name,
+      // Audio/Video Status
+      isCameraEnabled: p.isCameraEnabled,
+      isMicrophoneEnabled: p.isMicrophoneEnabled,
+      isScreenShareEnabled: p.isScreenShareEnabled,
+      // Track Publications
+      audioTrackPublications: Array.from(p.audioTrackPublications.values()).map(pub => ({
+        trackSid: pub.trackSid,
+        trackName: pub.trackName,
+        kind: pub.kind,
+        source: pub.source,
+        muted: pub.muted,
+        enabled: pub.enabled,
+        subscribed: pub.subscribed,
+        encrypted: pub.encrypted
+      })),
+      videoTrackPublications: Array.from(p.videoTrackPublications.values()).map(pub => ({
+        trackSid: pub.trackSid,
+        trackName: pub.trackName,
+        kind: pub.kind,
+        source: pub.source,
+        muted: pub.muted,
+        enabled: pub.enabled,
+        subscribed: pub.subscribed,
+        encrypted: pub.encrypted,
+        dimensions: pub.dimensions
+      })),
+      // Connection Quality
+      connectionQuality: p.connectionQuality,
+      // Permissions
+      permissions: p.permissions ? {
+        canPublish: p.permissions.canPublish,
+        canSubscribe: p.permissions.canSubscribe,
+        canPublishData: p.permissions.canPublishData,
+        hidden: p.permissions.hidden,
+        recorder: p.permissions.recorder
+      } : null
     }));
 
     const newCount = participants.length;
@@ -223,6 +300,10 @@
     participantCount = newCount;
 
     console.log('Participants updated:', participants);
+  }
+
+  function toggleParticipantDetails(participantSid) {
+    expandedParticipant = expandedParticipant === participantSid ? null : participantSid;
   }
 
   function checkForActiveStreams() {
@@ -324,20 +405,41 @@
       noCameraDiv.style.display = 'none';
       localVideo.style.display = 'block';
       await room.localParticipant.publishTrack(localVideoTrack);
+      hasActiveStream = true; // Stream ist jetzt aktiv
       status = '🔴 Stream läuft...';
     } catch (error) {
       console.error('Camera error:', error);
       status = '⚠️ Kamera-Zugriff fehlgeschlagen';
+      throw error; // Error weiterwerfen für startStream
     }
   }
 
-  function stopStream() {
+  function stopCamera() {
     if (localVideoTrack) {
+      // Track vom Room entfernen
+      room.localParticipant.unpublishTrack(localVideoTrack);
+      
+      // Track stoppen und UI cleanup
       localVideoTrack.detach();
       localVideoTrack.stop();
       localVideoTrack = null;
+      
+      // UI zurücksetzen
+      if (localVideo) localVideo.style.display = 'none';
+      if (noCameraDiv) noCameraDiv.style.display = 'flex';
     }
 
+    hasActiveStream = false;
+    status = '✅ Verbunden! Bereit zum Streamen.';
+  }
+
+  function leaveRoom() {
+    // Erst Stream beenden falls aktiv
+    if (hasActiveStream) {
+      stopCamera();
+    }
+
+    // Dann Room verlassen
     if (room) {
       room.disconnect();
       room = null;
@@ -360,7 +462,6 @@
     hasActiveStream = false;
     participantCount = 0;
     participants = [];
-    lastParticipantCount = 0;
     status = isStreamer ? 'Stream beendet' : 'Verbindung getrennt';
     
     if (localVideo) {
@@ -405,18 +506,47 @@
       {#if !isConnected}
         <button 
           on:click={startStream}
-          disabled={!participantName.trim()}
-          class="w-full bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-md font-medium transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+          disabled={!participantName.trim() || isConnecting}
+          class="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md font-medium transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
-          🔴 Stream starten
+          {#if isConnecting}
+            � Verbinde...
+          {:else}
+            🔗 Room beitreten
+          {/if}
         </button>
-      {:else}
-        <button 
-          on:click={stopStream}
-          class="w-full bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-md font-medium transition-colors"
-        >
-          ⏹️ Stream beenden
-        </button>
+      {:else if !hasActiveStream}
+        <div class="space-y-2">
+          <button 
+            on:click={startStream}
+            disabled={isStartingStream}
+            class="w-full bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-md font-medium transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+          >
+            {#if isStartingStream}
+              🔄 Starte Kamera...
+            {:else}
+              🔴 Kamera starten
+            {/if}
+          </button>
+          <button 
+            on:click={leaveRoom}
+            class="w-full bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-md font-medium transition-colors"
+          >
+            🚪 Room verlassen
+          </button>
+        </div>
+      {:else if hasActiveStream}
+        <div class="space-y-2">
+          <button 
+            on:click={stopCamera}
+            class="w-full bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-md font-medium transition-colors"
+          >
+            📹 Stream beenden
+          </button>
+          <p class="text-xs text-gray-600 dark:text-gray-400 text-center">
+            Beende zuerst den Stream, um den Room zu verlassen
+          </p>
+        </div>
       {/if}
     {:else}
       <!-- Viewer Info -->
@@ -493,27 +623,155 @@
           </h4>
           <div class="space-y-1">
             {#each participants as participant}
-              <div class="flex items-center justify-between text-sm p-2 rounded bg-white dark:bg-gray-800">
-                <div class="flex items-center space-x-2">
-                  <span class="font-medium text-gray-900 dark:text-gray-100">
-                    {participant.identity}
-                  </span>
-                  {#if participant.isLocal}
-                    <span class="text-blue-600 dark:text-blue-400 text-xs">(Du)</span>
-                  {/if}
-                </div>
-                <div class="flex items-center space-x-1">
-                  {#if participant.hasVideo}
-                    <span class="text-green-500" title="Video aktiv">📹</span>
-                  {:else}
-                    <span class="text-gray-400" title="Kein Video">📹</span>
-                  {/if}
-                  {#if participant.hasAudio}
-                    <span class="text-green-500" title="Audio aktiv">🎤</span>
-                  {:else}
-                    <span class="text-gray-400" title="Kein Audio">🎤</span>
-                  {/if}
-                </div>
+              <div class="border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden">
+                <!-- Participant Header (klickbar) -->
+                <button 
+                  class="w-full flex items-center justify-between text-sm p-3 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  on:click={() => toggleParticipantDetails(participant.sid)}
+                >
+                  <div class="flex items-center space-x-2">
+                    <span class="font-medium text-gray-900 dark:text-gray-100">
+                      {participant.identity}
+                    </span>
+                    {#if participant.isLocal}
+                      <span class="text-blue-600 dark:text-blue-400 text-xs">(Du)</span>
+                    {/if}
+                    <!-- Connection Quality Indicator -->
+                    <span class="text-xs px-2 py-1 rounded-full" 
+                          class:bg-green-100={participant.connectionQuality === 'excellent'}
+                          class:text-green-800={participant.connectionQuality === 'excellent'}
+                          class:bg-yellow-100={participant.connectionQuality === 'good'}
+                          class:text-yellow-800={participant.connectionQuality === 'good'}
+                          class:bg-red-100={participant.connectionQuality === 'poor'}
+                          class:text-red-800={participant.connectionQuality === 'poor'}
+                          class:bg-gray-100={!participant.connectionQuality}
+                          class:text-gray-800={!participant.connectionQuality}>
+                      {participant.connectionQuality || 'unknown'}
+                    </span>
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <!-- Status Icons -->
+                    {#if participant.isCameraEnabled}
+                      <span class="text-green-500" title="Video aktiv">📹</span>
+                    {/if}
+                    {#if participant.isMicrophoneEnabled}
+                      <span class="text-green-500" title="Audio aktiv">🎤</span>
+                    {/if}
+                    {#if participant.isScreenShareEnabled}
+                      <span class="text-blue-500" title="Screen Share aktiv">🖥️</span>
+                    {/if}
+                    <!-- Expand/Collapse Arrow -->
+                    <span class="transform transition-transform" class:rotate-180={expandedParticipant === participant.sid}>
+                      ▼
+                    </span>
+                  </div>
+                </button>
+
+                <!-- Expanded Details -->
+                {#if expandedParticipant === participant.sid}
+                  <div class="p-4 bg-gray-50 dark:bg-gray-700/50 border-t border-gray-200 dark:border-gray-600">
+                    <div class="space-y-3 text-xs text-gray-800 dark:text-gray-200">
+                      <!-- Basic Info -->
+                      <div class="grid grid-cols-2 gap-2">
+                        <div><strong class="text-gray-900 dark:text-gray-100">SID:</strong> <span class="text-gray-700 dark:text-gray-300">{participant.sid}</span></div>
+                        <div><strong class="text-gray-900 dark:text-gray-100">Name:</strong> <span class="text-gray-700 dark:text-gray-300">{participant.name || 'N/A'}</span></div>
+                        <div><strong class="text-gray-900 dark:text-gray-100">Connection:</strong> <span class="text-gray-700 dark:text-gray-300">{participant.connectionState}</span></div>
+                        <div><strong class="text-gray-900 dark:text-gray-100">Joined:</strong> <span class="text-gray-700 dark:text-gray-300">{participant.joinedAt ? new Date(participant.joinedAt).toLocaleTimeString() : 'N/A'}</span></div>
+                      </div>
+
+                      <!-- Metadata -->
+                      {#if participant.metadata}
+                        <div>
+                          <strong class="text-gray-900 dark:text-gray-100">Metadata:</strong>
+                          <pre class="mt-1 p-2 bg-gray-200 dark:bg-gray-800 rounded text-xs overflow-x-auto text-gray-800 dark:text-gray-200">{participant.metadata}</pre>
+                        </div>
+                      {/if}
+
+                      <!-- Permissions -->
+                      {#if participant.permissions}
+                        <div>
+                          <strong class="text-gray-900 dark:text-gray-100">Permissions:</strong>
+                          <div class="mt-1 flex flex-wrap gap-1">
+                            {#if participant.permissions.canPublish}
+                              <span class="bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-200 px-2 py-1 rounded text-xs">Can Publish</span>
+                            {/if}
+                            {#if participant.permissions.canSubscribe}
+                              <span class="bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-200 px-2 py-1 rounded text-xs">Can Subscribe</span>
+                            {/if}
+                            {#if participant.permissions.canPublishData}
+                              <span class="bg-purple-100 dark:bg-purple-800 text-purple-800 dark:text-purple-200 px-2 py-1 rounded text-xs">Can Publish Data</span>
+                            {/if}
+                            {#if participant.permissions.hidden}
+                              <span class="bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 px-2 py-1 rounded text-xs">Hidden</span>
+                            {/if}
+                            {#if participant.permissions.recorder}
+                              <span class="bg-red-100 dark:bg-red-800 text-red-800 dark:text-red-200 px-2 py-1 rounded text-xs">Recorder</span>
+                            {/if}
+                          </div>
+                        </div>
+                      {/if}
+
+                      <!-- Audio Tracks -->
+                      {#if participant.audioTrackPublications.length > 0}
+                        <div>
+                          <strong class="text-gray-900 dark:text-gray-100">Audio Tracks:</strong>
+                          {#each participant.audioTrackPublications as track}
+                            <div class="mt-1 p-2 bg-white dark:bg-gray-800 rounded border border-gray-300 dark:border-gray-600">
+                              <div class="flex flex-wrap gap-2 text-xs">
+                                <span class="text-gray-800 dark:text-gray-200"><strong>SID:</strong> {track.trackSid}</span>
+                                <span class="text-gray-800 dark:text-gray-200"><strong>Name:</strong> {track.trackName || 'N/A'}</span>
+                                <span class="text-gray-800 dark:text-gray-200"><strong>Source:</strong> {track.source}</span>
+                                <span class="px-2 py-1 rounded" class:bg-green-100={!track.muted} class:text-green-800={!track.muted} class:dark:bg-green-800={!track.muted} class:dark:text-green-200={!track.muted} class:bg-red-100={track.muted} class:text-red-800={track.muted} class:dark:bg-red-800={track.muted} class:dark:text-red-200={track.muted}>
+                                  {track.muted ? 'Muted' : 'Active'}
+                                </span>
+                                <span class="px-2 py-1 rounded" class:bg-green-100={track.enabled} class:text-green-800={track.enabled} class:dark:bg-green-800={track.enabled} class:dark:text-green-200={track.enabled} class:bg-gray-200={!track.enabled} class:text-gray-800={!track.enabled} class:dark:bg-gray-600={!track.enabled} class:dark:text-gray-200={!track.enabled}>
+                                  {track.enabled ? 'Enabled' : 'Disabled'}
+                                </span>
+                                <span class="px-2 py-1 rounded" class:bg-blue-100={track.subscribed} class:text-blue-800={track.subscribed} class:dark:bg-blue-800={track.subscribed} class:dark:text-blue-200={track.subscribed} class:bg-gray-200={!track.subscribed} class:text-gray-800={!track.subscribed} class:dark:bg-gray-600={!track.subscribed} class:dark:text-gray-200={!track.subscribed}>
+                                  {track.subscribed ? 'Subscribed' : 'Not Subscribed'}
+                                </span>
+                                {#if track.encrypted}
+                                  <span class="bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200 px-2 py-1 rounded">🔒 Encrypted</span>
+                                {/if}
+                              </div>
+                            </div>
+                          {/each}
+                        </div>
+                      {/if}
+
+                      <!-- Video Tracks -->
+                      {#if participant.videoTrackPublications.length > 0}
+                        <div>
+                          <strong class="text-gray-900 dark:text-gray-100">Video Tracks:</strong>
+                          {#each participant.videoTrackPublications as track}
+                            <div class="mt-1 p-2 bg-white dark:bg-gray-800 rounded border border-gray-300 dark:border-gray-600">
+                              <div class="flex flex-wrap gap-2 text-xs">
+                                <span class="text-gray-800 dark:text-gray-200"><strong>SID:</strong> {track.trackSid}</span>
+                                <span class="text-gray-800 dark:text-gray-200"><strong>Name:</strong> {track.trackName || 'N/A'}</span>
+                                <span class="text-gray-800 dark:text-gray-200"><strong>Source:</strong> {track.source}</span>
+                                {#if track.dimensions}
+                                  <span class="text-gray-800 dark:text-gray-200"><strong>Resolution:</strong> {track.dimensions.width}x{track.dimensions.height}</span>
+                                {/if}
+                                <span class="px-2 py-1 rounded" class:bg-green-100={!track.muted} class:text-green-800={!track.muted} class:dark:bg-green-800={!track.muted} class:dark:text-green-200={!track.muted} class:bg-red-100={track.muted} class:text-red-800={track.muted} class:dark:bg-red-800={track.muted} class:dark:text-red-200={track.muted}>
+                                  {track.muted ? 'Muted' : 'Active'}
+                                </span>
+                                <span class="px-2 py-1 rounded" class:bg-green-100={track.enabled} class:text-green-800={track.enabled} class:dark:bg-green-800={track.enabled} class:dark:text-green-200={track.enabled} class:bg-gray-200={!track.enabled} class:text-gray-800={!track.enabled} class:dark:bg-gray-600={!track.enabled} class:dark:text-gray-200={!track.enabled}>
+                                  {track.enabled ? 'Enabled' : 'Disabled'}
+                                </span>
+                                <span class="px-2 py-1 rounded" class:bg-blue-100={track.subscribed} class:text-blue-800={track.subscribed} class:dark:bg-blue-800={track.subscribed} class:dark:text-blue-200={track.subscribed} class:bg-gray-200={!track.subscribed} class:text-gray-800={!track.subscribed} class:dark:bg-gray-600={!track.subscribed} class:dark:text-gray-200={!track.subscribed}>
+                                  {track.subscribed ? 'Subscribed' : 'Not Subscribed'}
+                                </span>
+                                {#if track.encrypted}
+                                  <span class="bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-200 px-2 py-1 rounded">🔒 Encrypted</span>
+                                {/if}
+                              </div>
+                            </div>
+                          {/each}
+                        </div>
+                      {/if}
+                    </div>
+                  </div>
+                {/if}
               </div>
             {/each}
           </div>
@@ -528,9 +786,23 @@
   </div>
 
   <!-- Info Box -->
-  <div class="bg-{isStreamer ? 'blue' : 'green'}-50 dark:bg-{isStreamer ? 'blue' : 'green'}-900/20 border border-{isStreamer ? 'blue' : 'green'}-200 dark:border-{isStreamer ? 'blue' : 'green'}-800 rounded-lg p-4">
-    <h3 class="text-sm font-medium text-{isStreamer ? 'blue' : 'green'}-800 dark:text-{isStreamer ? 'blue' : 'green'}-200 mb-2">ℹ️ Info</h3>
-    <p class="text-sm text-{isStreamer ? 'blue' : 'green'}-700 dark:text-{isStreamer ? 'blue' : 'green'}-300">
+  <div class="rounded-lg p-4 border dark:bg-gray-800 dark:border-gray-700" 
+       class:bg-blue-50={isStreamer} 
+       class:border-blue-200={isStreamer} 
+       class:bg-green-50={!isStreamer} 
+       class:border-green-200={!isStreamer}>
+    <h3 class="text-sm font-medium mb-2"
+        class:text-blue-800={isStreamer} 
+        class:dark:text-blue-400={isStreamer}
+        class:text-green-800={!isStreamer} 
+        class:dark:text-green-400={!isStreamer}>
+      ℹ️ Info
+    </h3>
+    <p class="text-sm"
+       class:text-blue-700={isStreamer} 
+       class:dark:text-blue-300={isStreamer}
+       class:text-green-700={!isStreamer} 
+       class:dark:text-green-300={!isStreamer}>
       {isStreamer 
         ? 'Sobald du streamst, können andere auf der Viewer-Seite deinen Stream sehen.'
         : 'Live-Streams werden automatisch erkannt und angezeigt. Bei Unterbrechungen wird automatisch neu verbunden.'
