@@ -1,8 +1,50 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import LiveKitStream from '../components/svelte/LiveKitStream.svelte';
+import StreamerAuth from '../components/svelte/StreamerAuth.svelte';
+
+// Check authentication
+const authCookie = Astro.cookies.get('streamer_auth');
+const isAuthenticated = authCookie?.value === 'authenticated';
 ---
 
 <Layout title="Streamer | Fülltreffer">
-  <LiveKitStream isStreamer={true} client:load />
+  {isAuthenticated ? (
+    <div>
+      <LiveKitStream isStreamer={true} client:load />
+      
+      <!-- Logout Button -->
+      <div class="max-w-4xl mx-auto px-4 pb-8">
+        <div class="text-center">
+          <button 
+            id="logout-btn"
+            class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md text-sm transition-colors"
+          >
+            🚪 Abmelden
+          </button>
+        </div>
+      </div>
+    </div>
+  ) : (
+    <StreamerAuth client:load />
+  )}
 </Layout>
+
+{isAuthenticated && (
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const logoutBtn = document.getElementById('logout-btn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', async () => {
+          try {
+            await fetch('/api/auth', { method: 'DELETE' });
+            window.location.reload();
+          } catch (error) {
+            console.error('Logout error:', error);
+            window.location.reload();
+          }
+        });
+      }
+    });
+  </script>
+)}
