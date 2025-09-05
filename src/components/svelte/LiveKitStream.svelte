@@ -11,6 +11,10 @@
   let participantName = '';
   let hasActiveStream = false;
   let isConnecting = false;
+  let participantCount = 0;
+  let participants = [];
+  let showNewParticipantBlink = false;
+  let showCountBlink = false;
 
   // DOM elements
   let localVideo;
@@ -94,6 +98,8 @@
         isConnected = true;
         status = isStreamer ? '✅ Verbunden!' : '✅ Verbunden! Warte auf Streams...';
         
+        updateParticipantsList();
+        
         if (!isStreamer) {
           checkForActiveStreams();
         }
@@ -157,12 +163,14 @@
 
         room.on(RoomEvent.ParticipantConnected, (participant) => {
           console.log('Participant connected:', participant.identity);
+          updateParticipantsList();
           // Warte kurz bis Tracks verfügbar sind
           setTimeout(checkForActiveStreams, 1000);
         });
 
         room.on(RoomEvent.ParticipantDisconnected, (participant) => {
           console.log('Participant disconnected:', participant.identity);
+          updateParticipantsList();
           setTimeout(checkForActiveStreams, 500);
         });
       }
@@ -176,6 +184,45 @@
       isConnected = false;
       throw error;
     }
+  }
+
+  function updateParticipantsList() {
+    if (!room) {
+      participantCount = 0;
+      participants = [];
+      return;
+    }
+
+    // Alle Teilnehmer sammeln (inkl. local participant)
+    const allParticipants = [
+      room.localParticipant,
+      ...Array.from(room.remoteParticipants.values())
+    ].filter(p => p && p.identity);
+
+    participants = allParticipants.map(p => ({
+      identity: p.identity,
+      isLocal: p === room.localParticipant,
+      hasVideo: Array.from(p.videoTrackPublications.values()).some(pub => pub.isSubscribed || pub.track),
+      hasAudio: Array.from(p.audioTrackPublications.values()).some(pub => pub.isSubscribed || pub.track)
+    }));
+
+    const newCount = participants.length;
+    const oldCount = participantCount;
+    
+    // Blink-Effekt bei Änderung der Teilnehmerzahl
+    if (newCount !== oldCount && oldCount > 0) {
+      showCountBlink = true;
+      showNewParticipantBlink = true;
+      
+      setTimeout(() => {
+        showCountBlink = false;
+        showNewParticipantBlink = false;
+      }, 800);
+    }
+    
+    participantCount = newCount;
+
+    console.log('Participants updated:', participants);
   }
 
   function checkForActiveStreams() {
@@ -311,6 +358,9 @@
   function handleDisconnection() {
     isConnected = false;
     hasActiveStream = false;
+    participantCount = 0;
+    participants = [];
+    lastParticipantCount = 0;
     status = isStreamer ? 'Stream beendet' : 'Verbindung getrennt';
     
     if (localVideo) {
@@ -388,9 +438,35 @@
 
     <!-- Video Display -->
     <div class="mt-6">
-      <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-3">
-        {isStreamer ? 'Kamera-Vorschau' : 'Live Stream'}
-      </h3>
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+          {isStreamer ? 'Kamera-Vorschau' : 'Live Stream'}
+        </h3>
+        
+        <!-- Participants Counter -->
+        {#if isConnected && participantCount > 0}
+          <div class="flex items-center space-x-2">
+            <div class="flex items-center space-x-1 bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full text-sm transition-all duration-200" class:ring-2={showCountBlink} class:ring-blue-400={showCountBlink} class:ring-opacity-60={showCountBlink}>
+              <span class="text-gray-600 dark:text-gray-400">👥</span>
+              
+              <!-- Simple Counter mit Blink-Effekt -->
+              <span 
+                class="font-medium text-gray-900 dark:text-gray-100"
+                class:text-green-600={showNewParticipantBlink}
+                class:dark:text-green-400={showNewParticipantBlink}
+              >
+                {participantCount}
+              </span>
+              
+              {#if hasActiveStream}
+                <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse ml-1"></span>
+              {:else}
+                <span class="w-2 h-2 bg-gray-400 rounded-full ml-1"></span>
+              {/if}
+            </div>
+          </div>
+        {/if}
+      </div>
       <div class="relative bg-gray-900 rounded-lg overflow-hidden aspect-video">
         {#if isStreamer}
           <video bind:this={localVideo} autoplay muted playsinline class="w-full h-full object-cover" style="display: none;"></video>
@@ -404,6 +480,45 @@
           </div>
         {/if}
       </div>
+
+      <!-- Participants List (nur für Streamer) -->
+      {#if isStreamer && isConnected && participants.length > 0}
+        <div class="mt-4 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+          <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 flex items-center">
+            <span class="mr-2">👥</span>
+            Teilnehmer ({participantCount})
+            {#if showNewParticipantBlink}
+              <span class="ml-2 text-green-600 dark:text-green-400 animate-pulse">+NEU</span>
+            {/if}
+          </h4>
+          <div class="space-y-1">
+            {#each participants as participant}
+              <div class="flex items-center justify-between text-sm p-2 rounded bg-white dark:bg-gray-800">
+                <div class="flex items-center space-x-2">
+                  <span class="font-medium text-gray-900 dark:text-gray-100">
+                    {participant.identity}
+                  </span>
+                  {#if participant.isLocal}
+                    <span class="text-blue-600 dark:text-blue-400 text-xs">(Du)</span>
+                  {/if}
+                </div>
+                <div class="flex items-center space-x-1">
+                  {#if participant.hasVideo}
+                    <span class="text-green-500" title="Video aktiv">📹</span>
+                  {:else}
+                    <span class="text-gray-400" title="Kein Video">📹</span>
+                  {/if}
+                  {#if participant.hasAudio}
+                    <span class="text-green-500" title="Audio aktiv">🎤</span>
+                  {:else}
+                    <span class="text-gray-400" title="Kein Audio">🎤</span>
+                  {/if}
+                </div>
+              </div>
+            {/each}
+          </div>
+        </div>
+      {/if}
     </div>
 
     <!-- Status -->
