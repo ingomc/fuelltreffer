@@ -16,7 +16,7 @@ const url = new URL(Astro.request.url);
 const selectedTeamId = url.searchParams.get('team') || '308868';
 ---
 
-<!-- Sticky Header mit Team-Auswahl -->
+<!-- Sticky Header mit Navigation und Team-Auswahl -->
 <header class="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm transition-colors duration-200">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-16">
@@ -29,23 +29,64 @@ const selectedTeamId = url.searchParams.get('team') || '308868';
           🎯Fülltreffer
         </a>
       </div>
+
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex items-center space-x-6">
+        <a href="/" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+          🏠 Dashboard
+        </a>
+        <a href="/streamer" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+          📹 Streamer
+        </a>
+        <a href="/viewer" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+          👀 Viewer
+        </a>
+      </nav>
       
-      <!-- Team-Auswahl Dropdown -->
-      <div class="relative">
-        <div id="team-selector" class="flex items-center">
-          <span class="text-sm text-gray-600 dark:text-gray-400 mr-2 hidden sm:inline transition-colors duration-200">🏆</span>
-          <select 
-            id="header-team-select" 
-            class="text-sm border border-gray-300 dark:border-gray-600 rounded-md px-3 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-colors duration-200"
-          >
-            {ligaTeams.map(team => (
-              <option value={team.id} selected={team.id === selectedTeamId}>
-                {team.name}
-              </option>
-            ))}
-          </select>
+      <div class="flex items-center space-x-3">
+        <!-- Team-Auswahl Dropdown -->
+        <div class="relative">
+          <div id="team-selector" class="flex items-center">
+            <span class="text-sm text-gray-600 dark:text-gray-400 mr-2 hidden sm:inline transition-colors duration-200">🏆</span>
+            <select 
+              id="header-team-select" 
+              class="text-sm border border-gray-300 dark:border-gray-600 rounded-md px-3 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-blue-500 dark:focus:border-blue-400 transition-colors duration-200"
+            >
+              {ligaTeams.map(team => (
+                <option value={team.id} selected={team.id === selectedTeamId}>
+                  {team.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
+
+        <!-- Mobile Burger Menu Button -->
+        <button 
+          id="mobile-menu-button"
+          class="md:hidden p-2 rounded-md text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          aria-label="Navigation öffnen"
+        >
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
       </div>
+    </div>
+
+    <!-- Mobile Navigation Menu -->
+    <div id="mobile-menu" class="hidden md:hidden border-t border-gray-200 dark:border-gray-700">
+      <nav class="py-2 space-y-1">
+        <a href="/" class="block px-3 py-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors rounded-md">
+          🏠 Dashboard
+        </a>
+        <a href="/streamer" class="block px-3 py-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors rounded-md">
+          📹 Streamer
+        </a>
+        <a href="/viewer" class="block px-3 py-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors rounded-md">
+          👀 Viewer
+        </a>
+      </nav>
     </div>
   </div>
 </header>
@@ -63,6 +104,23 @@ const selectedTeamId = url.searchParams.get('team') || '308868';
           url.searchParams.set('team', selectedTeamId);
           // Keep existing tab parameter if present
           window.location.href = url.toString();
+        }
+      });
+    }
+
+    // Handle mobile menu toggle
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    if (mobileMenuButton && mobileMenu) {
+      mobileMenuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener('click', (event) => {
+        if (!mobileMenuButton.contains(event.target as Node) && !mobileMenu.contains(event.target as Node)) {
+          mobileMenu.classList.add('hidden');
         }
       });
     }

@@ -1,0 +1,8 @@
+---
+import Layout from '../layouts/Layout.astro';
+import LiveKitStream from '../components/svelte/LiveKitStream.svelte';
+---
+
+<Layout title="Streamer | Fülltreffer">
+  <LiveKitStream isStreamer={true} client:load />
+</Layout>
