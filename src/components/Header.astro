@@ -14,6 +14,12 @@ const ligaTeams = [
 // Get current team from URL parameter
 const url = new URL(Astro.request.url);
 const selectedTeamId = url.searchParams.get('team') || '308868';
+
+// Get current path for active navigation
+const currentPath = url.pathname;
+const isDashboard = currentPath === '/';
+const isViewer = currentPath === '/viewer';
+const isStreamer = currentPath === '/streamer';
 ---
 
 <!-- Sticky Header mit Navigation und Team-Auswahl -->
@@ -32,12 +38,31 @@ const selectedTeamId = url.searchParams.get('team') || '308868';
 
       <!-- Desktop Navigation -->
       <nav class="hidden md:flex items-center space-x-6">
-        <a href="/" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+        <a 
+          href="/" 
+          class={`transition-colors ${
+            isDashboard 
+              ? 'text-blue-600 dark:text-blue-400 font-medium' 
+              : 'text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400'
+          }`}
+        >
           🏠 Dashboard
         </a>
-        <a href="/viewer" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+        <a 
+          href="/viewer" 
+          class={`transition-colors ${
+            isViewer 
+              ? 'text-blue-600 dark:text-blue-400 font-medium' 
+              : 'text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400'
+          }`}
+        >
           👀 Viewer
         </a>
+        {isStreamer && (
+          <span class="text-blue-600 dark:text-blue-400 font-medium">
+            🎥 Streamer
+          </span>
+        )}
       </nav>
       
       <div class="flex items-center space-x-3">
@@ -74,12 +99,31 @@ const selectedTeamId = url.searchParams.get('team') || '308868';
     <!-- Mobile Navigation Menu -->
     <div id="mobile-menu" class="hidden md:hidden border-t border-gray-200 dark:border-gray-700">
       <nav class="py-2 space-y-1">
-        <a href="/" class="block px-3 py-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors rounded-md">
+        <a 
+          href="/" 
+          class={`block px-3 py-2 transition-colors rounded-md ${
+            isDashboard 
+              ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 font-medium' 
+              : 'text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800'
+          }`}
+        >
           🏠 Dashboard
         </a>
-        <a href="/viewer" class="block px-3 py-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors rounded-md">
+        <a 
+          href="/viewer" 
+          class={`block px-3 py-2 transition-colors rounded-md ${
+            isViewer 
+              ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 font-medium' 
+              : 'text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800'
+          }`}
+        >
           👀 Viewer
         </a>
+        {isStreamer && (
+          <span class="block px-3 py-2 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 font-medium rounded-md">
+            🎥 Streamer
+          </span>
+        )}
       </nav>
     </div>
   </div>
