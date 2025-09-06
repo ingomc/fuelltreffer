@@ -10,7 +10,10 @@ const setTimeout = globalThis.setTimeout;
  * Handles incoming video track from remote participant
  */
 export function handleVideoTrackSubscribed(track, participant, remoteVideos, noStreamDiv, screenShareVideo) {
+  console.log(`🎬 VIDEO TRACK SUBSCRIBED: ${participant.identity}`);
   console.log(`Video track subscribed from ${participant.identity}, name: ${track.name}, source: ${track.source}`);
+  console.log(`remoteVideos element:`, remoteVideos);
+  console.log(`noStreamDiv element:`, noStreamDiv);
   
   // Check if this is a screen share track - LiveKit uses different naming
   const isScreenShare = track.name === 'screen_share' || 
@@ -43,13 +46,48 @@ export function handleVideoTrackSubscribed(track, participant, remoteVideos, noS
       // Make sure the video is visible and properly configured
       screenShareVideo.style.display = 'block';
       screenShareVideo.style.width = '100%';
-      screenShareVideo.style.height = 'auto';
+      screenShareVideo.style.height = '100%';
       screenShareVideo.style.objectFit = 'contain';
       screenShareVideo.style.backgroundColor = '#000';
       screenShareVideo.autoplay = true;
       screenShareVideo.playsInline = true;
       screenShareVideo.muted = false; // Screen share should have audio
-      screenShareVideo.controls = false;
+      screenShareVideo.controls = true;
+      
+      // Function to set screen share aspect ratio
+      const setScreenShareAspectRatio = () => {
+        const videoTrack = track.mediaStreamTrack;
+        if (videoTrack && videoTrack.getSettings) {
+          const settings = videoTrack.getSettings();
+          if (settings.width && settings.height) {
+            const aspectRatio = settings.width / settings.height;
+            console.log(`📐 Screen share dimensions: ${settings.width}x${settings.height}, aspect ratio: ${aspectRatio.toFixed(2)}`);
+            
+            // Get the screen share container (parent of screenShareVideo)
+            const container = screenShareVideo.parentElement;
+            if (container) {
+              // Calculate height based on container width and aspect ratio
+              const containerWidth = container.offsetWidth || 800; // fallback for screen shares
+              const calculatedHeight = containerWidth / aspectRatio;
+              
+              console.log(`📦 Screen share container width: ${containerWidth}px, calculated height: ${calculatedHeight.toFixed(0)}px`);
+              
+              // Set container aspect ratio
+              container.style.aspectRatio = `${aspectRatio}`;
+              container.style.height = `${Math.min(calculatedHeight, window.innerHeight * 0.7)}px`; // Max 70vh
+            }
+          }
+        }
+      };
+      
+      // Set aspect ratio when metadata is loaded
+      screenShareVideo.addEventListener('loadedmetadata', () => {
+        console.log('📹 Screen share metadata loaded, setting aspect ratio...');
+        setScreenShareAspectRatio();
+      });
+      
+      // Also try immediately
+      setTimeout(setScreenShareAspectRatio, 100);
       
       // Force a play attempt after a small delay to ensure srcObject is set
       setTimeout(() => {
@@ -77,11 +115,11 @@ export function handleVideoTrackSubscribed(track, participant, remoteVideos, noS
   video.autoplay = true;
   video.playsInline = true;
   video.muted = false;
-  video.controls = false;
+  video.controls = true;
   
   // Style the video element
   video.style.width = '100%';
-  video.style.height = '100%';
+  video.style.height = 'auto';
   video.style.objectFit = 'contain';
   video.style.backgroundColor = 'black';
   video.style.borderRadius = '8px';
@@ -89,18 +127,50 @@ export function handleVideoTrackSubscribed(track, participant, remoteVideos, noS
   track.attach(video);
   
   if (remoteVideos && noStreamDiv) {
+    console.log(`📺 Creating remote video element for ${participant.identity}`);
     // Create container for this video
     const container = document.createElement('div');
     container.className = 'video-container';
     container.style.cssText = `
       position: relative;
       width: 100%;
-      height: 400px;
+      height: auto;
+      min-height: 200px;
       margin-bottom: 16px;
       border-radius: 8px;
       overflow: hidden;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      resize: both;
+      border: 2px solid transparent;
+      transition: border-color 0.2s ease;
     `;
+    
+    // Function to calculate and set proper aspect ratio
+    const setVideoAspectRatio = () => {
+      const videoTrack = track.mediaStreamTrack;
+      if (videoTrack && videoTrack.getSettings) {
+        const settings = videoTrack.getSettings();
+        if (settings.width && settings.height) {
+          const aspectRatio = settings.width / settings.height;
+          console.log(`📐 Video dimensions: ${settings.width}x${settings.height}, aspect ratio: ${aspectRatio.toFixed(2)}`);
+          
+          // Calculate container height based on current width and aspect ratio  
+          const containerWidth = container.offsetWidth || 400; // fallback width
+          const calculatedHeight = containerWidth / aspectRatio;
+          
+          console.log(`📦 Container width: ${containerWidth}px, calculated height: ${calculatedHeight.toFixed(0)}px`);
+          
+          // Set the container dimensions to maintain aspect ratio
+          container.style.height = `${calculatedHeight}px`;
+          container.style.aspectRatio = `${aspectRatio}`;
+          
+          // Ensure video fills container properly
+          video.style.width = '100%';
+          video.style.height = '100%';
+          video.style.objectFit = 'cover'; // Cover for better fit
+        }
+      }
+    };
     
     // Add participant label
     const label = document.createElement('div');
@@ -120,6 +190,24 @@ export function handleVideoTrackSubscribed(track, participant, remoteVideos, noS
     container.appendChild(video);
     container.appendChild(label);
     remoteVideos.appendChild(container);
+    
+    // Set initial aspect ratio when video metadata is loaded
+    video.addEventListener('loadedmetadata', () => {
+      console.log('📹 Video metadata loaded, setting aspect ratio...');
+      setVideoAspectRatio();
+    });
+    
+    // Also try to set it immediately in case metadata is already available
+    setTimeout(setVideoAspectRatio, 100);
+    
+    // Add hover effect for resizable container
+    container.addEventListener('mouseenter', () => {
+      container.style.borderColor = 'rgba(59, 130, 246, 0.5)';
+    });
+    
+    container.addEventListener('mouseleave', () => {
+      container.style.borderColor = 'transparent';
+    });
     
     // Hide "no stream" message since we have a video
     noStreamDiv.style.display = 'none';
@@ -201,6 +289,46 @@ export async function startCamera(localVideo, noCameraDiv) {
     if (localVideo) {
       videoTrack.attach(localVideo);
       localVideo.style.display = 'block';
+      
+      // Set up aspect ratio for local video
+      const setLocalVideoAspectRatio = () => {
+        const mediaStreamTrack = videoTrack.mediaStreamTrack;
+        if (mediaStreamTrack && mediaStreamTrack.getSettings) {
+          const settings = mediaStreamTrack.getSettings();
+          if (settings.width && settings.height) {
+            const aspectRatio = settings.width / settings.height;
+            console.log(`📐 Local video dimensions: ${settings.width}x${settings.height}, aspect ratio: ${aspectRatio.toFixed(2)}`);
+            
+            // Get the video container (parent of localVideo)
+            const container = localVideo.parentElement;
+            if (container && container.classList.contains('video-container')) {
+              // Calculate height based on container width and aspect ratio
+              const containerWidth = container.offsetWidth || 400;
+              const calculatedHeight = containerWidth / aspectRatio;
+              
+              console.log(`📦 Local video container width: ${containerWidth}px, calculated height: ${calculatedHeight.toFixed(0)}px`);
+              
+              // Set container dimensions
+              container.style.aspectRatio = `${aspectRatio}`;
+              container.style.height = `${calculatedHeight}px`;
+              
+              // Make video fill container
+              localVideo.style.width = '100%';
+              localVideo.style.height = '100%';
+              localVideo.style.objectFit = 'cover';
+            }
+          }
+        }
+      };
+      
+      // Set aspect ratio when metadata is loaded
+      localVideo.addEventListener('loadedmetadata', () => {
+        console.log('📹 Local video metadata loaded, setting aspect ratio...');
+        setLocalVideoAspectRatio();
+      });
+      
+      // Also try immediately
+      setTimeout(setLocalVideoAspectRatio, 100);
     }
     
     // Hide "no camera" placeholder

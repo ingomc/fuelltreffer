@@ -34,7 +34,8 @@
           autoplay 
           muted 
           playsinline
-          style="display: none;"
+          controls={true}
+          style="display: none; width: 100%; height: auto; object-fit: contain;"
         ></video>
         
         <div 
@@ -75,7 +76,7 @@
         class="screen-share-video"
         autoplay 
         playsinline
-        controls={false}
+        controls={true}
         muted={false}
       ></video>
       <div class="screen-share-label">
@@ -104,7 +105,7 @@
   /* Kleinere Videos während Screen-Sharing */
   .video-grid-container.screen-sharing {
     --video-width: 400px;
-    --video-height: 300px;
+    --video-height: auto;
     --video-max-width: 400px;
     --video-max-height: 300px;
   }
@@ -122,26 +123,34 @@
     height: var(--video-height);
     max-width: var(--video-max-width);
     max-height: var(--video-max-height);
+    position: relative;
+    resize: both;
+    overflow: hidden;
+    min-width: 200px;
+    min-height: 150px;
+    border: 2px solid transparent;
+    transition: border-color 0.2s ease;
+  }
+  
+  .video-container:hover {
+    border-color: rgba(59, 130, 246, 0.5);
+  }
+  
+  .video-container:focus-within {
+    border-color: rgba(59, 130, 246, 0.8);
+    outline: none;
   }
   
   .remote-videos {
     display: contents;
   }
   
-  /* Alle Videos in remote-videos verwenden die Custom Properties */
-  .remote-videos .video-container {
-    width: var(--video-width);
-    height: var(--video-height);
-    max-width: var(--video-max-width);
-    max-height: var(--video-max-height);
-  }
-  
-  .remote-videos .video-container video {
+  .video-element {
     width: 100%;
-    height: 100%;
-    max-width: var(--video-max-width);
-    max-height: var(--video-max-height);
-    object-fit: cover;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+    background: #000;
   }
   
   /* Screen Share Styles */
@@ -152,6 +161,22 @@
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    resize: both;
+    min-width: 100px;
+    min-height: 300px;
+    max-width: 100%;
+    max-height: 80vh;
+    border: 2px solid transparent;
+    transition: border-color 0.2s ease;
+  }
+  
+  .screen-share-container:hover {
+    border-color: rgba(34, 197, 94, 0.5);
+  }
+  
+  .screen-share-container:focus-within {
+    border-color: rgba(34, 197, 94, 0.8);
+    outline: none;
   }
   
   .screen-share-video {
@@ -160,6 +185,7 @@
     max-height: 70vh;
     object-fit: contain;
     display: block;
+    background: #000;
   }
   
   .screen-share-label {
@@ -183,7 +209,7 @@
     /* Mobile: Noch kleinere Videos während Screen-Sharing */
     .video-grid-container.screen-sharing {
       --video-width: 250px;
-      --video-height: 200px;
+      --video-height: auto;
       --video-max-width: 250px;
       --video-max-height: 200px;
     }
