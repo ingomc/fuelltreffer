@@ -68,10 +68,6 @@
   </div>
   
   <!-- Screen Share Container -->
-  <div class="screen-share-test" style="margin: 10px 0; padding: 10px; background: yellow; border: 2px solid red;">
-    🔍 DEBUG: isStreamer={isStreamer} | showContainer={showScreenShareContainer} | $isScreenSharing={$isScreenSharing} | hasRemoteScreenShare={hasRemoteScreenShare}
-  </div>
-  
   {#if showScreenShareContainer}
     <div class="screen-share-container">
       <video 
@@ -81,30 +77,10 @@
         playsinline
         controls={false}
         muted={false}
-        style="background: #000; min-height: 300px; border: 3px solid green;"
-        on:loadstart={() => console.log('📺 Screen share video: loadstart event')}
-        on:loadeddata={() => console.log('📺 Screen share video: loadeddata event')}
-        on:canplay={() => console.log('📺 Screen share video: canplay event')}
-        on:play={() => console.log('📺 Screen share video: play event')}
-        on:error={(e) => console.error('📺 Screen share video error:', e)}
       ></video>
       <div class="screen-share-label">
-        🖥️ {isStreamer ? 'Dein' : 'Fremder'} Bildschirm wird geteilt (LiveKit Built-in)
+        🖥️ {isStreamer ? 'Dein' : 'Fremder'} Bildschirm wird geteilt
       </div>
-      <div class="debug-info" style="position: absolute; bottom: 50px; left: 12px; background: rgba(255,255,255,0.9); padding: 8px; font-size: 11px; border-radius: 4px; color: black; font-family: monospace;">
-        Role: {isStreamer ? 'STREAMER' : 'VIEWER'}<br/>
-        showContainer: {showScreenShareContainer}<br/>
-        localScreenSharing: {$isScreenSharing}<br/>
-        remoteScreenSharing: {hasRemoteScreenShare}<br/>
-        videoElement: {screenShareVideo !== null ? 'bound' : 'null'}<br/>
-        srcObject: {screenShareVideo?.srcObject ? 'present' : 'null'}
-      </div>
-    </div>
-  {:else}
-    <div style="background: orange; padding: 10px; margin: 10px 0;">
-      ❌ DEBUG: Screen share container NOT shown<br/>
-      Role: {isStreamer ? 'STREAMER' : 'VIEWER'} | showScreenShareContainer: {showScreenShareContainer}<br/>
-      localScreenSharing: {$isScreenSharing} | remoteScreenSharing: {hasRemoteScreenShare}
     </div>
   {/if}
 </div>

@@ -91,6 +91,50 @@ export function setupChatHandlers(room) {
     }
   });
 
+  // Stream events handler - NEW: Handle broadcast stream events
+  room.registerTextStreamHandler('stream-events', async (reader, participantInfo) => {
+    try {
+      const eventData = JSON.parse(await reader.readAll());
+      
+      if (eventData.type === 'stream-event') {
+        const cleanName = getDisplayNameFromParticipantName(eventData.participantName);
+        let content = '';
+        
+        switch (eventData.action) {
+          case 'stream-start':
+            content = `🔴 ${cleanName} hat den Stream gestartet`;
+            break;
+          case 'stream-stop':
+            content = `⏹️ ${cleanName} hat den Stream gestoppt`;
+            break;
+          case 'screenshare-start':
+            content = `🖥️ ${cleanName} teilt den Bildschirm`;
+            break;
+          case 'screenshare-stop':
+            content = `🖥️ ${cleanName} hat die Bildschirmfreigabe beendet`;
+            break;
+          default:
+            return; // Unknown action, ignore
+        }
+        
+        // Only add the message if it's from a different participant 
+        // (to avoid duplicates since sender already added it locally)
+        if (participantInfo.identity !== room.localParticipant.identity) {
+          addChatMessage({
+            participantName: 'System',
+            participantId: 'system',
+            content: content,
+            type: 'system',
+            timestamp: Date.now()
+          });
+          console.log('Stream event received from remote:', eventData.action, cleanName);
+        }
+      }
+    } catch (error) {
+      console.error('Error processing stream event:', error);
+    }
+  });
+
   console.log('Chat handlers registered successfully');
 }
 
@@ -174,48 +218,132 @@ export function addSystemMessage(content) {
 }
 
 /**
- * Add stream event messages to chat
+ * Add stream event messages to chat and broadcast them
  */
-export function addStreamStartMessage(participantName) {
+export async function addStreamStartMessage(participantName, room = null) {
   const cleanName = getDisplayNameFromParticipantName(participantName);
-  addChatMessage({
+  const content = `🔴 ${cleanName} hat den Stream gestartet`;
+  
+  const messageData = {
     participantName: 'System',
     participantId: 'system',
-    content: `🔴 ${cleanName} hat den Stream gestartet`,
+    content: content,
     type: 'system',
     timestamp: Date.now()
-  });
+  };
+  
+  // Add locally
+  addChatMessage(messageData);
+  
+  // Broadcast to all participants if room is available
+  if (room) {
+    try {
+      await room.localParticipant.sendText(JSON.stringify({
+        type: 'stream-event',
+        action: 'stream-start',
+        participantName: cleanName
+      }), {
+        topic: 'stream-events'
+      });
+      console.log('Stream start event broadcasted');
+    } catch (error) {
+      console.error('Failed to broadcast stream start:', error);
+    }
+  }
 }
 
-export function addStreamStopMessage(participantName) {
+export async function addStreamStopMessage(participantName, room = null) {
   const cleanName = getDisplayNameFromParticipantName(participantName);
-  addChatMessage({
+  const content = `⏹️ ${cleanName} hat den Stream gestoppt`;
+  
+  const messageData = {
     participantName: 'System',
     participantId: 'system',
-    content: `⏹️ ${cleanName} hat den Stream gestoppt`,
+    content: content,
     type: 'system',
     timestamp: Date.now()
-  });
+  };
+  
+  // Add locally
+  addChatMessage(messageData);
+  
+  // Broadcast to all participants if room is available
+  if (room) {
+    try {
+      await room.localParticipant.sendText(JSON.stringify({
+        type: 'stream-event',
+        action: 'stream-stop',
+        participantName: cleanName
+      }), {
+        topic: 'stream-events'
+      });
+      console.log('Stream stop event broadcasted');
+    } catch (error) {
+      console.error('Failed to broadcast stream stop:', error);
+    }
+  }
 }
 
-export function addScreenShareStartMessage(participantName) {
+export async function addScreenShareStartMessage(participantName, room = null) {
   const cleanName = getDisplayNameFromParticipantName(participantName);
-  addChatMessage({
+  const content = `🖥️ ${cleanName} teilt den Bildschirm`;
+  
+  const messageData = {
     participantName: 'System',
     participantId: 'system',
-    content: `🖥️ ${cleanName} teilt den Bildschirm`,
+    content: content,
     type: 'system',
     timestamp: Date.now()
-  });
+  };
+  
+  // Add locally
+  addChatMessage(messageData);
+  
+  // Broadcast to all participants if room is available
+  if (room) {
+    try {
+      await room.localParticipant.sendText(JSON.stringify({
+        type: 'stream-event',
+        action: 'screenshare-start',
+        participantName: cleanName
+      }), {
+        topic: 'stream-events'
+      });
+      console.log('Screen share start event broadcasted');
+    } catch (error) {
+      console.error('Failed to broadcast screen share start:', error);
+    }
+  }
 }
 
-export function addScreenShareStopMessage(participantName) {
+export async function addScreenShareStopMessage(participantName, room = null) {
   const cleanName = getDisplayNameFromParticipantName(participantName);
-  addChatMessage({
+  const content = `🖥️ ${cleanName} hat die Bildschirmfreigabe beendet`;
+  
+  const messageData = {
     participantName: 'System',
     participantId: 'system',
-    content: `🖥️ ${cleanName} hat die Bildschirmfreigabe beendet`,
+    content: content,
     type: 'system',
     timestamp: Date.now()
-  });
+  };
+  
+  // Add locally
+  addChatMessage(messageData);
+  
+  // Broadcast to all participants if room is available
+  if (room) {
+    try {
+      await room.localParticipant.sendText(JSON.stringify({
+        type: 'stream-event',
+        action: 'screenshare-stop',
+        participantName: cleanName
+      }), {
+        topic: 'stream-events'
+      });
+      console.log('Screen share stop event broadcasted');
+    } catch (error) {
+      console.error('Failed to broadcast screen share stop:', error);
+    }
+  }
 }

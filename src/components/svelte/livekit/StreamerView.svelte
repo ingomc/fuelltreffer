@@ -150,8 +150,8 @@
     
     try {
       await publishVideoTrack($room);
-      // Log stream start to chat
-      addStreamStartMessage($participantName);
+      // Log stream start to chat and broadcast to all participants
+      addStreamStartMessage($participantName, $room);
     } catch (error) {
       console.error('Error starting stream:', error);
     }
@@ -164,8 +164,8 @@
       // Stop the stream to LiveKit
       await unpublishVideoTrack($room);
       
-      // Log stream stop to chat
-      addStreamStopMessage($participantName);
+      // Log stream stop to chat and broadcast to all participants
+      addStreamStopMessage($participantName, $room);
       
       // Recreate local video preview so streamer can still see themselves
       await recreateLocalPreview(localVideo);
@@ -205,12 +205,12 @@
     try {
       if (!$isScreenSharing) {
         await startScreenShare();
-        // Log screen share start to chat
-        addScreenShareStartMessage($participantName);
+        // Log screen share start to chat and broadcast to all participants
+        addScreenShareStartMessage($participantName, $room);
       } else {
         await stopScreenShare();
-        // Log screen share stop to chat
-        addScreenShareStopMessage($participantName);
+        // Log screen share stop to chat and broadcast to all participants
+        addScreenShareStopMessage($participantName, $room);
       }
     } catch (error) {
       console.error('Error toggling screen share:', error);
