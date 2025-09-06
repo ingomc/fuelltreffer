@@ -1,6 +1,11 @@
 import { writable, derived, get } from 'svelte/store';
 import { Room } from 'livekit-client';
 
+// Use globalThis for better compatibility
+const clearInterval = globalThis.clearInterval;
+const setInterval = globalThis.setInterval;
+const setTimeout = globalThis.setTimeout;
+
 // Core room state
 export const room = writable(null);
 export const isConnected = writable(false);

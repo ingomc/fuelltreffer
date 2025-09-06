@@ -2,6 +2,9 @@ import { createLocalVideoTrack } from 'livekit-client';
 import { localVideoTrack, isStartingStream, status, hasActiveStream } from './livekit-store.js';
 import { get } from 'svelte/store';
 
+// Use globalThis for better compatibility
+const navigator = globalThis.navigator;
+
 /**
  * Handles video track subscription for viewers
  */

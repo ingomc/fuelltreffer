@@ -24,7 +24,7 @@ export function addChatMessage(message) {
     const currentMessages = Array.isArray(messages) ? messages : [];
     
     const newMessage = {
-      id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`, // Better unique ID
+      id: `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`, // Better unique ID using substring
       timestamp: new Date(),
       ...message
     };
