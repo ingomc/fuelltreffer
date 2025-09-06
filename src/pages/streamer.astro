@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import LiveKitStream from '../components/svelte/LiveKitStream.svelte';
+import LiveKitContainer from '../components/svelte/livekit/LiveKitContainer.svelte';
 import StreamerAuth from '../components/svelte/StreamerAuth.svelte';
 
 // Check authentication
@@ -11,7 +11,7 @@ const isAuthenticated = authCookie?.value === 'authenticated';
 <Layout title="Streamer | Fülltreffer">
   {isAuthenticated ? (
     <div>
-      <LiveKitStream isStreamer={true} client:load />
+      <LiveKitContainer mode="streamer" client:load />
       
       <!-- Logout Button -->
       <div class="max-w-4xl mx-auto px-4 pb-8">

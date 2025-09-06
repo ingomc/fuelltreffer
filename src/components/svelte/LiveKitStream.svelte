@@ -17,6 +17,7 @@
   let showNewParticipantBlink = false;
   let showCountBlink = false;
   let expandedParticipant = null;
+  let participantCheckInterval = null;
 
   // DOM elements
   let localVideo;
@@ -37,6 +38,11 @@
   });
 
   onDestroy(() => {
+    // Cleanup
+    if (participantCheckInterval) {
+      clearInterval(participantCheckInterval);
+    }
+    
     if (room) {
       room.disconnect();
     }
@@ -137,6 +143,16 @@
         
         updateParticipantsList();
         
+        // Starte periodische Participant-Überprüfung
+        if (participantCheckInterval) {
+          clearInterval(participantCheckInterval);
+        }
+        participantCheckInterval = setInterval(() => {
+          if (room && isConnected) {
+            updateParticipantsList();
+          }
+        }, 5000); // Alle 5 Sekunden
+        
         if (!isStreamer) {
           checkForActiveStreams();
         }
@@ -146,6 +162,12 @@
         console.log('Disconnected from room:', reason);
         isConnected = false;
         hasActiveStream = false;
+        
+        // Stoppe periodische Überprüfung
+        if (participantCheckInterval) {
+          clearInterval(participantCheckInterval);
+          participantCheckInterval = null;
+        }
         
         if (reason === 'user-initiated') {
           status = isStreamer ? 'Stream beendet' : 'Verbindung getrennt';
@@ -179,34 +201,93 @@
         isConnected = true;
         status = isStreamer ? '✅ Reconnected!' : '✅ Reconnected! Warte auf Streams...';
         
-        if (!isStreamer) {
-          checkForActiveStreams();
+        // Nach Reconnect die Participant-Liste vollständig aktualisieren
+        setTimeout(() => {
+          updateParticipantsList();
+          if (!isStreamer) {
+            checkForActiveStreams();
+          }
+        }, 1000);
+        
+        // Restart periodische Überprüfung
+        if (participantCheckInterval) {
+          clearInterval(participantCheckInterval);
         }
+        participantCheckInterval = setInterval(() => {
+          if (room && isConnected) {
+            updateParticipantsList();
+          }
+        }, 5000);
+      });
+
+      // Participant Events für beide (Streamer und Viewer)
+      room.on(RoomEvent.ParticipantConnected, (participant) => {
+        console.log('Participant connected:', participant.identity);
+        // Sofort aktualisieren
+        updateParticipantsList();
+        
+        // Nach kurzer Verzögerung nochmal, falls Tracks noch nicht verfügbar waren
+        setTimeout(() => {
+          updateParticipantsList();
+          if (!isStreamer) {
+            checkForActiveStreams();
+          }
+        }, 1000);
+      });
+
+      room.on(RoomEvent.ParticipantDisconnected, (participant) => {
+        console.log('Participant disconnected:', participant.identity);
+        updateParticipantsList();
+        
+        if (!isStreamer) {
+          setTimeout(checkForActiveStreams, 500);
+        }
+      });
+
+      // Zusätzliche Events für zuverlässige Participant-Tracking
+      room.on(RoomEvent.ParticipantMetadataChanged, (metadata, participant) => {
+        console.log('Participant metadata changed:', participant.identity);
+        updateParticipantsList();
+      });
+
+      room.on(RoomEvent.ParticipantPermissionsChanged, (prevPermissions, participant) => {
+        console.log('Participant permissions changed:', participant.identity);
+        updateParticipantsList();
+      });
+
+      room.on(RoomEvent.ConnectionQualityChanged, (connectionQuality, participant) => {
+        // Nur aktualisieren wenn sich die Qualität wesentlich geändert hat
+        updateParticipantsList();
       });
 
       // Track Events für Viewer
       if (!isStreamer) {
         room.on(RoomEvent.TrackSubscribed, (track, publication, participant) => {
+          console.log('Track subscribed:', track.kind, 'from', participant.identity);
+          updateParticipantsList(); // Aktualisiere auch hier
+          
           if (track.kind === 'video') {
             handleVideoTrackSubscribed(track, participant);
           }
         });
 
         room.on(RoomEvent.TrackUnsubscribed, (track, publication, participant) => {
+          console.log('Track unsubscribed:', track.kind, 'from', participant.identity);
+          updateParticipantsList(); // Aktualisiere auch hier
+          
           if (track.kind === 'video') {
             handleVideoTrackUnsubscribed(track, participant);
           }
         });
 
-        room.on(RoomEvent.ParticipantConnected, (participant) => {
-          console.log('Participant connected:', participant.identity);
+        room.on(RoomEvent.TrackPublished, (publication, participant) => {
+          console.log('Track published:', publication.kind, 'from', participant.identity);
           updateParticipantsList();
-          // Warte kurz bis Tracks verfügbar sind
-          setTimeout(checkForActiveStreams, 1000);
+          setTimeout(checkForActiveStreams, 500);
         });
 
-        room.on(RoomEvent.ParticipantDisconnected, (participant) => {
-          console.log('Participant disconnected:', participant.identity);
+        room.on(RoomEvent.TrackUnpublished, (publication, participant) => {
+          console.log('Track unpublished:', publication.kind, 'from', participant.identity);
           updateParticipantsList();
           setTimeout(checkForActiveStreams, 500);
         });
@@ -230,21 +311,32 @@
       return;
     }
 
-    // Alle Teilnehmer sammeln (inkl. local participant)
+    // Robuste Teilnehmer-Sammlung mit mehrfacher Validierung
+    const localParticipant = room.localParticipant;
+    const remoteParticipants = Array.from(room.remoteParticipants.values());
+    
+    // Alle gültigen Teilnehmer sammeln
     const allParticipants = [
-      room.localParticipant,
-      ...Array.from(room.remoteParticipants.values())
-    ].filter(p => p && p.identity);
+      ...(localParticipant && localParticipant.identity ? [localParticipant] : []),
+      ...remoteParticipants.filter(p => p && p.identity && p.sid)
+    ];
+
+    console.log('Participant count check:', {
+      localParticipant: localParticipant?.identity || 'none',
+      remoteCount: remoteParticipants.length,
+      validRemote: remoteParticipants.filter(p => p && p.identity).length,
+      totalValid: allParticipants.length
+    });
 
     participants = allParticipants.map(p => ({
       identity: p.identity,
       isLocal: p === room.localParticipant,
-      // Alle verfügbaren Participant-Infos sammeln
+      // Basis-Infos
       sid: p.sid,
       connectionState: p.connectionState,
       joinedAt: p.joinedAt,
       metadata: p.metadata,
-      name: p.name,
+      name: p.name || p.identity,
       // Audio/Video Status
       isCameraEnabled: p.isCameraEnabled,
       isMicrophoneEnabled: p.isMicrophoneEnabled,
@@ -287,19 +379,30 @@
     const oldCount = participantCount;
     
     // Blink-Effekt bei Änderung der Teilnehmerzahl
-    if (newCount !== oldCount && oldCount > 0) {
-      showCountBlink = true;
-      showNewParticipantBlink = true;
+    if (newCount !== oldCount) {
+      console.log(`Participant count changed: ${oldCount} → ${newCount}`);
       
-      setTimeout(() => {
-        showCountBlink = false;
-        showNewParticipantBlink = false;
-      }, 800);
+      if (oldCount > 0) { // Nur blinken wenn nicht der erste Load
+        showCountBlink = true;
+        showNewParticipantBlink = true;
+        
+        setTimeout(() => {
+          showCountBlink = false;
+          showNewParticipantBlink = false;
+        }, 800);
+      }
     }
     
     participantCount = newCount;
 
-    console.log('Participants updated:', participants);
+    console.log('Participants updated:', {
+      count: participantCount,
+      participants: participants.map(p => ({
+        identity: p.identity,
+        isLocal: p.isLocal,
+        connectionState: p.connectionState
+      }))
+    });
   }
 
   function toggleParticipantDetails(participantSid) {
