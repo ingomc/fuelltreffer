@@ -203,23 +203,24 @@
           </div>
         </div>
       {/each}
+    </div>
 
-      {#if $typingUsers.length > 0}
-        <div class="typing-indicator">
-          <div class="typing-bubble">
-            <span class="typing-text">
-              {$typingUsers.join(', ')} 
-              {$typingUsers.length === 1 ? 'schreibt' : 'schreiben'}...
-            </span>
-            <div class="typing-dots">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
+    <!-- Typing indicator - fixed at bottom left -->
+    {#if $typingUsers.length > 0}
+      <div class="typing-indicator-fixed">
+        <div class="typing-bubble">
+          <span class="typing-text">
+            {$typingUsers.join(', ')} 
+            {$typingUsers.length === 1 ? 'schreibt' : 'schreiben'}...
+          </span>
+          <div class="typing-dots">
+            <span></span>
+            <span></span>
+            <span></span>
           </div>
         </div>
-      {/if}
-    </div>
+      </div>
+    {/if}
 
     <div class="chat-input-container">
       <input
@@ -254,6 +255,7 @@
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
     transition: height 0.3s ease;
     height: 400px;
+    position: relative; /* For absolute positioning of typing indicator */
   }
 
   .chat-widget.minimized {
@@ -394,14 +396,19 @@
     text-align: left;
   }
 
-  .typing-indicator {
+  .typing-indicator-fixed {
+    position: absolute;
+    bottom: 70px; /* Above input field */
+    left: 8px;
+    right: 8px;
     display: flex;
-    margin-bottom: 8px;
+    pointer-events: none;
+    z-index: 20;
     animation: slideIn 0.3s ease-out;
   }
 
   .typing-bubble {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(0, 0, 0, 0.85);
     color: white;
     border-radius: 18px;
     border-bottom-left-radius: 4px;
@@ -412,8 +419,10 @@
     max-width: 70%;
     font-size: 13px;
     animation: fadeInUp 0.3s ease-out;
-    backdrop-filter: blur(4px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    pointer-events: auto;
   }
 
   .typing-text {
