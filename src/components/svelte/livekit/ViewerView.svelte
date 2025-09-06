@@ -8,7 +8,8 @@
     hasValidName,
     createRoom, 
     connectToRoom, 
-    disconnectFromRoom 
+    disconnectFromRoom,
+    participants 
   } from './utils/livekit-store.js';
   import { setupParticipantEvents, checkForActiveStreams } from './utils/participant-manager.js';
   import { handleVideoTrackSubscribed, handleVideoTrackUnsubscribed } from './utils/video-manager.js';
@@ -22,7 +23,6 @@
   } from './utils/audio-manager.js';
   import { writable } from 'svelte/store';
   import VideoGrid from './VideoGrid.svelte';
-  import ParticipantsList from './ParticipantsList.svelte';
   import ChatWidget from './ChatWidget.svelte';
   import { get } from 'svelte/store';
 
@@ -229,7 +229,29 @@
       </button>
     </div>
     
-    <ParticipantsList />
+    <!-- Vereinfachte Teilnehmer-Badges für Viewer -->
+    {#if $participants.length > 0}
+      <div class="participants-badges">
+        <div class="badges-header">
+          <span>👥 {$participants.length} Teilnehmer</span>
+        </div>
+        <div class="badges-container">
+          {#each $participants as participant (participant.sid)}
+            <div class="participant-badge">
+              <div class="badge-avatar">
+                {participant.identity.charAt(0).toUpperCase()}
+              </div>
+              <span class="badge-name">{participant.identity}</span>
+              <div class="badge-icons">
+                {#if participant.isCameraEnabled}📹{/if}
+                {#if participant.isMicrophoneEnabled}🎤{/if}
+                {#if participant.isScreenShareEnabled}🖥️{/if}
+              </div>
+            </div>
+          {/each}
+        </div>
+      </div>
+    {/if}
   </div>
   
   <div class="chat-sidebar">
@@ -266,6 +288,77 @@
 
   .control-button.active:hover {
     background-color: #16a34a;
+  }
+
+  /* Vereinfachte Teilnehmer-Badges */
+  .participants-badges {
+    margin-top: 20px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+  }
+
+  .badges-header {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .badges-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .participant-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: white;
+    transition: all 0.2s ease;
+  }
+
+  .participant-badge:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .badge-avatar {
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
+    color: white;
+  }
+
+  .badge-name {
+    font-weight: 500;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .badge-icons {
+    display: flex;
+    gap: 2px;
+    font-size: 0.7rem;
+    opacity: 0.8;
   }
 
   @media (max-width: 1024px) {
