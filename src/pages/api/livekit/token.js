@@ -69,12 +69,13 @@ export async function GET({ url }) {
         canSubscribe: true,
       });
     } else {
+      // Viewer needs canPublishData: true for chat messages
       at.addGrant({ 
         room: roomName,
         roomJoin: true,
-        canPublish: false,
-        canPublishData: false,
-        canSubscribe: true,
+        canPublish: false,        // Can't publish video/audio
+        canPublishData: true,     // Can send chat messages
+        canSubscribe: true,       // Can receive video/audio
       });
     }
 

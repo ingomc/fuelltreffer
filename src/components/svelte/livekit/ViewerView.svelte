@@ -13,6 +13,7 @@
   import { handleVideoTrackSubscribed, handleVideoTrackUnsubscribed } from './utils/video-manager.js';
   import VideoGrid from './VideoGrid.svelte';
   import ParticipantsList from './ParticipantsList.svelte';
+  import ChatWidget from './ChatWidget.svelte';
   import { get } from 'svelte/store';
 
   let remoteVideos = null;
@@ -94,35 +95,67 @@
 </script>
 
 <div class="viewer-view">
-  <VideoGrid 
-    isStreamer={false} 
-    bind:remoteVideos 
-    bind:noStreamDiv 
-  />
-  
-  <div class="stream-controls">
-    <button 
-      class="control-button"
-      on:click={handleRefresh}
-    >
-      🔄 Aktualisieren
-    </button>
+  <div class="viewer-content">
+    <VideoGrid 
+      isStreamer={false} 
+      bind:remoteVideos 
+      bind:noStreamDiv 
+    />
     
-    <button 
-      class="control-button"
-      on:click={handleDisconnect}
-    >
-      🚪 Trennen
-    </button>
+    <div class="stream-controls">
+      <button 
+        class="control-button"
+        on:click={handleRefresh}
+      >
+        🔄 Aktualisieren
+      </button>
+      
+      <button 
+        class="control-button"
+        on:click={handleDisconnect}
+      >
+        🚪 Trennen
+      </button>
+    </div>
+    
+    <ParticipantsList />
   </div>
   
-  <ParticipantsList />
+  <div class="chat-sidebar">
+    <ChatWidget />
+  </div>
 </div>
 
 <style>
   @import './utils/livekit.css';
   
   .viewer-view {
+    display: flex;
+    gap: 16px;
     width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .viewer-content {
+    flex: 1;
+    min-width: 0; /* Important for flex shrinking */
+  }
+
+  .chat-sidebar {
+    width: 300px;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 1024px) {
+    .viewer-view {
+      flex-direction: column;
+    }
+
+    .chat-sidebar {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+    }
   }
 </style>

@@ -16,6 +16,7 @@
   import { startCamera, stopCamera, publishVideoTrack, unpublishVideoTrack, recreateLocalPreview } from './utils/video-manager.js';
   import VideoGrid from './VideoGrid.svelte';
   import ParticipantsList from './ParticipantsList.svelte';
+  import ChatWidget from './ChatWidget.svelte';
   import { get } from 'svelte/store';
 
   let localVideo = null;
@@ -114,68 +115,100 @@
 </script>
 
 <div class="streamer-view">
-  <VideoGrid 
-    isStreamer={true} 
-    bind:localVideo 
-    bind:noCameraDiv 
-  />
-  
-  <div class="stream-controls">
-    {#if !$localVideoTrack}
-      <button 
-        class="control-button primary"
-        on:click={handleStartCamera}
-        disabled={$isStartingStream}
-      >
-        {#if $isStartingStream}
-          <span class="loading-spinner"></span>
-        {:else}
-          📹
-        {/if}
-        Kamera starten
-      </button>
-    {:else}
-      <button 
-        class="control-button"
-        on:click={handleStopCamera}
-      >
-        📹 Kamera stoppen
-      </button>
-      
-      {#if !$hasActiveStream}
+  <div class="streamer-content">
+    <VideoGrid 
+      isStreamer={true} 
+      bind:localVideo 
+      bind:noCameraDiv 
+    />
+    
+    <div class="stream-controls">
+      {#if !$localVideoTrack}
         <button 
           class="control-button primary"
-          on:click={handleStartStream}
-          disabled={!$isConnected}
+          on:click={handleStartCamera}
+          disabled={$isStartingStream}
         >
-          🔴 Stream starten
+          {#if $isStartingStream}
+            <span class="loading-spinner"></span>
+          {:else}
+            📹
+          {/if}
+          Kamera starten
         </button>
       {:else}
         <button 
-          class="control-button danger"
-          on:click={handleStopStream}
+          class="control-button"
+          on:click={handleStopCamera}
         >
-          ⏹️ Stream stoppen
+          📹 Kamera stoppen
         </button>
+        
+        {#if !$hasActiveStream}
+          <button 
+            class="control-button primary"
+            on:click={handleStartStream}
+            disabled={!$isConnected}
+          >
+            🔴 Stream starten
+          </button>
+        {:else}
+          <button 
+            class="control-button danger"
+            on:click={handleStopStream}
+          >
+            ⏹️ Stream stoppen
+          </button>
+        {/if}
       {/if}
-    {/if}
+      
+      <button 
+        class="control-button"
+        on:click={handleDisconnect}
+        disabled={!$isConnected && !$isConnecting}
+      >
+        🚪 Trennen
+      </button>
+    </div>
     
-    <button 
-      class="control-button"
-      on:click={handleDisconnect}
-      disabled={!$isConnected && !$isConnecting}
-    >
-      🚪 Trennen
-    </button>
+    <ParticipantsList />
   </div>
   
-  <ParticipantsList />
+  <div class="chat-sidebar">
+    <ChatWidget />
+  </div>
 </div>
 
 <style>
   @import './utils/livekit.css';
   
   .streamer-view {
+    display: flex;
+    gap: 16px;
     width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .streamer-content {
+    flex: 1;
+    min-width: 0; /* Important for flex shrinking */
+  }
+
+  .chat-sidebar {
+    width: 300px;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 1024px) {
+    .streamer-view {
+      flex-direction: column;
+    }
+
+    .chat-sidebar {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+    }
   }
 </style>

@@ -8,24 +8,50 @@ import {
   startParticipantMonitoring,
   stopParticipantMonitoring 
 } from './livekit-store.js';
+import { setupChatHandlers, addSystemMessage } from './chat-manager-fixed.js';
 import { get } from 'svelte/store';
 
 /**
- * Sets up all participant-related event listeners for a room
+ * Sets up event listeners for a LiveKit room
  */
-export function setupParticipantEvents(currentRoom, isStreamer = false) {
+export function setupParticipantEvents(currentRoom, isStreamer) {
   if (!currentRoom) return;
+  
+  // Setup chat handlers
+  setupChatHandlers(currentRoom);
 
-  // Connection Events
+  // Room connection events
   currentRoom.on(RoomEvent.Connected, () => {
     console.log('Connected to room');
+    room.set(currentRoom);
+    status.set(isStreamer ? '📹 Bereit zum Streamen' : '👀 Verbunden als Viewer');
     isConnected.set(true);
-    status.set(isStreamer ? '✅ Verbunden!' : '✅ Verbunden! Warte auf Streams...');
-    
-    updateParticipantsList();
     startParticipantMonitoring();
+    updateParticipantsList();
     
+    // Add welcome message for viewer
     if (!isStreamer) {
+      addSystemMessage('Willkommen im Stream! 👋');
+    }
+  });
+
+  // Participant events  
+  currentRoom.on(RoomEvent.ParticipantConnected, (participant) => {
+    console.log('Participant joined:', participant.identity);
+    addSystemMessage(`${participant.identity} ist dem Stream beigetreten`);
+    updateParticipantsList();
+    
+    if (participant.identity.includes('Streamer')) {
+      checkForActiveStreams();
+    }
+  });
+
+  currentRoom.on(RoomEvent.ParticipantDisconnected, (participant) => {
+    console.log('Participant left:', participant.identity);
+    addSystemMessage(`${participant.identity} hat den Stream verlassen`);
+    updateParticipantsList();
+    
+    if (participant.identity.includes('Streamer')) {
       checkForActiveStreams();
     }
   });
@@ -50,80 +76,11 @@ export function setupParticipantEvents(currentRoom, isStreamer = false) {
   });
 
   currentRoom.on(RoomEvent.Reconnected, () => {
-    console.log('Reconnected successfully');
+    console.log('Reconnected to room');
+    status.set(isStreamer ? '📹 Bereit zum Streamen' : '👀 Verbunden als Viewer');
     isConnected.set(true);
-    status.set(isStreamer ? '✅ Reconnected!' : '✅ Reconnected! Warte auf Streams...');
-    
-    setTimeout(() => {
-      updateParticipantsList();
-      if (!isStreamer) {
-        checkForActiveStreams();
-      }
-    }, 1000);
-    
-    startParticipantMonitoring();
-  });
-
-  // Participant Events
-  currentRoom.on(RoomEvent.ParticipantConnected, (participant) => {
-    console.log('Participant connected:', participant.identity);
-    updateParticipantsList();
-    
-    setTimeout(() => {
-      updateParticipantsList();
-      if (!isStreamer) {
-        checkForActiveStreams();
-      }
-    }, 1000);
-  });
-
-  currentRoom.on(RoomEvent.ParticipantDisconnected, (participant) => {
-    console.log('Participant disconnected:', participant.identity);
-    updateParticipantsList();
-    
-    if (!isStreamer) {
-      setTimeout(checkForActiveStreams, 500);
-    }
-  });
-
-  currentRoom.on(RoomEvent.ParticipantMetadataChanged, (_metadata, participant) => {
-    console.log('Participant metadata changed:', participant.identity);
     updateParticipantsList();
   });
-
-  currentRoom.on(RoomEvent.ParticipantPermissionsChanged, (_prevPermissions, participant) => {
-    console.log('Participant permissions changed:', participant.identity);
-    updateParticipantsList();
-  });
-
-  currentRoom.on(RoomEvent.ConnectionQualityChanged, (_connectionQuality, _participant) => {
-    updateParticipantsList();
-  });
-
-  // Track Events (für Viewer)
-  if (!isStreamer) {
-    currentRoom.on(RoomEvent.TrackSubscribed, (track, _publication, participant) => {
-      console.log('Track subscribed:', track.kind, 'from', participant.identity);
-      updateParticipantsList();
-    });
-
-    currentRoom.on(RoomEvent.TrackUnsubscribed, (track, _publication, participant) => {
-      console.log('Track unsubscribed:', track.kind, 'from', participant.identity);
-      updateParticipantsList();
-    });
-
-    currentRoom.on(RoomEvent.TrackPublished, (publication, participant) => {
-      console.log('Track published:', publication.kind, 'from', participant.identity);
-      updateParticipantsList();
-      setTimeout(checkForActiveStreams, 500);
-    });
-
-    currentRoom.on(RoomEvent.TrackUnpublished, (publication, participant) => {
-      console.log('Track unpublished:', publication.kind, 'from', participant.identity);
-      updateParticipantsList();
-      setTimeout(checkForActiveStreams, 500);
-    });
-  }
 }
 
 /**
