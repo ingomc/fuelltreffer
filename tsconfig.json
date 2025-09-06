@@ -4,6 +4,15 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
-  }
+    },
+    // Reduziere TypeScript Hints/Warnungen
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "exactOptionalPropertyTypes": false
+  },
+  "exclude": [
+    "dist/**/*",
+    "node_modules/**/*",
+    ".astro/**/*"
+  ]
 }

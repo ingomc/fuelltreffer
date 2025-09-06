@@ -7,16 +7,17 @@ const urlParams = new URLSearchParams(Astro.url.search);
 const selectedTeamId = urlParams.get('team') || '308868';
 
 // Liga-Teams basierend auf den Matches von Fülltreffer
-const ligaTeams = [
-  { id: '308863', name: 'VFB Einberg 2' },
-  { id: '308864', name: 'ESV Darter' },
-  { id: '308865', name: '1. DC DownFillCreek 2' },
-  { id: '308866', name: 'DC Fire and Ice' },
-  { id: '308867', name: 'LTV Gauerstadt' },
-  { id: '308868', name: 'SCO-Darts Team Fülltreffer' },
-  { id: '308869', name: 'TSG 2005 Bamberg 2' },
-  { id: '308870', name: 'Erlauer SV' }
-];
+// TODO: Diese Teams können später für ein Dropdown-Menü verwendet werden
+// const ligaTeams = [
+//   { id: '308863', name: 'VFB Einberg 2' },
+//   { id: '308864', name: 'ESV Darter' },
+//   { id: '308865', name: '1. DC DownFillCreek 2' },
+//   { id: '308866', name: 'DC Fire and Ice' },
+//   { id: '308867', name: 'LTV Gauerstadt' },
+//   { id: '308868', name: 'SCO-Darts Team Fülltreffer' },
+//   { id: '308869', name: 'TSG 2005 Bamberg 2' },
+//   { id: '308870', name: 'Erlauer SV' }
+// ];
 ---
 
 <Layout 
