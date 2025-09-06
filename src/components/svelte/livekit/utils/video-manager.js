@@ -1,16 +1,77 @@
-import { createLocalVideoTrack } from 'livekit-client';
+import { LocalVideoTrack } from 'livekit-client';
 import { localVideoTrack, isStartingStream, status, hasActiveStream } from './livekit-store.js';
 import { get } from 'svelte/store';
 
 // Use globalThis for better compatibility
 const navigator = globalThis.navigator;
+const setTimeout = globalThis.setTimeout;
 
 /**
- * Handles video track subscription for viewers
+ * Handles incoming video track from remote participant
  */
-export function handleVideoTrackSubscribed(track, participant, remoteVideos, noStreamDiv) {
-  console.log(`Video track subscribed from ${participant.identity}`);
+export function handleVideoTrackSubscribed(track, participant, remoteVideos, noStreamDiv, screenShareVideo) {
+  console.log(`Video track subscribed from ${participant.identity}, name: ${track.name}, source: ${track.source}`);
   
+  // Check if this is a screen share track - LiveKit uses different naming
+  const isScreenShare = track.name === 'screen_share' || 
+                        track.source === 'screen_share' || 
+                        track.name === 'screen' ||
+                        participant.isScreenShareEnabled;
+  
+  if (isScreenShare && screenShareVideo) {
+    // Handle screen share separately
+    console.log('🖥️ Attaching SCREEN SHARE track to video element');
+    console.log('Screen share video element:', screenShareVideo);
+    console.log('Track details:', { 
+      name: track.name, 
+      kind: track.kind, 
+      source: track.source, 
+      mediaStreamTrack: track.mediaStreamTrack,
+      isRemote: !track.isLocal 
+    });
+    
+    try {
+      // Clear any existing video first
+      screenShareVideo.srcObject = null;
+      
+      // For RemoteVideoTrack, we MUST use track.attach(element) according to LiveKit docs
+      // This is especially important for adaptive streams
+      console.log('📌 Using LiveKit RemoteVideoTrack.attach() method');
+      const result = track.attach(screenShareVideo);
+      console.log('✅ LiveKit attach result:', result);
+      
+      // Make sure the video is visible and properly configured
+      screenShareVideo.style.display = 'block';
+      screenShareVideo.style.width = '100%';
+      screenShareVideo.style.height = 'auto';
+      screenShareVideo.style.objectFit = 'contain';
+      screenShareVideo.style.backgroundColor = '#000';
+      screenShareVideo.autoplay = true;
+      screenShareVideo.playsInline = true;
+      screenShareVideo.muted = false; // Screen share should have audio
+      screenShareVideo.controls = false;
+      
+      // Force a play attempt after a small delay to ensure srcObject is set
+      setTimeout(() => {
+        console.log('🎬 Attempting to play screen share video');
+        console.log('Video readyState:', screenShareVideo.readyState);
+        console.log('Video srcObject after attach:', screenShareVideo.srcObject);
+        
+        screenShareVideo.play().catch(error => {
+          console.warn('Could not auto-play screen share video:', error);
+        });
+      }, 100);
+      
+      console.log('✅ Screen share video attached and configured');
+      
+    } catch (error) {
+      console.error('❌ Error attaching screen share video:', error);
+    }
+    
+    return;
+  }
+  
+  // Handle regular camera video
   const video = document.createElement('video');
   video.id = `video-${participant.sid}`;
   video.autoplay = true;
@@ -60,72 +121,95 @@ export function handleVideoTrackSubscribed(track, participant, remoteVideos, noS
     container.appendChild(label);
     remoteVideos.appendChild(container);
     
-    // Hide "no stream" message
+    // Hide "no stream" message since we have a video
     noStreamDiv.style.display = 'none';
+    
+    console.log('Remote video element created and attached');
     hasActiveStream.set(true);
   }
 }
 
 /**
- * Handles video track unsubscription for viewers
+ * Handles video track unsubscribed
  */
-export function handleVideoTrackUnsubscribed(track, participant, remoteVideos, noStreamDiv) {
+export function handleVideoTrackUnsubscribed(track, participant, remoteVideos) {
   console.log(`Video track unsubscribed from ${participant.identity}`);
   
-  const video = document.getElementById(`video-${participant.sid}`);
-  if (video) {
-    track.detach(video);
-    const container = video.parentElement;
-    if (container && container.className === 'video-container') {
-      container.remove();
-    } else {
-      video.remove();
-    }
+  // Check if this is a screen share track - LiveKit uses different naming
+  const isScreenShare = track.name === 'screen_share' || 
+                        track.source === 'screen_share' || 
+                        track.name === 'screen';
+  
+  if (isScreenShare) {
+    // Screen share track detached
+    console.log('🖥️ Screen share track detached');
+    return;
   }
   
-  if (remoteVideos && noStreamDiv) {
-    // Check if there are any remaining video streams
-    const remainingVideos = remoteVideos.querySelectorAll('video');
-    if (remainingVideos.length === 0) {
-      noStreamDiv.style.display = 'flex';
-      hasActiveStream.set(false);
-    }
+  const video = document.getElementById(`video-${participant.sid}`);
+  if (video && video.parentElement) {
+    video.parentElement.remove();
+    console.log('Remote video element removed');
+  }
+  
+  // Check if there are any remaining videos
+  if (remoteVideos && remoteVideos.children.length === 0) {
+    hasActiveStream.set(false);
   }
 }
 
 /**
- * Starts camera for streaming
+ * Creates a local video track from camera
  */
-export async function startCamera(localVideo, noCameraDiv) {
-  isStartingStream.set(true);
-  status.set('🎥 Kamera wird gestartet...');
-  
+export async function createVideoTrack() {
   try {
-    const currentTrack = get(localVideoTrack);
-    if (currentTrack) {
-      currentTrack.stop();
-    }
-    
-    const videoTrack = await createLocalVideoTrack({
-      resolution: {
-        width: 1280,
-        height: 720,
-        frameRate: 30
-      }
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        width: { ideal: 1280 },
+        height: { ideal: 720 },
+        frameRate: { ideal: 30 }
+      },
+      audio: true // Enable audio for full streaming
     });
     
+    const videoTrack = stream.getVideoTracks()[0];
+    
+    if (videoTrack) {
+      const lkTrack = new LocalVideoTrack(videoTrack);
+      return lkTrack;
+    }
+    
+  } catch (error) {
+    console.error('Error creating video track:', error);
+    throw error;
+  }
+}
+
+/**
+ * Starts the camera and creates local preview
+ */
+export async function startCamera(localVideo, noCameraDiv) {
+  console.log('Starting camera...');
+  isStartingStream.set(true);
+  status.set('📹 Kamera startet...');
+  
+  try {
+    const videoTrack = await createVideoTrack();
     localVideoTrack.set(videoTrack);
     
+    // Apply track to local video element
     if (localVideo) {
       videoTrack.attach(localVideo);
       localVideo.style.display = 'block';
-      if (noCameraDiv) {
-        noCameraDiv.style.display = 'none';
-      }
     }
     
-    status.set('✅ Kamera gestartet!');
-    return videoTrack;
+    // Hide "no camera" placeholder
+    if (noCameraDiv) {
+      noCameraDiv.style.display = 'none';
+    }
+    
+    console.log('Camera started successfully');
+    status.set('📹 Kamera bereit');
     
   } catch (error) {
     console.error('Error starting camera:', error);
@@ -137,25 +221,20 @@ export async function startCamera(localVideo, noCameraDiv) {
 }
 
 /**
- * Stops camera stream (only for streamer)
+ * Stops the camera and cleans up
  */
-export function stopCamera(localVideo, noCameraDiv) {
-  const currentTrack = get(localVideoTrack);
+export async function stopCamera(localVideo, noCameraDiv) {
+  console.log('Stopping camera...');
   
-  if (currentTrack) {
-    currentTrack.stop();
+  const videoTrack = get(localVideoTrack);
+  if (videoTrack) {
+    videoTrack.stop();
     localVideoTrack.set(null);
   }
   
+  // Clean up video element
   if (localVideo) {
-    // For streamer: stop all tracks and clear video element
-    if (localVideo.srcObject) {
-      const tracks = localVideo.srcObject.getTracks();
-      tracks.forEach(track => track.stop());
-    }
-    
     localVideo.srcObject = null;
-    localVideo.pause();
     localVideo.style.display = 'none';
     localVideo.load(); // Reset the video element
   }
@@ -178,10 +257,24 @@ export async function publishVideoTrack(currentRoom) {
   }
   
   try {
+    // Publish both video and audio tracks from the camera stream
+    const stream = videoTrack.mediaStream || videoTrack.getSettings?.().mediaStream;
+    
     await currentRoom.localParticipant.publishTrack(videoTrack, {
       name: 'camera',
       simulcast: true
     });
+    
+    // Also publish audio track if available in the same stream
+    if (stream) {
+      const audioTracks = stream.getAudioTracks();
+      if (audioTracks.length > 0) {
+        await currentRoom.localParticipant.publishTrack(audioTracks[0], {
+          name: 'microphone'
+        });
+        console.log('Audio track published with video');
+      }
+    }
     
     console.log('Video track published successfully');
     status.set('🔴 LIVE - Stream läuft!');
@@ -207,6 +300,13 @@ export async function unpublishVideoTrack(currentRoom) {
       console.log('Video track unpublished');
     }
     
+    // Also unpublish microphone if it was published with video
+    const micPublication = currentRoom.localParticipant.getTrackPublication('microphone');
+    if (micPublication) {
+      await currentRoom.localParticipant.unpublishTrack(micPublication.track);
+      console.log('Microphone track unpublished');
+    }
+    
     hasActiveStream.set(false);
     status.set('⏹️ Stream gestoppt');
     
@@ -230,7 +330,7 @@ export async function recreateLocalPreview(localVideo) {
         height: { ideal: 720 },
         frameRate: { ideal: 30 }
       },
-      audio: false
+      audio: true // Also enable audio for preview
     });
     
     // Apply the fresh stream to local video element

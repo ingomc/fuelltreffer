@@ -172,3 +172,50 @@ export function addSystemMessage(content) {
     timestamp: Date.now()
   });
 }
+
+/**
+ * Add stream event messages to chat
+ */
+export function addStreamStartMessage(participantName) {
+  const cleanName = getDisplayNameFromParticipantName(participantName);
+  addChatMessage({
+    participantName: 'System',
+    participantId: 'system',
+    content: `🔴 ${cleanName} hat den Stream gestartet`,
+    type: 'system',
+    timestamp: Date.now()
+  });
+}
+
+export function addStreamStopMessage(participantName) {
+  const cleanName = getDisplayNameFromParticipantName(participantName);
+  addChatMessage({
+    participantName: 'System',
+    participantId: 'system',
+    content: `⏹️ ${cleanName} hat den Stream gestoppt`,
+    type: 'system',
+    timestamp: Date.now()
+  });
+}
+
+export function addScreenShareStartMessage(participantName) {
+  const cleanName = getDisplayNameFromParticipantName(participantName);
+  addChatMessage({
+    participantName: 'System',
+    participantId: 'system',
+    content: `🖥️ ${cleanName} teilt den Bildschirm`,
+    type: 'system',
+    timestamp: Date.now()
+  });
+}
+
+export function addScreenShareStopMessage(participantName) {
+  const cleanName = getDisplayNameFromParticipantName(participantName);
+  addChatMessage({
+    participantName: 'System',
+    participantId: 'system',
+    content: `🖥️ ${cleanName} hat die Bildschirmfreigabe beendet`,
+    type: 'system',
+    timestamp: Date.now()
+  });
+}

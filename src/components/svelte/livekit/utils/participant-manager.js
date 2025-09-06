@@ -8,7 +8,7 @@ import {
   startParticipantMonitoring,
   stopParticipantMonitoring 
 } from './livekit-store.js';
-import { setupChatHandlers, addSystemMessage } from './chat-manager.js';
+import { setupChatHandlers, addSystemMessage } from './chat-manager-fixed.js';
 import { get } from 'svelte/store';
 
 /**
@@ -44,6 +44,11 @@ export function setupParticipantEvents(currentRoom, isStreamer) {
     if (participant.identity.includes('Streamer')) {
       checkForActiveStreams();
     }
+    
+    // Log screen share status if participant joins with screen share already active
+    if (participant.isScreenShareEnabled) {
+      console.log(`${participant.identity} joined with screen share already active`);
+    }
   });
 
   currentRoom.on(RoomEvent.ParticipantDisconnected, (participant) => {
@@ -67,6 +72,29 @@ export function setupParticipantEvents(currentRoom, isStreamer) {
     } else {
       status.set('🔄 Reconnecting...');
     }
+  });
+
+  // Audio track events for both streamer and viewer
+  currentRoom.on(RoomEvent.TrackSubscribed, (track, participant) => {
+    if (track.kind === 'audio') {
+      console.log(`Audio track subscribed from ${participant.identity}`);
+      // Audio tracks are automatically played by LiveKit
+      // We just need to make sure they're not muted
+      const audioElement = track.attach();
+      audioElement.volume = 1.0;
+      console.log('Audio track attached and volume set to max');
+    }
+    // Note: Screen share state is handled in ViewerView.svelte for viewers
+    // and in StreamerView.svelte for streamers to avoid conflicts
+  });
+
+  currentRoom.on(RoomEvent.TrackUnsubscribed, (track, participant) => {
+    if (track.kind === 'audio') {
+      console.log(`Audio track unsubscribed from ${participant.identity}`);
+      track.detach();
+    }
+    // Note: Screen share state is handled in ViewerView.svelte for viewers
+    // and in StreamerView.svelte for streamers to avoid conflicts
   });
 
   currentRoom.on(RoomEvent.Reconnecting, () => {

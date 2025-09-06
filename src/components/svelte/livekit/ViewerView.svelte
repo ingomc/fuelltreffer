@@ -12,6 +12,15 @@
   } from './utils/livekit-store.js';
   import { setupParticipantEvents, checkForActiveStreams } from './utils/participant-manager.js';
   import { handleVideoTrackSubscribed, handleVideoTrackUnsubscribed } from './utils/video-manager.js';
+  import { 
+    isAudioEnabled, 
+    isAudioMuted, 
+    startMicrophone, 
+    stopMicrophone, 
+    publishAudioTrack, 
+    unpublishAudioTrack 
+  } from './utils/audio-manager.js';
+  import { writable } from 'svelte/store';
   import VideoGrid from './VideoGrid.svelte';
   import ParticipantsList from './ParticipantsList.svelte';
   import ChatWidget from './ChatWidget.svelte';
@@ -19,6 +28,15 @@
 
   let remoteVideos = null;
   let noStreamDiv = null;
+  let screenShareVideo = null;
+
+  // SEPARATE State für REMOTE Screen-Sharing (nur für Viewer)
+  const hasRemoteScreenShare = writable(false);
+
+  // Debug: Watch remote screen sharing state changes
+  $: if (typeof $hasRemoteScreenShare !== 'undefined') {
+    console.log('🔍 Viewer: hasRemoteScreenShare state changed:', $hasRemoteScreenShare);
+  }
 
   // Connect to LiveKit only when user has entered a valid name
   $: if ($hasValidName && $participantName && !$isConnecting && !get(room)) {
@@ -57,17 +75,48 @@
   }
 
   function setupViewerEvents(currentRoom) {
-    // Video track events for viewers
-    currentRoom.on(RoomEvent.TrackSubscribed, (track, publication, participant) => {
+    // Video track events for screen sharing support
+    currentRoom.on(RoomEvent.TrackSubscribed, (track, participant) => {
+      console.log(`🎬 TRACK SUBSCRIBED: ${track.kind} track "${track.name}" from ${participant.identity}`);
+      
       if (track.kind === 'video') {
-        handleVideoTrackSubscribed(track, participant, remoteVideos, noStreamDiv);
+        handleVideoTrackSubscribed(track, participant, remoteVideos, noStreamDiv, screenShareVideo);
+        
+        // Check if this is a screen share track from REMOTE participant
+        // LiveKit built-in screen sharing uses specific track names
+        if (track.name === 'screen_share' || track.source === 'screen_share' || track.kind === 'video' && participant.isScreenShareEnabled) {
+          console.log(`🖥️ REMOTE SCREEN SHARE track received from ${participant.identity}`);
+          console.log('✅ Setting hasRemoteScreenShare to TRUE');
+          hasRemoteScreenShare.set(true);
+        }
       }
+      // Audio is handled in participant-manager.js
     });
 
-    currentRoom.on(RoomEvent.TrackUnsubscribed, (track, publication, participant) => {
+    currentRoom.on(RoomEvent.TrackUnsubscribed, (track, participant) => {
+      console.log(`🎬 TRACK UNSUBSCRIBED: ${track.kind} track "${track.name}" from ${participant.identity}`);
+      
       if (track.kind === 'video') {
-        handleVideoTrackUnsubscribed(track, participant, remoteVideos, noStreamDiv);
+        handleVideoTrackUnsubscribed(track, participant, remoteVideos);
+        
+        // Check if this was a screen share track from REMOTE participant
+        if (track.name === 'screen_share' || track.source === 'screen_share' || track.kind === 'video' && !participant.isScreenShareEnabled) {
+          console.log(`🖥️ REMOTE SCREEN SHARE track REMOVED from ${participant.identity}`);
+          
+          // Check if there are any other screen share tracks before updating state
+          const hasOtherScreenShares = Array.from(currentRoom.remoteParticipants.values())
+            .some(p => p.isScreenShareEnabled || Array.from(p.videoTrackPublications.values())
+              .some(pub => pub.track && (pub.track.name === 'screen_share' || pub.track.source === 'screen_share')));
+          
+          if (!hasOtherScreenShares) {
+            console.log('❌ Setting hasRemoteScreenShare to FALSE');
+            hasRemoteScreenShare.set(false);
+          } else {
+            console.log('ℹ️ Other screen shares still active, keeping state true');
+          }
+        }
       }
+      // Audio is handled in participant-manager.js
     });
 
     // Clean up video elements on disconnect
@@ -94,6 +143,25 @@
   function handleRefresh() {
     checkForActiveStreams();
   }
+
+  // Handle microphone toggle for viewer
+  async function handleMicrophoneToggle() {
+    try {
+      if (!$isAudioEnabled) {
+        await startMicrophone();
+        if ($room) {
+          await publishAudioTrack($room);
+        }
+      } else {
+        if ($room) {
+          await unpublishAudioTrack($room);
+        }
+        await stopMicrophone();
+      }
+    } catch (error) {
+      console.error('Error toggling microphone:', error);
+    }
+  }
 </script>
 
 <div class="viewer-view">
@@ -102,6 +170,8 @@
       isStreamer={false} 
       bind:remoteVideos 
       bind:noStreamDiv 
+      bind:screenShareVideo
+      hasRemoteScreenShare={$hasRemoteScreenShare}
     />
     
     <div class="stream-controls">
@@ -117,6 +187,24 @@
         on:click={handleDisconnect}
       >
         🚪 Trennen
+      </button>
+      
+      
+      <!-- Mikrofon für Viewer -->
+      <button 
+        class="control-button {$isAudioEnabled ? 'active' : ''}"
+        on:click={handleMicrophoneToggle}
+        title={$isAudioEnabled ? 'Mikrofon ausschalten' : 'Mikrofon einschalten'}
+      >
+        {#if $isAudioEnabled}
+          {#if $isAudioMuted}
+            🔇
+          {:else}
+            🎤
+          {/if}
+        {:else}
+          🎤❌
+        {/if}
       </button>
     </div>
     
@@ -147,6 +235,16 @@
   .chat-sidebar {
     width: 300px;
     flex-shrink: 0;
+  }
+
+  /* Active state for microphone button */
+  .control-button.active {
+    background-color: #22c55e;
+    color: white;
+  }
+
+  .control-button.active:hover {
+    background-color: #16a34a;
   }
 
   @media (max-width: 1024px) {

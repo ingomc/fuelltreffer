@@ -6,7 +6,7 @@
     isConnecting, 
     isConnected, 
     isStartingStream, 
-    localVideoTrack, 
+    localVideoTrack,
     hasActiveStream,
     hasValidName,
     createRoom, 
@@ -15,6 +15,25 @@
   } from './utils/livekit-store.js';
   import { setupParticipantEvents } from './utils/participant-manager.js';
   import { startCamera, stopCamera, publishVideoTrack, unpublishVideoTrack, recreateLocalPreview } from './utils/video-manager.js';
+  import { 
+    isAudioEnabled, 
+    isAudioMuted, 
+    startMicrophone, 
+    stopMicrophone, 
+    publishAudioTrack, 
+    unpublishAudioTrack 
+  } from './utils/audio-manager.js';
+  import { 
+    isScreenSharing, 
+    startScreenShare, 
+    stopScreenShare
+  } from './utils/screen-manager.js';
+  import { 
+    addStreamStartMessage, 
+    addStreamStopMessage,
+    addScreenShareStartMessage,
+    addScreenShareStopMessage
+  } from './utils/chat-manager-fixed.js';
   import VideoGrid from './VideoGrid.svelte';
   import ParticipantsList from './ParticipantsList.svelte';
   import ChatWidget from './ChatWidget.svelte';
@@ -22,6 +41,7 @@
 
   let localVideo = null;
   let noCameraDiv = null;
+  let screenShareVideo = null;
 
   // Connect to LiveKit only when user has entered a valid name
   $: if ($hasValidName && $participantName && !$isConnected && !$isConnecting) {
@@ -87,6 +107,8 @@
     
     try {
       await publishVideoTrack($room);
+      // Log stream start to chat
+      addStreamStartMessage($participantName);
     } catch (error) {
       console.error('Error starting stream:', error);
     }
@@ -98,6 +120,9 @@
     try {
       // Stop the stream to LiveKit
       await unpublishVideoTrack($room);
+      
+      // Log stream stop to chat
+      addStreamStopMessage($participantName);
       
       // Recreate local video preview so streamer can still see themselves
       await recreateLocalPreview(localVideo);
@@ -112,6 +137,42 @@
   function handleDisconnect() {
     disconnectFromRoom();
   }
+
+  // Handle microphone toggle
+  async function handleMicrophoneToggle() {
+    try {
+      if (!$isAudioEnabled) {
+        await startMicrophone();
+        if ($room && $hasActiveStream) {
+          await publishAudioTrack($room);
+        }
+      } else {
+        if ($room && $hasActiveStream) {
+          await unpublishAudioTrack($room);
+        }
+        await stopMicrophone();
+      }
+    } catch (error) {
+      console.error('Error toggling microphone:', error);
+    }
+  }
+
+  // Handle screen share toggle - SIMPLIFIED with LiveKit built-in method
+  async function handleScreenShareToggle() {
+    try {
+      if (!$isScreenSharing) {
+        await startScreenShare();
+        // Log screen share start to chat
+        addScreenShareStartMessage($participantName);
+      } else {
+        await stopScreenShare();
+        // Log screen share stop to chat
+        addScreenShareStopMessage($participantName);
+      }
+    } catch (error) {
+      console.error('Error toggling screen share:', error);
+    }
+  }
 </script>
 
 <div class="streamer-view">
@@ -120,6 +181,8 @@
       isStreamer={true} 
       bind:localVideo 
       bind:noCameraDiv 
+      bind:screenShareVideo
+      hasRemoteScreenShare={false}
     />
     
     <div class="stream-controls">
@@ -169,6 +232,37 @@
       >
         🚪 Trennen
       </button>
+      
+      <!-- Media Controls in der gleichen Reihe -->
+      {#if $localVideoTrack}
+        <button 
+          class="control-button {$isAudioEnabled ? 'active' : ''}"
+          on:click={handleMicrophoneToggle}
+          title={$isAudioEnabled ? 'Mikrofon ausschalten' : 'Mikrofon einschalten'}
+        >
+          {#if $isAudioEnabled}
+            {#if $isAudioMuted}
+              🔇
+            {:else}
+              🎤
+            {/if}
+          {:else}
+            🎤❌
+          {/if}
+        </button>
+        
+        <button 
+          class="control-button {$isScreenSharing ? 'active' : ''}"
+          on:click={handleScreenShareToggle}
+          title={$isScreenSharing ? 'Bildschirm teilen beenden' : 'Bildschirm teilen'}
+        >
+          {#if $isScreenSharing}
+            🖥️✅
+          {:else}
+            🖥️
+          {/if}
+        </button>
+      {/if}
     </div>
     
     <ParticipantsList />
@@ -198,6 +292,16 @@
   .chat-sidebar {
     width: 300px;
     flex-shrink: 0;
+  }
+
+  /* Active state for media control buttons */
+  .control-button.active {
+    background-color: #22c55e;
+    color: white;
+  }
+
+  .control-button.active:hover {
+    background-color: #16a34a;
   }
 
   @media (max-width: 1024px) {

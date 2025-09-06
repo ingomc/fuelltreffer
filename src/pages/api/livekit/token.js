@@ -68,11 +68,11 @@ export async function GET({ url }) {
         canSubscribe: true,
       });
     } else {
-      // Viewer needs canPublishData: true for chat messages
+      // Viewer can publish audio for voice chat
       at.addGrant({ 
         room: roomName,
         roomJoin: true,
-        canPublish: false,        // Can't publish video/audio
+        canPublish: true,         // Can publish audio for voice chat
         canPublishData: true,     // Can send chat messages
         canSubscribe: true,       // Can receive video/audio
       });
