@@ -408,7 +408,7 @@
   }
 
   .typing-bubble {
-    background: rgba(0, 0, 0, 0.85);
+    background: rgba(255, 255, 255, 0.15);
     color: white;
     border-radius: 18px;
     border-bottom-left-radius: 4px;
