@@ -17,6 +17,8 @@
   let isMinimized = false;
   let typingManager = null;
   let shouldAutoScroll = true; // Track if we should auto-scroll new messages
+  let hasNewMessages = false; // Track if there are unseen messages
+  let lastSeenMessageCount = 0; // Track last seen message count
 
   // Initialize typing manager when room and user info are available
   $: if ($room && $participantName && !typingManager) {
@@ -65,7 +67,14 @@
     if (!chatContainer) return;
     
     // Update auto-scroll preference based on current position
-    shouldAutoScroll = isAtBottom();
+    const atBottom = isAtBottom();
+    shouldAutoScroll = atBottom;
+    
+    // Hide new messages indicator when user scrolls to bottom
+    if (atBottom) {
+      hasNewMessages = false;
+      lastSeenMessageCount = $chatMessages.length;
+    }
   }
 
   // WhatsApp-style auto-scroll: only when user is at bottom
@@ -87,11 +96,31 @@
     // Check if we should auto-scroll BEFORE the DOM updates
     const wasAtBottom = isAtBottom();
     
+    // Show new messages indicator if user is not at bottom and there are new messages
+    if (!wasAtBottom && $chatMessages.length > lastSeenMessageCount) {
+      hasNewMessages = true;
+    }
+    
     requestAnimationFrame(() => {
       if (wasAtBottom) {
         chatContainer.scrollTop = chatContainer.scrollHeight;
+        hasNewMessages = false;
+        lastSeenMessageCount = $chatMessages.length;
       }
     });
+  }
+
+  // Function to scroll to bottom when new messages button is clicked
+  function scrollToNewMessages() {
+    if (chatContainer) {
+      chatContainer.scrollTo({
+        top: chatContainer.scrollHeight,
+        behavior: 'smooth'
+      });
+      hasNewMessages = false;
+      shouldAutoScroll = true;
+      lastSeenMessageCount = $chatMessages.length;
+    }
   }
 
   function handleInputChange() {
@@ -121,6 +150,8 @@
         if (chatContainer) {
           chatContainer.scrollTop = chatContainer.scrollHeight;
           shouldAutoScroll = true; // Enable auto-scroll after user sends
+          hasNewMessages = false; // Clear new messages indicator
+          lastSeenMessageCount = $chatMessages.length;
         }
       }, 100);
       
@@ -220,6 +251,20 @@
             <span></span>
             <span></span>
             <span></span>
+          </div>
+        </div>
+      </div>
+    {/if}
+
+    <!-- New messages indicator - fixed at bottom left like typing bubble -->
+    {#if hasNewMessages}
+      <div class="new-messages-indicator-fixed">
+        <div class="new-messages-bubble" on:click={scrollToNewMessages}>
+          <span class="new-messages-text">Neue Nachrichten</span>
+          <div class="new-messages-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+            </svg>
           </div>
         </div>
       </div>
@@ -510,6 +555,56 @@
     color: rgba(255, 255, 255, 0.3);
   }
 
+  /* New messages indicator - same style as typing bubble */
+  .new-messages-indicator-fixed {
+    position: absolute;
+    bottom: 8px; /* Direct am Rand des Chat-Bereichs */
+    left: 8px;
+    right: auto; /* Remove right positioning */
+    display: flex;
+    justify-content: flex-start; /* Align to left */
+    pointer-events: none;
+    z-index: 25;
+    animation: slideIn 0.3s ease-out;
+  }
+
+  .new-messages-bubble {
+    background: rgba(0, 122, 255, 0.2); /* Subtle blue tint */
+    color: white;
+    border-radius: 18px;
+    border-bottom-left-radius: 4px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 70%;
+    font-size: 13px;
+    animation: fadeInUp 0.3s ease-out;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 122, 255, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    pointer-events: auto;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .new-messages-bubble:hover {
+    background: rgba(0, 122, 255, 0.3);
+    border-color: rgba(0, 122, 255, 0.5);
+    transform: scale(1.02);
+  }
+
+  .new-messages-text {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .new-messages-arrow svg {
+    color: rgba(255, 255, 255, 0.7);
+    animation: bounce 1s infinite;
+  }
+
   @keyframes slideIn {
     from {
       opacity: 0;
@@ -518,6 +613,29 @@
     to {
       opacity: 1;
       transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateX(-50%) translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  }
+
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+      transform: translateY(0);
+    }
+    40% {
+      transform: translateY(-3px);
+    }
+    60% {
+      transform: translateY(-1px);
     }
   }
 
