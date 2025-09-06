@@ -22,12 +22,12 @@
     '| hasRemoteScreenShare =', hasRemoteScreenShare);
 </script>
 
-<div class="video-grid-container">
+<div class="video-grid-container" class:screen-sharing={showScreenShareContainer}>
   <!-- Main Video Grid -->
-  <div class="video-grid" class:single={!$hasActiveStream} class:with-screen={showScreenShareContainer}>
+  <div class="video-grid" class:single={!$hasActiveStream}>
     {#if isStreamer}
       <!-- Streamer Local Video -->
-      <div class="video-container" class:small={showScreenShareContainer}>
+      <div class="video-container">
         <video 
           bind:this={localVideo}
           class="video-element"
@@ -50,7 +50,7 @@
       </div>
     {:else}
       <!-- Viewer Remote Videos -->
-      <div bind:this={remoteVideos} class="remote-videos" class:small={showScreenShareContainer}>
+      <div bind:this={remoteVideos} class="remote-videos">
         <!-- Videos werden dynamisch hinzugefügt -->
       </div>
       
@@ -89,10 +89,24 @@
   @import './utils/livekit.css';
   
   .video-grid-container {
+    /* CSS Custom Properties für dynamische Video-Größen */
+    --video-width: 100%;
+    --video-height: auto;
+    --video-max-width: none;
+    --video-max-height: none;
+    
     display: flex;
     flex-direction: column;
     gap: 16px;
     width: 100%;
+  }
+  
+  /* Kleinere Videos während Screen-Sharing */
+  .video-grid-container.screen-sharing {
+    --video-width: 400px;
+    --video-height: 300px;
+    --video-max-width: 400px;
+    --video-max-height: 300px;
   }
   
   .video-grid {
@@ -102,21 +116,32 @@
     transition: all 0.3s ease;
   }
   
-  .video-grid.with-screen {
-    /* Kleinere Kamera-Videos wenn Screen-Sharing aktiv */
-    max-height: 300px;
-  }
-  
-  .video-container.small {
-    max-width: 400px;
+  .video-container {
+    /* Verwendet CSS Custom Properties */
+    width: var(--video-width);
+    height: var(--video-height);
+    max-width: var(--video-max-width);
+    max-height: var(--video-max-height);
   }
   
   .remote-videos {
-    display: contents; /* Allows children to participate in parent's grid */
+    display: contents;
   }
   
-  .remote-videos.small {
-    max-height: 300px;
+  /* Alle Videos in remote-videos verwenden die Custom Properties */
+  .remote-videos .video-container {
+    width: var(--video-width);
+    height: var(--video-height);
+    max-width: var(--video-max-width);
+    max-height: var(--video-max-height);
+  }
+  
+  .remote-videos .video-container video {
+    width: 100%;
+    height: 100%;
+    max-width: var(--video-max-width);
+    max-height: var(--video-max-height);
+    object-fit: cover;
   }
   
   /* Screen Share Styles */
@@ -155,12 +180,12 @@
       gap: 12px;
     }
     
-    .video-grid.with-screen {
-      max-height: 200px;
-    }
-    
-    .video-container.small {
-      max-width: 250px;
+    /* Mobile: Noch kleinere Videos während Screen-Sharing */
+    .video-grid-container.screen-sharing {
+      --video-width: 250px;
+      --video-height: 200px;
+      --video-max-width: 250px;
+      --video-max-height: 200px;
     }
     
     .screen-share-video {
