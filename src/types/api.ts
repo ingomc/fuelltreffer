@@ -60,7 +60,7 @@ export interface Round {
   index: number;
   typeCd: string;
   groupCd: string;
-  matchmode: any;
+  matchmode: string | number | null;
   nameCd: string;
   dateFrom: string;
   dateTo: string;

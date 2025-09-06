@@ -27,7 +27,8 @@ export default [
     rules: {
       'no-unused-vars': ['warn', { 
         argsIgnorePattern: '^_',
-        varsIgnorePattern: '^_'
+        varsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_'
       }],
       'prefer-const': 'error',
       'no-var': 'error'
@@ -50,7 +51,8 @@ export default [
     rules: {
       '@typescript-eslint/no-unused-vars': ['warn', { 
         argsIgnorePattern: '^_',
-        varsIgnorePattern: '^_'
+        varsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_'
       }],
       '@typescript-eslint/no-explicit-any': 'warn',
       'prefer-const': 'error'
@@ -60,11 +62,26 @@ export default [
   // Global ignores
   {
     ignores: [
+      // Build outputs
       'dist/',
       'node_modules/',
       '.astro/',
+      
+      // Public assets
       'public/',
+      
+      // Config files
       '*.config.*',
+      '*.config.js',
+      '*.config.mjs',
+      '*.config.ts',
+      
+      // Logs and temp files
+      '*.log',
+      '.env',
+      '.env.local',
+      '.env.production',
+      
       // Ignore Astro and Svelte files for now due to parser issues
       '**/*.astro',
       '**/*.svelte'

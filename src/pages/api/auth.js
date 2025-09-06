@@ -3,7 +3,7 @@ import { config } from 'dotenv';
 // Lade .env explizit
 try {
   config();
-} catch (e) {
+} catch (_e) {
   console.log('No .env file found, using system environment variables');
 }
 

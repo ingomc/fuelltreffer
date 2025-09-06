@@ -2,7 +2,7 @@ import { writable } from 'svelte/store';
 
 // Theme store mit persistierung
 function createThemeStore() {
-  const { subscribe, set, update } = writable('system');
+  const { subscribe, set } = writable('system');
 
   return {
     subscribe,
@@ -46,7 +46,7 @@ export const theme = createThemeStore();
 
 // Listen for system theme changes
 if (typeof window !== 'undefined') {
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (_e) => {
     // Only auto-switch if user has system preference selected
     const currentTheme = localStorage.getItem('theme') || 'system';
     if (currentTheme === 'system') {

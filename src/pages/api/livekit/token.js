@@ -1,12 +1,10 @@
 import { AccessToken } from 'livekit-server-sdk';
 import { config } from 'dotenv';
-import { readFileSync } from 'fs';
-import { join } from 'path';
 
 // Versuche .env zu laden (für Development und Docker)
 try {
   config();
-} catch (e) {
+} catch (_e) {
   console.log('No .env file found, using system environment variables');
 }
 
