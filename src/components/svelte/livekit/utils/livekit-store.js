@@ -15,6 +15,11 @@ export const participantName = writable('');
 export const isStreamer = writable(false);
 export const reconnectAttempts = writable(0);
 
+// Name input state
+export const userName = writable('');
+export const hasValidName = writable(false);
+export const displayName = writable('');
+
 // Stream state
 export const hasActiveStream = writable(false);
 export const isStartingStream = writable(false);

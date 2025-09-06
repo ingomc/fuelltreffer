@@ -5,6 +5,7 @@
     room, 
     participantName, 
     isConnecting,
+    hasValidName,
     createRoom, 
     connectToRoom, 
     disconnectFromRoom 
@@ -19,10 +20,11 @@
   let remoteVideos = null;
   let noStreamDiv = null;
 
-  onMount(() => {
-    participantName.set(`Viewer-${Date.now()}`);
+  // Connect to LiveKit only when user has entered a valid name
+  $: if ($hasValidName && $participantName && !$isConnecting && !get(room)) {
+    console.log('Valid name provided, connecting as viewer with name:', $participantName);
     connectAsViewer();
-  });
+  }
 
   async function connectAsViewer() {
     if ($isConnecting) return;

@@ -8,6 +8,7 @@
     isStartingStream, 
     localVideoTrack, 
     hasActiveStream,
+    hasValidName,
     createRoom, 
     connectToRoom, 
     disconnectFromRoom 
@@ -22,12 +23,11 @@
   let localVideo = null;
   let noCameraDiv = null;
 
-  onMount(() => {
-    const streamerName = `Streamer-${Date.now()}`;
-    participantName.set(streamerName);
-    console.log('StreamerView mounted with name:', streamerName);
+  // Connect to LiveKit only when user has entered a valid name
+  $: if ($hasValidName && $participantName && !$isConnected && !$isConnecting) {
+    console.log('Valid name provided, connecting as streamer with name:', $participantName);
     connectAsStreamer();
-  });
+  }
 
   async function connectAsStreamer() {
     console.log('Starting streamer connection...');

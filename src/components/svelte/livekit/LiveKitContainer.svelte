@@ -1,9 +1,10 @@
 <script>
   import { onMount, onDestroy } from 'svelte';
-  import { isStreamer, room, isConnected, reconnectAttempts } from './utils/livekit-store.js';
+  import { isStreamer, room, isConnected, reconnectAttempts, hasValidName } from './utils/livekit-store.js';
   import StreamerView from './StreamerView.svelte';
   import ViewerView from './ViewerView.svelte';
   import ConnectionStatus from './ConnectionStatus.svelte';
+  import NameInputOverlay from './NameInputOverlay.svelte';
   import { get } from 'svelte/store';
 
   // Props
@@ -28,7 +29,12 @@
 </script>
 
 {#if mounted}
-  <div class="livekit-container">
+  <!-- Name Input Overlay - OUTSIDE container to avoid blur -->
+  {#if !$hasValidName}
+    <NameInputOverlay />
+  {/if}
+
+  <div class="livekit-container" class:disabled={!$hasValidName}>
     <ConnectionStatus />
     
     {#if mode === 'streamer'}
@@ -48,6 +54,14 @@
     margin: 0 auto;
     padding: 20px;
     box-sizing: border-box;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .livekit-container.disabled {
+    opacity: 0.3;
+    pointer-events: none;
+    filter: blur(2px);
   }
 
   @media (max-width: 768px) {

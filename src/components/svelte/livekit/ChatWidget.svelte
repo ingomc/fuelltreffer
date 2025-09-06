@@ -3,7 +3,7 @@
   import { chatMessages, typingUsers, chatEnabled, showTimestamps } from './utils/chat-store.js';
   import { sendChatMessage } from './utils/chat-manager-fixed.js';
   import { TypingManager } from './utils/typing-manager.js';
-  import { room, participantName } from './utils/livekit-store.js';
+  import { room, participantName, displayName, hasValidName } from './utils/livekit-store.js';
   import { get } from 'svelte/store';
 
   // Use globalThis for better compatibility
@@ -137,7 +137,9 @@
     if (!currentRoom) return;
 
     try {
-      await sendChatMessage(currentRoom, messageInput, $participantName);
+      // Use displayName for chat messages instead of participantName
+      const senderName = get(displayName) || get(participantName);
+      await sendChatMessage(currentRoom, messageInput, senderName);
       messageInput = '';
       
       // Signal that user sent a message (stop typing)
@@ -192,6 +194,8 @@
   }
 </script>
 
+<!-- Only show chat widget if user has valid name -->
+{#if $hasValidName}
 <div class="chat-widget" class:minimized={isMinimized}>
   <div class="chat-header">
     <h3>💬 Live Chat</h3>
@@ -290,6 +294,7 @@
     </div>
   {/if}
 </div>
+{/if}
 
 <style>
   .chat-widget {
