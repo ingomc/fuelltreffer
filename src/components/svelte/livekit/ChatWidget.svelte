@@ -6,11 +6,18 @@
   import { room, participantName } from './utils/livekit-store.js';
   import { get } from 'svelte/store';
 
+  // Use globalThis for better compatibility
+  const clearTimeout = globalThis.clearTimeout;
+  const setTimeout = globalThis.setTimeout;
+  const requestAnimationFrame = globalThis.requestAnimationFrame;
+
   let chatContainer;
   let messageInput = '';
   let inputElement;
   let isMinimized = false;
   let typingManager = null;
+  let isUserScrolled = false;
+  let scrollTimeout;
 
   // Initialize typing manager when room and user info are available
   $: if ($room && $participantName && !typingManager) {
@@ -30,16 +37,55 @@
     if (typingManager) {
       typingManager.destroy();
     }
+    if (scrollTimeout) {
+      clearTimeout(scrollTimeout);
+    }
   });
 
-  // Auto-scroll to bottom when new messages arrive - More stable version
+  // Check if user is scrolled to bottom
+  function isScrolledToBottom() {
+    if (!chatContainer) return true;
+    const threshold = 50; // 50px threshold
+    return (
+      chatContainer.scrollHeight - chatContainer.scrollTop - chatContainer.clientHeight <= threshold
+    );
+  }
+
+  // Handle scroll events to track user scrolling
+  function handleScroll() {
+    if (scrollTimeout) {
+      clearTimeout(scrollTimeout);
+    }
+    
+    // Set flag that user is actively scrolling
+    isUserScrolled = !isScrolledToBottom();
+    
+    // Reset user scrolled flag after 2 seconds of no scrolling
+    scrollTimeout = setTimeout(() => {
+      isUserScrolled = false;
+    }, 2000);
+  }
+
+  // Smart auto-scroll based on best practices
+  function smartScrollToBottom() {
+    if (!chatContainer) return;
+    
+    // Only auto-scroll if user is at bottom or hasn't manually scrolled up
+    if (!isUserScrolled || isScrolledToBottom()) {
+      requestAnimationFrame(() => {
+        if (chatContainer) {
+          chatContainer.scrollTo({
+            top: chatContainer.scrollHeight,
+            behavior: 'smooth'
+          });
+        }
+      });
+    }
+  }
+
+  // Auto-scroll when new messages arrive - Chat Best Practice
   $: if ($chatMessages && chatContainer && $chatMessages.length > 0) {
-    // Use requestAnimationFrame for better performance
-    requestAnimationFrame(() => {
-      if (chatContainer) {
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-      }
-    });
+    smartScrollToBottom();
   }
 
   function handleInputChange() {
@@ -63,6 +109,17 @@
       if (typingManager) {
         typingManager.handleSend();
       }
+      
+      // Always scroll to bottom when user sends a message
+      setTimeout(() => {
+        if (chatContainer) {
+          chatContainer.scrollTo({
+            top: chatContainer.scrollHeight,
+            behavior: 'smooth'
+          });
+          isUserScrolled = false; // Reset scroll state
+        }
+      }, 100);
       
     } catch (error) {
       console.error('Failed to send message:', error);
@@ -124,7 +181,7 @@
   </div>
 
   {#if $chatEnabled && !isMinimized}
-    <div class="chat-messages" bind:this={chatContainer}>
+    <div class="chat-messages" bind:this={chatContainer} on:scroll={handleScroll}>
       {#each $chatMessages as message (message.id)}
         <div class="message-wrapper" class:own-message={message.isOwnMessage}>
           <div class="message-bubble" class:system={message.type === 'system'} class:own={message.isOwnMessage}>
@@ -246,10 +303,11 @@
     flex: 1;
     overflow-y: auto;
     padding: 8px;
-    padding-bottom: 60px; /* Extra space for typing indicator */
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
-    position: relative; /* Added for absolute positioning of typing indicator */
+    position: relative;
+    /* Better scroll behavior */
+    scroll-behavior: smooth;
   }
 
   .chat-messages::-webkit-scrollbar {
@@ -337,23 +395,22 @@
   }
 
   .typing-indicator {
-    position: absolute;
-    bottom: 8px;
-    left: 8px;
-    right: 8px;
     display: flex;
-    pointer-events: none;
-    z-index: 10;
+    margin-bottom: 8px;
+    animation: slideIn 0.3s ease-out;
   }
 
   .typing-bubble {
     background: rgba(255, 255, 255, 0.15);
+    color: white;
     border-radius: 18px;
     border-bottom-left-radius: 4px;
     padding: 10px 14px;
     display: flex;
     align-items: center;
     gap: 8px;
+    max-width: 70%;
+    font-size: 13px;
     animation: fadeInUp 0.3s ease-out;
     backdrop-filter: blur(4px);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -471,6 +528,17 @@
     30% {
       transform: scale(1);
       opacity: 1;
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 
