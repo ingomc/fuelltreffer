@@ -22,31 +22,50 @@
   let noCameraDiv = null;
 
   onMount(() => {
-    participantName.set(`Streamer-${Date.now()}`);
+    const streamerName = `Streamer-${Date.now()}`;
+    participantName.set(streamerName);
+    console.log('StreamerView mounted with name:', streamerName);
     connectAsStreamer();
   });
 
   async function connectAsStreamer() {
-    if ($isConnecting) return;
+    console.log('Starting streamer connection...');
+    if ($isConnecting) {
+      console.log('Already connecting, skipping...');
+      return;
+    }
     
     try {
       const currentRoom = createRoom();
       setupParticipantEvents(currentRoom, true);
       
-      const response = await fetch('/api/livekit/token', {
+      const params = new URLSearchParams({
+        name: $participantName,
+        streamer: 'true'
+      });
+      
+      const tokenUrl = `/api/livekit/token?${params}`;
+      console.log('Requesting token from:', tokenUrl);
+      console.log('With participant name:', $participantName);
+      
+      const response = await fetch(tokenUrl, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       });
       
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorText = await response.text();
+        console.error('Token request failed:', response.status, errorText);
+        throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
       }
       
       const data = await response.json();
+      console.log('Token received successfully:', data);
       await connectToRoom(data.wsUrl, data.token);
       
     } catch (error) {
       console.error('Error connecting as streamer:', error);
+      status.set(`Fehler: ${error.message}`);
     }
   }
 

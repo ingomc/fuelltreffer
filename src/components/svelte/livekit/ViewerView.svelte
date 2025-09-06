@@ -31,7 +31,12 @@
       setupParticipantEvents(currentRoom, false);
       setupViewerEvents(currentRoom);
       
-      const response = await fetch('/api/livekit/token', {
+      const params = new URLSearchParams({
+        name: $participantName,
+        streamer: 'false'
+      });
+      
+      const response = await fetch(`/api/livekit/token?${params}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       });
