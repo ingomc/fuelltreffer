@@ -134,7 +134,7 @@ export async function startCamera(localVideo, noCameraDiv) {
 }
 
 /**
- * Stops camera stream
+ * Stops camera stream (only for streamer)
  */
 export function stopCamera(localVideo, noCameraDiv) {
   const currentTrack = get(localVideoTrack);
@@ -145,8 +145,16 @@ export function stopCamera(localVideo, noCameraDiv) {
   }
   
   if (localVideo) {
+    // For streamer: stop all tracks and clear video element
+    if (localVideo.srcObject) {
+      const tracks = localVideo.srcObject.getTracks();
+      tracks.forEach(track => track.stop());
+    }
+    
     localVideo.srcObject = null;
+    localVideo.pause();
     localVideo.style.display = 'none';
+    localVideo.load(); // Reset the video element
   }
   
   if (noCameraDiv) {
@@ -184,7 +192,7 @@ export async function publishVideoTrack(currentRoom) {
 }
 
 /**
- * Unpublishes video track from room
+ * Unpublishes video track from room but keeps local preview
  */
 export async function unpublishVideoTrack(currentRoom) {
   if (!currentRoom) return;
@@ -202,5 +210,33 @@ export async function unpublishVideoTrack(currentRoom) {
   } catch (error) {
     console.error('Error unpublishing video track:', error);
     status.set(`❌ Stop-Fehler: ${error.message}`);
+  }
+}
+
+/**
+ * Recreates local video preview after stopping stream
+ */
+export async function recreateLocalPreview(localVideo) {
+  if (!localVideo) return;
+  
+  try {
+    // Get fresh camera stream for local preview
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        width: { ideal: 1280 },
+        height: { ideal: 720 },
+        frameRate: { ideal: 30 }
+      },
+      audio: false
+    });
+    
+    // Apply the fresh stream to local video element
+    localVideo.srcObject = stream;
+    localVideo.style.display = 'block';
+    
+    console.log('Local video preview recreated');
+    
+  } catch (error) {
+    console.error('Error recreating local preview:', error);
   }
 }

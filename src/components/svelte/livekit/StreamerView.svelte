@@ -13,7 +13,7 @@
     disconnectFromRoom 
   } from './utils/livekit-store.js';
   import { setupParticipantEvents } from './utils/participant-manager.js';
-  import { startCamera, stopCamera, publishVideoTrack, unpublishVideoTrack } from './utils/video-manager.js';
+  import { startCamera, stopCamera, publishVideoTrack, unpublishVideoTrack, recreateLocalPreview } from './utils/video-manager.js';
   import VideoGrid from './VideoGrid.svelte';
   import ParticipantsList from './ParticipantsList.svelte';
   import { get } from 'svelte/store';
@@ -95,7 +95,14 @@
     if (!$room) return;
     
     try {
+      // Stop the stream to LiveKit
       await unpublishVideoTrack($room);
+      
+      // Recreate local video preview so streamer can still see themselves
+      await recreateLocalPreview(localVideo);
+      
+      console.log('Stream stopped, local preview maintained');
+      
     } catch (error) {
       console.error('Error stopping stream:', error);
     }
