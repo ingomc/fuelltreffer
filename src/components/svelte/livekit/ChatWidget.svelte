@@ -16,8 +16,7 @@
   let inputElement;
   let isMinimized = false;
   let typingManager = null;
-  let isUserScrolled = false;
-  let scrollTimeout;
+  let shouldAutoScroll = true; // Track if we should auto-scroll new messages
 
   // Initialize typing manager when room and user info are available
   $: if ($room && $participantName && !typingManager) {
@@ -32,60 +31,67 @@
     });
   }
 
+  // Initial setup - scroll to bottom on mount
+  onMount(() => {
+    if (chatContainer) {
+      requestAnimationFrame(() => {
+        if (chatContainer) {
+          chatContainer.scrollTop = chatContainer.scrollHeight;
+          shouldAutoScroll = true;
+        }
+      });
+    }
+  });
+
   // Cleanup when component is destroyed
   onDestroy(() => {
     if (typingManager) {
       typingManager.destroy();
     }
-    if (scrollTimeout) {
-      clearTimeout(scrollTimeout);
-    }
   });
 
-  // Check if user is scrolled to bottom
-  function isScrolledToBottom() {
+  // Check if user is at bottom (StackOverflow best practice with threshold)
+  function isAtBottom() {
     if (!chatContainer) return true;
-    const threshold = 50; // 50px threshold
+    // Using small threshold for more reliable detection
+    const threshold = 50; // 50px tolerance for rounding errors
     return (
-      chatContainer.scrollHeight - chatContainer.scrollTop - chatContainer.clientHeight <= threshold
+      chatContainer.scrollTop + chatContainer.clientHeight >= chatContainer.scrollHeight - threshold
     );
   }
 
-  // Handle scroll events to track user scrolling
+  // Handle scroll events - track if user should receive auto-scroll
   function handleScroll() {
-    if (scrollTimeout) {
-      clearTimeout(scrollTimeout);
-    }
+    if (!chatContainer) return;
     
-    // Set flag that user is actively scrolling
-    isUserScrolled = !isScrolledToBottom();
-    
-    // Reset user scrolled flag after 2 seconds of no scrolling
-    scrollTimeout = setTimeout(() => {
-      isUserScrolled = false;
-    }, 2000);
+    // Update auto-scroll preference based on current position
+    shouldAutoScroll = isAtBottom();
   }
 
-  // Smart auto-scroll based on best practices
+  // WhatsApp-style auto-scroll: only when user is at bottom
   function smartScrollToBottom() {
     if (!chatContainer) return;
     
-    // Only auto-scroll if user is at bottom or hasn't manually scrolled up
-    if (!isUserScrolled || isScrolledToBottom()) {
+    // Only auto-scroll if user is at bottom (preserves history browsing)
+    if (shouldAutoScroll) {
       requestAnimationFrame(() => {
         if (chatContainer) {
-          chatContainer.scrollTo({
-            top: chatContainer.scrollHeight,
-            behavior: 'smooth'
-          });
+          chatContainer.scrollTop = chatContainer.scrollHeight;
         }
       });
     }
   }
 
-  // Auto-scroll when new messages arrive - Chat Best Practice
+  // Auto-scroll when new messages arrive (only if user is at bottom)
   $: if ($chatMessages && chatContainer && $chatMessages.length > 0) {
-    smartScrollToBottom();
+    // Check if we should auto-scroll BEFORE the DOM updates
+    const wasAtBottom = isAtBottom();
+    
+    requestAnimationFrame(() => {
+      if (wasAtBottom) {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }
+    });
   }
 
   function handleInputChange() {
@@ -113,11 +119,8 @@
       // Always scroll to bottom when user sends a message
       setTimeout(() => {
         if (chatContainer) {
-          chatContainer.scrollTo({
-            top: chatContainer.scrollHeight,
-            behavior: 'smooth'
-          });
-          isUserScrolled = false; // Reset scroll state
+          chatContainer.scrollTop = chatContainer.scrollHeight;
+          shouldAutoScroll = true; // Enable auto-scroll after user sends
         }
       }, 100);
       
