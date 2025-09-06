@@ -8,7 +8,9 @@
     "build": "astro check && astro build",
     "preview": "astro preview --port ${FRONTEND_PORT:-4000}",
     "astro": "astro",
-    "build:docker": "docker build -t fuelltreffer ."
+    "build:docker": "docker build -t fuelltreffer .",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.0",
@@ -24,6 +26,12 @@
     "typescript": "^5.5.0"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "@eslint/js": "^9.35.0",
+    "@typescript-eslint/eslint-plugin": "^8.42.0",
+    "@typescript-eslint/parser": "^8.42.0",
+    "concurrently": "^8.2.2",
+    "eslint": "^9.35.0",
+    "eslint-plugin-astro": "^1.3.1",
+    "eslint-plugin-svelte": "^3.12.1"
   }
 }
