@@ -80,14 +80,32 @@
       console.log(`🎬 TRACK SUBSCRIBED: ${track.kind} track "${track.name}" from ${participant.identity}`);
       
       if (track.kind === 'video') {
-        handleVideoTrackSubscribed(track, participant, remoteVideos, noStreamDiv, screenShareVideo);
-        
         // Check if this is a screen share track from REMOTE participant
-        // LiveKit built-in screen sharing uses specific track names
-        if (track.name === 'screen_share' || track.source === 'screen_share' || track.kind === 'video' && participant.isScreenShareEnabled) {
+        const isScreenShare = track.name === 'screen_share' || 
+                             track.source === 'screen_share' || 
+                             track.name === 'screen' ||
+                             participant.isScreenShareEnabled;
+        
+        if (isScreenShare) {
           console.log(`🖥️ REMOTE SCREEN SHARE track received from ${participant.identity}`);
           console.log('✅ Setting hasRemoteScreenShare to TRUE');
           hasRemoteScreenShare.set(true);
+          
+          // Ensure screen share video element is ready, retry if needed
+          const attachScreenShare = () => {
+            if (screenShareVideo) {
+              console.log('📱 Screen share video element is ready, attaching track');
+              handleVideoTrackSubscribed(track, participant, remoteVideos, noStreamDiv, screenShareVideo);
+            } else {
+              console.log('⏰ Screen share video element not ready, retrying in 100ms');
+              setTimeout(attachScreenShare, 100);
+            }
+          };
+          
+          attachScreenShare();
+        } else {
+          // Regular camera video
+          handleVideoTrackSubscribed(track, participant, remoteVideos, noStreamDiv, screenShareVideo);
         }
       }
       // Audio is handled in participant-manager.js
@@ -97,11 +115,12 @@
       console.log(`🎬 TRACK UNSUBSCRIBED: ${track.kind} track "${track.name}" from ${participant.identity}`);
       
       if (track.kind === 'video') {
-        handleVideoTrackUnsubscribed(track, participant, remoteVideos);
+        const isScreenShare = track.name === 'screen_share' || 
+                             track.source === 'screen_share' || 
+                             track.name === 'screen';
         
-        // Check if this was a screen share track from REMOTE participant
-        if (track.name === 'screen_share' || track.source === 'screen_share' || track.kind === 'video' && !participant.isScreenShareEnabled) {
-          console.log(`🖥️ REMOTE SCREEN SHARE track REMOVED from ${participant.identity}`);
+        if (isScreenShare) {
+          console.log(`🖥️ REMOTE SCREEN SHARE track removed from ${participant.identity}`);
           
           // Check if there are any other screen share tracks before updating state
           const hasOtherScreenShares = Array.from(currentRoom.remoteParticipants.values())
@@ -115,6 +134,8 @@
             console.log('ℹ️ Other screen shares still active, keeping state true');
           }
         }
+        
+        handleVideoTrackUnsubscribed(track, participant, remoteVideos);
       }
       // Audio is handled in participant-manager.js
     });

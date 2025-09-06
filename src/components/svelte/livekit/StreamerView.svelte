@@ -1,5 +1,6 @@
 <script>
   import { onMount } from 'svelte';
+  import { RoomEvent } from 'livekit-client';
   import { 
     room, 
     participantName, 
@@ -14,7 +15,7 @@
     disconnectFromRoom 
   } from './utils/livekit-store.js';
   import { setupParticipantEvents } from './utils/participant-manager.js';
-  import { startCamera, stopCamera, publishVideoTrack, unpublishVideoTrack, recreateLocalPreview } from './utils/video-manager.js';
+  import { startCamera, stopCamera, publishVideoTrack, unpublishVideoTrack, recreateLocalPreview, handleVideoTrackSubscribed, handleVideoTrackUnsubscribed } from './utils/video-manager.js';
   import { 
     isAudioEnabled, 
     isAudioMuted, 
@@ -59,6 +60,7 @@
     try {
       const currentRoom = createRoom();
       setupParticipantEvents(currentRoom, true);
+      setupStreamerEvents(currentRoom);
       
       const params = new URLSearchParams({
         name: $participantName,
@@ -88,6 +90,47 @@
       console.error('Error connecting as streamer:', error);
       status.set(`Fehler: ${error.message}`);
     }
+  }
+
+  function setupStreamerEvents(currentRoom) {
+    // Listen for LOCAL video track events (including screen sharing)
+    currentRoom.on(RoomEvent.LocalTrackPublished, (publication, participant) => {
+      console.log(`🎬 LOCAL TRACK PUBLISHED: ${publication.kind} track "${publication.trackName}" from ${participant.identity}`);
+      
+      if (publication.kind === 'video' && publication.source === 'screen_share') {
+        console.log(`🖥️ LOCAL SCREEN SHARE track published by ${participant.identity}`);
+        
+        // Get the actual track from the publication
+        const track = publication.track;
+        if (track) {
+          // Ensure screen share video element is ready, retry if needed
+          const attachLocalScreenShare = () => {
+            if (screenShareVideo) {
+              console.log('📱 Local screen share video element is ready, attaching track');
+              handleVideoTrackSubscribed(track, participant, null, null, screenShareVideo);
+            } else {
+              console.log('⏰ Screen share video element not ready, retrying in 100ms');
+              setTimeout(attachLocalScreenShare, 100);
+            }
+          };
+          
+          attachLocalScreenShare();
+        }
+      }
+    });
+
+    currentRoom.on(RoomEvent.LocalTrackUnpublished, (publication, participant) => {
+      console.log(`🎬 LOCAL TRACK UNPUBLISHED: ${publication.kind} track "${publication.trackName}" from ${participant.identity}`);
+      
+      if (publication.kind === 'video' && publication.source === 'screen_share') {
+        console.log(`🖥️ LOCAL SCREEN SHARE track unpublished by ${participant.identity}`);
+        
+        // Clear the screen share video
+        if (screenShareVideo) {
+          screenShareVideo.srcObject = null;
+        }
+      }
+    });
   }
 
   async function handleStartCamera() {
