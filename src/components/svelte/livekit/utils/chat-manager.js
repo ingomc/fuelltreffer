@@ -16,11 +16,27 @@ function sanitizeName(name) {
   return name.trim().substring(0, 50) || 'Anonymous';
 }
 
-export function getDisplayNameFromParticipantName(name) {
+function getDisplayNameFromParticipantName(name) {
   if (!name || typeof name !== 'string') return 'Anonymous';
   
-  // Just return the name as-is, no prefix filtering needed
-  return name.trim();
+  // Remove the prefix for display in chat
+  // Note: In Node.js/build context, import.meta.env might not be available
+  // We'll use a fallback approach
+  let prefix = 'SCO-';
+  try {
+    prefix = import.meta.env.PUBLIC_LIVEKIT_PARTICIPANT_PREFIX || 'SCO-';
+  } catch (_e) {
+    // Fallback if import.meta.env is not available
+    prefix = 'SCO-';
+  }
+  
+  if (name.startsWith(prefix)) {
+    const nameWithoutPrefix = name.substring(prefix.length);
+    // Also remove (Admin) suffix if present
+    return nameWithoutPrefix.replace(/\s*\(Admin\)$/, '').trim() || 'Anonymous';
+  }
+  
+  return name.trim() || 'Anonymous';
 }
 
 /**

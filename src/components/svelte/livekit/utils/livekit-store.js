@@ -19,6 +19,7 @@ export const reconnectAttempts = writable(0);
 export const userName = writable('');
 export const hasValidName = writable(false);
 export const displayName = writable('');
+export const chatName = writable(''); // For chat display only
 
 // Stream state
 export const hasActiveStream = writable(false);

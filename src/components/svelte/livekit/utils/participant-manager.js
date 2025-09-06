@@ -8,7 +8,7 @@ import {
   startParticipantMonitoring,
   stopParticipantMonitoring 
 } from './livekit-store.js';
-import { setupChatHandlers, addSystemMessage } from './chat-manager-fixed.js';
+import { setupChatHandlers, addSystemMessage } from './chat-manager.js';
 import { get } from 'svelte/store';
 
 /**

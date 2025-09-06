@@ -1,5 +1,5 @@
 <script>
-  import { userName, hasValidName, displayName, isStreamer, participantName } from './utils/livekit-store.js';
+  import { userName, hasValidName, displayName, chatName, isStreamer, participantName } from './utils/livekit-store.js';
   import { get } from 'svelte/store';
 
   let inputValue = '';
@@ -10,13 +10,16 @@
     if (trimmedName.length >= 2) {
       const isStreamerMode = get(isStreamer);
       
-      // Set display name with SCO- prefix for streamer
       if (isStreamerMode) {
-        displayName.set(`SCO-${trimmedName} (Admin)`);
-        participantName.set(`SCO-${trimmedName}`);
+        // STREAMER: Andre -> Andre (Admin) (KEIN prefix mehr)
+        displayName.set(`${trimmedName} (Admin)`); // UI: Andre (Admin)
+        participantName.set(`${trimmedName} (Admin)`); // LiveKit: Andre (Admin)
+        chatName.set(trimmedName); // Chat: Andre
       } else {
-        displayName.set(trimmedName);
-        participantName.set(trimmedName);
+        // VIEWER: Fabian -> Fabian (KEIN prefix)
+        displayName.set(trimmedName); // UI: Fabian
+        participantName.set(trimmedName); // LiveKit: Fabian
+        chatName.set(trimmedName); // Chat: Fabian
       }
       
       userName.set(trimmedName);
@@ -56,19 +59,20 @@
         <div class="input-group">
           <label for="name-input">
             {#if $isStreamer}
-              Dein Name (wird als SCO-Name (Admin) angezeigt):
+              Dein Name (wird als Name (Admin) angezeigt):
             {:else}
               Dein Name:
             {/if}
           </label>
           <input
             id="name-input"
+            autocomplete="off"
             bind:this={inputElement}
             bind:value={inputValue}
             on:input={handleInput}
             on:keypress={handleKeyPress}
             type="text"
-            placeholder={$isStreamer ? "Andre → SCO-Andre (Admin)" : "Dein Name..."}
+            placeholder="Name eingeben"
             maxlength="20"
             required
           />
@@ -77,7 +81,7 @@
             <div class="name-preview">
               Angezeigt als: <strong>
                 {#if $isStreamer}
-                  SCO-{inputValue.trim()} (Admin)
+                  {inputValue.trim()} (Admin)
                 {:else}
                   {inputValue.trim()}
                 {/if}

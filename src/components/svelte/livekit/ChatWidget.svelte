@@ -1,9 +1,9 @@
 <script>
   import { onMount, onDestroy } from 'svelte';
   import { chatMessages, typingUsers, chatEnabled, showTimestamps } from './utils/chat-store.js';
-  import { sendChatMessage } from './utils/chat-manager-fixed.js';
+  import { sendChatMessage } from './utils/chat-manager.js';
   import { TypingManager } from './utils/typing-manager.js';
-  import { room, participantName, displayName, hasValidName } from './utils/livekit-store.js';
+  import { room, participantName, displayName, chatName, hasValidName } from './utils/livekit-store.js';
   import { get } from 'svelte/store';
 
   // Use globalThis for better compatibility
@@ -137,8 +137,8 @@
     if (!currentRoom) return;
 
     try {
-      // Use displayName for chat messages instead of participantName
-      const senderName = get(displayName) || get(participantName);
+      // Use chatName for chat messages (pure name without SCO prefix)
+      const senderName = get(chatName) || get(participantName);
       await sendChatMessage(currentRoom, messageInput, senderName);
       messageInput = '';
       

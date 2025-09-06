@@ -28,7 +28,6 @@ export async function GET({ url }) {
     const apiKey = process.env.LIVEKIT_API_KEY;
     const apiSecret = process.env.LIVEKIT_API_SECRET;
     const wsUrl = process.env.LIVEKIT_URL;
-    const participantPrefix = process.env.LIVEKIT_PARTICIPANT_PREFIX || 'ft-';
 
     // Debug-Information für Docker/Production
     console.log('Environment Debug:', {
@@ -56,7 +55,7 @@ export async function GET({ url }) {
     }
 
     const at = new AccessToken(apiKey, apiSecret, {
-      identity: `${participantPrefix}${participantName}`,
+      identity: participantName, // Kein Prefix mehr
     });
 
     // Set room permissions based on role
