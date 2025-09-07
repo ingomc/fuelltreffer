@@ -11,9 +11,7 @@
   import { 
     isScreenSharing, 
     startScreenShare, 
-    stopScreenShare, 
-    publishScreenTrack, 
-    unpublishScreenTrack 
+    stopScreenShare
   } from './utils/screen-manager.js';
   import { room, hasActiveStream } from './utils/livekit-store.js';
   import { get } from 'svelte/store';
@@ -42,13 +40,7 @@
     try {
       if (!$isScreenSharing) {
         await startScreenShare();
-        if ($room && $hasActiveStream) {
-          await publishScreenTrack($room);
-        }
       } else {
-        if ($room && $hasActiveStream) {
-          await unpublishScreenTrack($room);
-        }
         await stopScreenShare();
       }
     } catch (error) {

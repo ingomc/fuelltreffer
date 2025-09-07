@@ -6,6 +6,7 @@
 import { writable, get } from 'svelte/store';
 import { LocalAudioTrack } from 'livekit-client';
 import { status } from './livekit-store.js';
+import { selectedAudioDevice, getAudioConstraints } from './device-manager.js';
 
 // Use globalThis for better compatibility
 const navigator = globalThis.navigator;
@@ -18,16 +19,17 @@ export const isAudioMuted = writable(true);
 /**
  * Start microphone capture
  */
-export async function startMicrophone() {
+export async function startMicrophone(customConstraints = {}) {
   try {
-    console.log('Starting microphone...');
+    const currentDevice = get(selectedAudioDevice);
+    const getConstraints = getAudioConstraints(customConstraints);
+    const audioConstraints = getConstraints(currentDevice);
+    
+    console.log('Starting microphone with device:', currentDevice?.label || 'default');
+    console.log('Audio constraints:', audioConstraints);
     
     const stream = await navigator.mediaDevices.getUserMedia({
-      audio: {
-        echoCancellation: true,
-        noiseSuppression: true,
-        autoGainControl: true
-      }
+      audio: audioConstraints
     });
     
     const audioTrack = stream.getAudioTracks()[0];
@@ -44,6 +46,49 @@ export async function startMicrophone() {
   } catch (error) {
     console.error('Error starting microphone:', error);
     status.set(`❌ Mikrofon-Fehler: ${error.message}`);
+    throw error;
+  }
+}
+
+/**
+ * Switch to a different audio device during streaming
+ */
+export async function switchAudioDevice(newDevice) {
+  console.log('Switching audio device to:', newDevice?.label || 'default');
+  
+  const currentTrack = get(localAudioTrack);
+  if (!currentTrack) {
+    console.warn('No active audio track to switch');
+    return;
+  }
+  
+  try {
+    // Update the selected device
+    selectedAudioDevice.set(newDevice);
+    
+    // Create new audio stream with the selected device
+    const getConstraints = getAudioConstraints();
+    const audioConstraints = getConstraints(newDevice);
+    
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: audioConstraints
+    });
+    
+    const newAudioTrack = stream.getAudioTracks()[0];
+    
+    if (newAudioTrack) {
+      // Replace the track in the existing LiveKit track
+      await currentTrack.replaceTrack(newAudioTrack);
+      
+      console.log('Audio device switched successfully');
+      status.set(`✅ Mikrofon gewechselt zu: ${newDevice?.label || 'Standard'}`);
+      
+      // The old track is automatically stopped by replaceTrack
+    }
+    
+  } catch (error) {
+    console.error('Error switching audio device:', error);
+    status.set(`❌ Mikrofon-Wechsel fehlgeschlagen: ${error.message}`);
     throw error;
   }
 }

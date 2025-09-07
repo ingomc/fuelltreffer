@@ -38,6 +38,7 @@
   import VideoGrid from './VideoGrid.svelte';
   import ParticipantsList from './ParticipantsList.svelte';
   import ChatWidget from './ChatWidget.svelte';
+  import DeviceSelector from './DeviceSelector.svelte';
   import { get } from 'svelte/store';
 
   let localVideo = null;
@@ -226,6 +227,12 @@
       bind:noCameraDiv 
       bind:screenShareVideo
       hasRemoteScreenShare={false}
+    />
+    
+    <!-- Device Selection Panel -->
+    <DeviceSelector 
+      showDeviceSelection={$isConnected} 
+      allowSwitching={true} 
     />
     
     <div class="stream-controls">

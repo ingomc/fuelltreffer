@@ -1,5 +1,6 @@
 import { LocalVideoTrack } from 'livekit-client';
 import { localVideoTrack, isStartingStream, status, hasActiveStream } from './livekit-store.js';
+import { selectedVideoDevice, getVideoConstraints } from './device-manager.js';
 import { get } from 'svelte/store';
 
 // Use globalThis for better compatibility
@@ -249,26 +250,67 @@ export function handleVideoTrackUnsubscribed(track, participant, remoteVideos) {
 /**
  * Creates a local video track from camera
  */
-export async function createVideoTrack() {
+export async function createVideoTrack(customConstraints = {}) {
   try {
+    const currentDevice = get(selectedVideoDevice);
+    const getConstraints = getVideoConstraints(customConstraints);
+    const videoConstraints = getConstraints(currentDevice);
+    
+    console.log('Creating video track with device:', currentDevice?.label || 'default');
+    console.log('Video constraints:', videoConstraints);
+    
     const stream = await navigator.mediaDevices.getUserMedia({
-      video: {
-        width: { ideal: 1280 },
-        height: { ideal: 720 },
-        frameRate: { ideal: 30 }
-      },
-      audio: true // Enable audio for full streaming
+      video: videoConstraints,
+      audio: false // Only video for this function, audio handled separately
     });
     
     const videoTrack = stream.getVideoTracks()[0];
     
     if (videoTrack) {
       const lkTrack = new LocalVideoTrack(videoTrack);
+      console.log('Video track created successfully');
       return lkTrack;
     }
     
   } catch (error) {
     console.error('Error creating video track:', error);
+    throw error;
+  }
+}
+
+/**
+ * Switch to a different video device during streaming
+ */
+export async function switchVideoDevice(newDevice) {
+  console.log('Switching video device to:', newDevice?.label || 'default');
+  
+  const currentTrack = get(localVideoTrack);
+  if (!currentTrack) {
+    console.warn('No active video track to switch');
+    return;
+  }
+  
+  try {
+    // Update the selected device
+    selectedVideoDevice.set(newDevice);
+    
+    // Create new track with the selected device
+    const newTrack = await createVideoTrack();
+    
+    if (newTrack && newTrack.mediaStreamTrack) {
+      // Replace the track in the existing LiveKit track
+      await currentTrack.replaceTrack(newTrack.mediaStreamTrack);
+      
+      console.log('Video device switched successfully');
+      status.set(`✅ Kamera gewechselt zu: ${newDevice?.label || 'Standard'}`);
+      
+      // Clean up the temporary track since replaceTrack copies the MediaStreamTrack
+      newTrack.stop();
+    }
+    
+  } catch (error) {
+    console.error('Error switching video device:', error);
+    status.set(`❌ Kamera-Wechsel fehlgeschlagen: ${error.message}`);
     throw error;
   }
 }
