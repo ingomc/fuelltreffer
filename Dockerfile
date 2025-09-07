@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 
 FROM base AS prod-deps
-RUN npm ci --omit=dev --only=production
+RUN npm ci --omit=dev
 
 FROM base AS build-deps
 RUN npm ci
