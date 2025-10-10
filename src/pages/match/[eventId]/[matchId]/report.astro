@@ -50,7 +50,7 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
   </main>
 </Layout>
 
-<script define:vars={{ eventId, matchId }}>
+<script define:vars={{ eventId, matchId, teamParam }}>
   // Fetch match report data
   async function fetchMatchReport() {
     const loadingEl = document.getElementById('loading');
@@ -59,22 +59,88 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
     const contentEl = document.getElementById('content');
 
     try {
-      // Fetch both report and statistics
-      const [reportResponse, statsResponse] = await Promise.all([
-        fetch(`/api/match/${eventId}/${matchId}/report`),
-        fetch(`/api/match/${eventId}/${matchId}/statistics`)
-      ]);
+      // Fetch report first
+      const reportResponse = await fetch(`/api/match/${eventId}/${matchId}/report`);
       
       if (!reportResponse.ok) {
         throw new Error(`HTTP error! status: ${reportResponse.status}`);
       }
       
       const reportData = await reportResponse.json();
-      let statsData = null;
+      console.log('Report loaded, games:', reportData.length);
       
-      // Statistics might not always be available
-      if (statsResponse.ok) {
-        statsData = await statsResponse.json();
+      // Get round info from first game to fetch ALL matches of this round
+      const firstGame = reportData[0];
+      const phaseId = firstGame.round?.phase?.id;
+      const roundIndex = firstGame.round?.roundIndex;
+      
+      console.log('🎯 Round info - Phase:', phaseId, 'Round:', roundIndex);
+      
+      // Fetch ALL matches of this round (all teams playing on this match day)
+      let allRoundMatches = [];
+      if (phaseId && roundIndex !== undefined) {
+        try {
+          console.log('📥 Loading all matches for this round...');
+          const roundResponse = await fetch(`/api/round/${eventId}/${phaseId}/${roundIndex}`);
+          if (roundResponse.ok) {
+            const roundData = await roundResponse.json();
+            allRoundMatches = roundData.matches || [];
+            console.log('✅ Loaded', allRoundMatches.length, 'matches from round');
+          }
+        } catch (e) {
+          console.error('Failed to load round matches:', e);
+        }
+      }
+      
+      // Fetch statistics for EACH game in EACH match of the round
+      const allStats = [];
+      
+      for (const match of allRoundMatches) {
+        // Get the match report for each match
+        try {
+          const matchReportResponse = await fetch(`/api/match/${eventId}/${match.id}/report`);
+          if (matchReportResponse.ok) {
+            const matchGames = await matchReportResponse.json();
+            console.log(`📊 Match ${match.id}: ${matchGames.length} games`);
+            
+            // For each game in the match, fetch statistics
+            for (const game of matchGames) {
+              if (game.hasPerformances) {
+                try {
+                  const statsResponse = await fetch(`/api/match/${eventId}/${game.id}/statistics`);
+                  if (statsResponse.ok) {
+                    const gameStats = await statsResponse.json();
+                    if (gameStats.length > 0) {
+                      console.log(`  ✅ Game ${game.gameNr}: ${gameStats.length} stats`);
+                      allStats.push(...gameStats);
+                    }
+                  }
+                } catch (e) {
+                  console.error(`Failed to load stats for game ${game.id}:`, e);
+                }
+              }
+            }
+          }
+        } catch (e) {
+          console.error(`Failed to load match ${match.id}:`, e);
+        }
+      }
+      
+      console.log('📊 Total statistics loaded:', allStats.length, 'entries from all matches');
+      
+      // Load team roster if teamParam is provided
+      let teamRoster = null;
+      if (teamParam) {
+        try {
+          console.log(`🔍 Loading roster for team ${teamParam}`);
+          const rosterResponse = await fetch(`/api/participant/${teamParam}`);
+          if (rosterResponse.ok) {
+            teamRoster = await rosterResponse.json();
+            console.log(`✅ Team roster loaded: ${teamRoster?.members?.length || 0} members`);
+          }
+        } catch (e) {
+          console.error('Failed to load team roster:', e);
+        }
       }
       
       // Hide loading
@@ -84,7 +150,7 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
       contentEl.classList.remove('hidden');
       
       // Render the match report
-      renderMatchReport(reportData, statsData, contentEl);
+      renderMatchReport(reportData, allStats.length > 0 ? allStats : null, teamRoster, contentEl);
       
     } catch (error) {
       console.error('Error fetching match report:', error);
@@ -123,7 +189,7 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
     return (scoreTotal / dartsTotal * 3).toFixed(2);
   }
 
-  function renderMatchReport(data, statsData, container) {
+  function renderMatchReport(data, statsData, teamRoster, container) {
     if (!data || data.length === 0) {
       container.innerHTML = '<p class="text-center text-gray-500">Keine Daten verfügbar</p>';
       return;
@@ -311,70 +377,154 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
       `;
     });
 
-    // Player Statistics
+    // Player Statistics - Alle Spieler mit ihren Spielen am Spieltag
+    console.log('Checking stats data...', statsData ? 'Available' : 'Not available');
+    
     if (statsData && statsData.length > 0) {
-      // Separate MATCH and LEG statistics
+      console.log('📊 Rendering statistics - Stats Data:', statsData.length, 'entries');
+      
+      // Get all MATCH statistics (one per player per EINZELSPIEL)
       const matchStats = statsData.filter(s => s.type === 'MATCH');
-      const legStats = statsData.filter(s => s.type === 'LEG');
       
-      // Group by participant
-      const homeStats = matchStats.filter(s => 
-        data[0].participantHome.id === s.participantId || 
-        data[0].participantHome.displayName === s.displayName
-      );
-      const awayStats = matchStats.filter(s => 
-        data[0].participantGuest.id === s.participantId || 
-        data[0].participantGuest.displayName === s.displayName
-      );
+      console.log('Match Stats (Einzelspiele):', matchStats.length);
       
-      html += '<div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">';
+      // Bestimme welches Team die ausgewählte Mannschaft ist (aus teamParam)
+      const selectedTeamId = teamParam ? parseInt(teamParam) : null;
+      
+      // Finde heraus welches Team Heim/Gast ist
+      const firstGame = data[0];
+      const homeTeamId = firstGame.participantHome?.teamSeason?.team?.id;
+      const awayTeamId = firstGame.participantGuest?.teamSeason?.team?.id;
+      
+      console.log('🏠 Home Team ID:', homeTeamId, '🚗 Away Team ID:', awayTeamId, '🎯 Selected Team:', selectedTeamId);
+      
+      // Alle Spieler der ausgewählten Mannschaft (aus Team Roster)
+      let allTeamPlayers = [];
+      let isHomeTeam = false;
+      
+      if (teamRoster && teamRoster.members) {
+        allTeamPlayers = teamRoster.members.map(m => ({
+          id: m.id,
+          name: m.displayName || m.name || 'N/A'
+        }));
+        console.log('👥 Team roster loaded:', allTeamPlayers.length, 'players');
+        
+        // Prüfe ob selected team = home oder away
+        isHomeTeam = selectedTeamId === homeTeamId;
+        console.log('Selected team is:', isHomeTeam ? 'HOME' : 'AWAY');
+      }
+      
+      // Gruppiere Statistiken nach Spieler-ID oder Name
+      const playerStatsMap = new Map();
+      
+      matchStats.forEach(stat => {
+        // Verwende participant ID als Key, falls vorhanden
+        const key = stat.participant?.id || stat.displayName;
+        if (!playerStatsMap.has(key)) {
+          playerStatsMap.set(key, []);
+        }
+        playerStatsMap.get(key).push(stat);
+      });
+      
+      console.log('Players with stats:', playerStatsMap.size);
+      
+      // Baue Statistiken für ALLE Team-Spieler auf (auch ohne Spiele)
+      const teamPlayerStats = new Map();
+      
+      if (allTeamPlayers.length > 0) {
+        // Für jeden Spieler im Roster
+        allTeamPlayers.forEach(player => {
+          // Suche seine Statistiken
+          const stats = playerStatsMap.get(player.id) || 
+                       playerStatsMap.get(player.name) || 
+                       [];
+          
+          teamPlayerStats.set(player.name, stats);
+        });
+        console.log('✅ Team stats built for', teamPlayerStats.size, 'players');
+      } else {
+        // Fallback: Zeige nur Spieler mit Stats (alte Logik)
+        console.log('⚠️ No roster available, showing only players with stats');
+        
+        // Sammle alle Spieler die im Match gespielt haben
+        const allPlayedParticipants = new Set();
+        data.forEach(game => {
+          if (isHomeTeam) {
+            allPlayedParticipants.add(game.participantHome.displayName);
+          } else {
+            allPlayedParticipants.add(game.participantGuest.displayName);
+          }
+        });
+        
+        // Nur Spieler mit Stats von der ausgewählten Seite
+        playerStatsMap.forEach((stats, key) => {
+          const playerName = stats[0]?.displayName || key;
+          if (allPlayedParticipants.has(playerName)) {
+            teamPlayerStats.set(playerName, stats);
+          }
+        });
+      }
+      
+      html += '<div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden mt-6">';
       html += '<div class="bg-gradient-to-r from-purple-500 to-purple-600 dark:from-purple-600 dark:to-purple-700 p-3 text-white font-bold">';
       html += '📊 Spieler Statistiken';
       html += '</div>';
       
-      // Home Team Stats
-      if (homeStats.length > 0) {
-        html += '<div class="p-3 bg-blue-50 dark:bg-blue-950 border-b border-gray-200 dark:border-gray-700">';
-        html += '<div class="font-bold text-blue-900 dark:text-blue-100 mb-2">🏠 ' + homeTeamName + '</div>';
+      // Show stats for selected team only
+      if (teamPlayerStats.size > 0) {
+        const teamDisplayName = isHomeTeam ? homeTeamName : awayTeamName;
+        const teamIcon = isHomeTeam ? '🏠' : '🚗';
+        const colorScheme = isHomeTeam ? 'blue' : 'green';
+        
+        html += '<div class="p-3 bg-' + colorScheme + '-50 dark:bg-' + colorScheme + '-950 border-b border-gray-200 dark:border-gray-700">';
+        html += '<div class="font-bold text-' + colorScheme + '-900 dark:text-' + colorScheme + '-100 mb-3">' + teamIcon + ' ' + teamDisplayName + '</div>';
         html += '<div class="overflow-x-auto">';
-        html += '<table class="w-full text-sm">';
-        html += '<thead class="text-xs text-blue-700 dark:text-blue-300 border-b border-blue-200 dark:border-blue-800">';
+        html += '<table class="w-full text-sm border-collapse">';
+        html += '<thead class="text-xs text-' + colorScheme + '-700 dark:text-' + colorScheme + '-300 bg-' + colorScheme + '-100 dark:bg-' + colorScheme + '-900">';
         html += '<tr>';
-        html += '<th class="text-left p-2">Spieler</th>';
-        html += '<th class="text-center p-2">Legs</th>';
-        html += '<th class="text-center p-2">Ø Gesamt</th>';
-      
-        // Add leg headers for home team
-        const homePlayerLegs = legStats.filter(l => homeStats.some(h => h.participantId === l.participantId));
-        const uniqueLegs = [...new Set(homePlayerLegs.map(l => l.legIndex))].sort();
-        uniqueLegs.forEach(legIndex => {
-          html += '<th class="text-center p-2">Leg ' + (legIndex + 1) + '</th>';
+        html += '<th class="text-left p-2 border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800">Spieler</th>';
+        html += '<th class="text-center p-2 border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800">Spiele</th>';
+        html += '<th class="text-center p-2 border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800">Legs Won</th>';
+        html += '<th class="text-center p-2 border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800 bg-' + colorScheme + '-200 dark:bg-' + colorScheme + '-800">Ø Gesamt</th>';
+        
+        // Find max number of games any player played
+        let maxGames = 0;
+        teamPlayerStats.forEach(stats => {
+          if (stats.length > maxGames) maxGames = stats.length;
         });
+        
+        for (let i = 0; i < maxGames; i++) {
+          html += '<th class="text-center p-2 border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800">Spiel ' + (i + 1) + '</th>';
+        }
         
         html += '</tr>';
         html += '</thead>';
-        html += '<tbody class="text-blue-900 dark:text-blue-100">';
+        html += '<tbody class="text-' + colorScheme + '-900 dark:text-' + colorScheme + '-100">';
       
-        homeStats.forEach(player => {
-          const playerLegs = legStats.filter(l => l.participantId === player.participantId).sort((a, b) => a.legIndex - b.legIndex);
-          const overallAvg = calculateAverage(player.scoreTotal, player.dartsTotal);
+        teamPlayerStats.forEach((playerGames, playerName) => {
+          // Calculate overall stats
+          const totalDarts = playerGames.reduce((sum, g) => sum + g.dartsTotal, 0);
+          const totalScore = playerGames.reduce((sum, g) => sum + g.scoreTotal, 0);
+          const totalLegsWon = playerGames.reduce((sum, g) => sum + g.legCount, 0);
+          const overallAvg = playerGames.length > 0 ? calculateAverage(totalScore, totalDarts) : '-';
           
-          html += '<tr class="border-b border-blue-100 dark:border-blue-900">';
-          html += '<td class="p-2 font-medium">' + player.displayName + '</td>';
-          html += '<td class="text-center p-2">' + player.legCount + '</td>';
-          html += '<td class="text-center p-2 font-bold text-lg">' + overallAvg + '</td>';
+          html += '<tr class="border-b border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800 hover:bg-' + colorScheme + '-100 dark:hover:bg-' + colorScheme + '-900">';
+          html += '<td class="p-2 font-medium border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800">' + playerName + '</td>';
+          html += '<td class="text-center p-2 border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800">' + (playerGames.length || '-') + '</td>';
+          html += '<td class="text-center p-2 border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800">' + (totalLegsWon || '-') + '</td>';
+          html += '<td class="text-center p-2 font-bold text-lg border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800 bg-' + colorScheme + '-100 dark:bg-' + colorScheme + '-900">' + overallAvg + '</td>';
           
-          // Add leg averages
-          uniqueLegs.forEach(legIndex => {
-            const leg = playerLegs.find(l => l.legIndex === legIndex);
-            if (leg) {
-              const legAvg = calculateAverage(leg.scoreTotal, leg.dartsTotal);
-              const wonClass = leg.won ? 'text-green-600 dark:text-green-400 font-bold' : '';
-              html += '<td class="text-center p-2 ' + wonClass + '">' + legAvg + '</td>';
+          // Add individual game averages
+          for (let i = 0; i < maxGames; i++) {
+            if (i < playerGames.length) {
+              const game = playerGames[i];
+              const gameAvg = calculateAverage(game.scoreTotal, game.dartsTotal);
+              const wonClass = game.won ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 font-bold' : '';
+              html += '<td class="text-center p-2 border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800 ' + wonClass + '">' + gameAvg + '</td>';
             } else {
-              html += '<td class="text-center p-2 text-gray-400">-</td>';
+              html += '<td class="text-center p-2 border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800 text-gray-400">-</td>';
             }
-          });
+          }
           
           html += '</tr>';
         });
@@ -385,59 +535,21 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
         html += '</div>';
       }
       
-      // Away Team Stats
-      if (awayStats.length > 0) {
-        html += '<div class="p-3 bg-green-50 dark:bg-green-950">';
-        html += '<div class="font-bold text-green-900 dark:text-green-100 mb-2">🚗 ' + awayTeamName + '</div>';
-        html += '<div class="overflow-x-auto">';
-        html += '<table class="w-full text-sm">';
-        html += '<thead class="text-xs text-green-700 dark:text-green-300 border-b border-green-200 dark:border-green-800">';
-        html += '<tr>';
-        html += '<th class="text-left p-2">Spieler</th>';
-        html += '<th class="text-center p-2">Legs</th>';
-        html += '<th class="text-center p-2">Ø Gesamt</th>';
-        
-        // Add leg headers for away team
-        const awayPlayerLegs = legStats.filter(l => awayStats.some(h => h.participantId === l.participantId));
-        const uniqueAwayLegs = [...new Set(awayPlayerLegs.map(l => l.legIndex))].sort();
-        uniqueAwayLegs.forEach(legIndex => {
-          html += '<th class="text-center p-2">Leg ' + (legIndex + 1) + '</th>';
-        });
-        
-        html += '</tr>';
-        html += '</thead>';
-        html += '<tbody class="text-green-900 dark:text-green-100">';
+      html += '</div>';
+    } else {
+      console.log('No stats data available:', statsData ? 'Empty array' : 'Null/undefined');
       
-        awayStats.forEach(player => {
-          const playerLegs = legStats.filter(l => l.participantId === player.participantId).sort((a, b) => a.legIndex - b.legIndex);
-          const overallAvg = calculateAverage(player.scoreTotal, player.dartsTotal);
-          
-          html += '<tr class="border-b border-green-100 dark:border-green-900">';
-          html += '<td class="p-2 font-medium">' + player.displayName + '</td>';
-          html += '<td class="text-center p-2">' + player.legCount + '</td>';
-          html += '<td class="text-center p-2 font-bold text-lg">' + overallAvg + '</td>';
-          
-          // Add leg averages
-          uniqueAwayLegs.forEach(legIndex => {
-            const leg = playerLegs.find(l => l.legIndex === legIndex);
-            if (leg) {
-              const legAvg = calculateAverage(leg.scoreTotal, leg.dartsTotal);
-              const wonClass = leg.won ? 'text-green-600 dark:text-green-400 font-bold' : '';
-              html += '<td class="text-center p-2 ' + wonClass + '">' + legAvg + '</td>';
-            } else {
-              html += '<td class="text-center p-2 text-gray-400">-</td>';
-            }
-          });
-          
-          html += '</tr>';
-        });
-        
-        html += '</tbody>';
-        html += '</table>';
-        html += '</div>';
-        html += '</div>';
-      }
-      
+      // Show message that no statistics are available
+      html += '<div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden mt-6">';
+      html += '<div class="bg-gradient-to-r from-purple-500 to-purple-600 dark:from-purple-600 dark:to-purple-700 p-3 text-white font-bold">';
+      html += '📊 Spieler Statistiken';
+      html += '</div>';
+      html += '<div class="p-6 text-center text-gray-500 dark:text-gray-400">';
+      html += '<div class="text-4xl mb-3">📊</div>';
+      html += '<div class="text-lg font-medium mb-2">Keine Statistik-Daten verfügbar</div>';
+      html += '<div class="text-sm">Für dieses Match wurden keine detaillierten Statistiken aufgezeichnet.</div>';
+      html += '<div class="text-xs mt-2 text-gray-400">Nur Matches mit Dartsscorer haben Statistik-Daten.</div>';
+      html += '</div>';
       html += '</div>';
     }
 
