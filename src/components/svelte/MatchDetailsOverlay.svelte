@@ -399,7 +399,6 @@
                   </div>
                 </div>
               {/if}
-            {:else}
             {:else if originalMatchData}
               <!-- Fallback: Verwende ursprüngliche Match-Daten kombiniert mit API-Details -->
               <div class="bg-yellow-50 dark:bg-yellow-900 rounded-lg p-4 mb-4">

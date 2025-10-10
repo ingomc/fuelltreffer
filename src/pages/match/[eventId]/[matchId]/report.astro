@@ -1,0 +1,486 @@
+---
+import Layout from '../../../../layouts/Layout.astro';
+
+const { eventId, matchId } = Astro.params;
+
+// Get team parameter if present (for back navigation)
+const teamParam = Astro.url.searchParams.get('team');
+const backUrl = teamParam ? `/?team=${teamParam}` : '/';
+---
+
+<Layout title={`Match Details - ${matchId}`}>
+  <main class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+    <!-- Header with back button -->
+    <div class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
+      <div class="container mx-auto px-4 py-4">
+        <div class="flex items-center gap-4">
+          <a 
+            href={backUrl}
+            class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors text-gray-900 dark:text-gray-100"
+          >
+            <span>←</span>
+            <span>Zurück</span>
+          </a>
+          <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            🎯 Match Report
+          </h1>
+        </div>
+      </div>
+    </div>
+
+    <!-- Match Report Component -->
+    <div class="container mx-auto px-4 py-8">
+      <div id="match-report-container" class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+        <!-- Loading state -->
+        <div id="loading" class="flex items-center justify-center py-12">
+          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+        
+        <!-- Error state -->
+        <div id="error" class="hidden text-center py-12">
+          <span class="text-4xl">❌</span>
+          <p class="text-red-600 dark:text-red-400 mt-2">Fehler beim Laden des Match Reports</p>
+          <p id="error-message" class="text-gray-500 text-sm mt-1"></p>
+        </div>
+        
+        <!-- Content -->
+        <div id="content" class="hidden space-y-6"></div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<script define:vars={{ eventId, matchId }}>
+  // Fetch match report data
+  async function fetchMatchReport() {
+    const loadingEl = document.getElementById('loading');
+    const errorEl = document.getElementById('error');
+    const errorMessageEl = document.getElementById('error-message');
+    const contentEl = document.getElementById('content');
+
+    try {
+      // Fetch both report and statistics
+      const [reportResponse, statsResponse] = await Promise.all([
+        fetch(`/api/match/${eventId}/${matchId}/report`),
+        fetch(`/api/match/${eventId}/${matchId}/statistics`)
+      ]);
+      
+      if (!reportResponse.ok) {
+        throw new Error(`HTTP error! status: ${reportResponse.status}`);
+      }
+      
+      const reportData = await reportResponse.json();
+      let statsData = null;
+      
+      // Statistics might not always be available
+      if (statsResponse.ok) {
+        statsData = await statsResponse.json();
+      }
+      
+      // Hide loading
+      loadingEl.classList.add('hidden');
+      
+      // Show content
+      contentEl.classList.remove('hidden');
+      
+      // Render the match report
+      renderMatchReport(reportData, statsData, contentEl);
+      
+    } catch (error) {
+      console.error('Error fetching match report:', error);
+      
+      // Hide loading
+      loadingEl.classList.add('hidden');
+      
+      // Show error
+      errorEl.classList.remove('hidden');
+      errorMessageEl.textContent = error.message;
+    }
+  }
+
+  function formatDate(dateString) {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleString('de-DE', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  function formatDuration(seconds) {
+    if (!seconds) return 'N/A';
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')} min`;
+  }
+
+  function calculateAverage(scoreTotal, dartsTotal) {
+    if (!dartsTotal || dartsTotal === 0) return 0;
+    return (scoreTotal / dartsTotal * 3).toFixed(2);
+  }
+
+  function renderMatchReport(data, statsData, container) {
+    if (!data || data.length === 0) {
+      container.innerHTML = '<p class="text-center text-gray-500">Keine Daten verfügbar</p>';
+      return;
+    }
+
+    // Get first match for general info
+    const firstMatch = data[0];
+    
+    // Try to find team names by looking at all participants
+    // Group by home/away and collect unique team names
+    const homeTeams = new Set();
+    const awayTeams = new Set();
+    
+    data.forEach(match => {
+      if (match.participantHome?.teamSeason?.team?.name) {
+        homeTeams.add(match.participantHome.teamSeason.team.name);
+      }
+      if (match.participantGuest?.teamSeason?.team?.name) {
+        awayTeams.add(match.participantGuest.teamSeason.team.name);
+      }
+    });
+    
+    const homeTeamName = homeTeams.size === 1 ? [...homeTeams][0] : 
+                         firstMatch.participantHome?.teamSeason?.team?.name || 
+                         'Heimteam';
+    const awayTeamName = awayTeams.size === 1 ? [...awayTeams][0] : 
+                         firstMatch.participantGuest?.teamSeason?.team?.name || 
+                         'Gastteam';
+    
+    let html = '';
+
+    // Compact Header with Score
+    const totalLegsHome = data.reduce((sum, m) => sum + (m.legsHome || 0), 0);
+    const totalLegsAway = data.reduce((sum, m) => sum + (m.legsAway || 0), 0);
+    
+    html += `
+      <div class="bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 rounded-lg p-4 text-white">
+        <div class="flex items-center justify-between mb-3">
+          <div class="text-sm opacity-90">${firstMatch.event?.name || 'Liga'} • ${firstMatch.round?.name || 'Runde'}</div>
+          <div class="text-sm opacity-90">Match #${firstMatch.gameNr || ''}</div>
+        </div>
+        
+        <div class="grid grid-cols-3 gap-4 items-center">
+          <!-- Home Team -->
+          <div class="text-center">
+            <div class="text-xs opacity-75 mb-1">🏠 Heim</div>
+            <div class="text-lg font-bold mb-1">${homeTeamName}</div>
+            <div class="text-3xl font-bold">${totalLegsHome}</div>
+          </div>
+          
+          <!-- VS & Info -->
+          <div class="text-center">
+            <div class="text-2xl font-bold opacity-50 mb-1">VS</div>
+            <div class="text-xs opacity-75">
+              ${formatDate(firstMatch.beginDate || firstMatch.datePlanned).split(',')[0]}
+            </div>
+            ${firstMatch.duration ? `
+              <div class="text-xs opacity-75">⏱️ ${formatDuration(firstMatch.duration)}</div>
+            ` : ''}
+          </div>
+          
+          <!-- Away Team -->
+          <div class="text-center">
+            <div class="text-xs opacity-75 mb-1">🚗 Gast</div>
+            <div class="text-lg font-bold mb-1">${awayTeamName}</div>
+            <div class="text-3xl font-bold">${totalLegsAway}</div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Compact Match Details
+    html += `
+      <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+        <div class="flex items-center justify-between text-sm">
+          <div class="flex gap-4">
+            <div><span class="text-gray-600 dark:text-gray-400">Modus:</span> <span class="font-bold text-gray-900 dark:text-gray-100">${firstMatch.matchmode?.matchmodePoints || 'N/A'}</span></div>
+            <div><span class="text-gray-600 dark:text-gray-400">In/Out:</span> <span class="font-medium text-gray-900 dark:text-gray-100">${firstMatch.matchmode?.matchmodeInCd} / ${firstMatch.matchmode?.matchmodeOutCd}</span></div>
+            <div><span class="text-gray-600 dark:text-gray-400">Legs:</span> <span class="font-medium text-gray-900 dark:text-gray-100">Best of ${firstMatch.matchmode?.legsBestOf || 'N/A'}</span></div>
+          </div>
+          <div class="px-2 py-1 rounded text-xs font-medium ${
+            firstMatch.statusCd === 'FINISH' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' :
+            firstMatch.statusCd === 'ACTIVE' ? 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200' :
+            'bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200'
+          }">
+            ${firstMatch.statusCd === 'FINISH' ? '✅ Beendet' :
+              firstMatch.statusCd === 'ACTIVE' ? '🟢 Aktiv' :
+              firstMatch.statusCd || 'Offen'}
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Group games by block
+    const blockGroups = {};
+    data.forEach(game => {
+      const blockKey = game.matchReportBlock ? 
+        `${game.matchReportBlock.blockIndex}_${game.matchReportBlock.matchTypeCd}` : 
+        'other';
+      
+      if (!blockGroups[blockKey]) {
+        blockGroups[blockKey] = {
+          block: game.matchReportBlock,
+          games: []
+        };
+      }
+      blockGroups[blockKey].games.push(game);
+    });
+
+    // Render blocks
+    Object.entries(blockGroups).forEach(([key, group]) => {
+      const block = group.block;
+      const games = group.games;
+      
+      if (!block) return;
+      
+      const matchTypeLabel = block.matchTypeCd === 'EZ' ? 'Einzel' : 
+                            block.matchTypeCd === 'DP' ? 'Doppel' : 
+                            block.matchTypeCd;
+      
+      html += `
+        <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <!-- Block Header -->
+          <div class="bg-gradient-to-r from-orange-500 to-orange-600 dark:from-orange-600 dark:to-orange-700 p-3 flex items-center justify-between text-white">
+            <div class="font-bold">
+              ${block.blockIndex}. Block: ${block.numberOfMatches} ${matchTypeLabel}
+            </div>
+            <div class="text-sm opacity-90">
+              Best of ${block.matchmode?.legsBestOf || 3} Legs, ${block.matchmode?.matchmodePoints || 501}
+            </div>
+          </div>
+          
+          <!-- Games in Block -->
+          <div class="bg-gray-900 dark:bg-gray-950">
+      `;
+      
+      games.forEach((game, index) => {
+        const winner = game.legsHome > game.legsAway ? 'home' : game.legsAway > game.legsHome ? 'away' : 'draw';
+        const boardIcon = game.matchReportBlock?.blockIndex ? 
+          `<div class="w-8 h-8 bg-blue-500 dark:bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm">${game.gameNrRound || index + 1}</div>` :
+          '';
+        
+        // Get player names
+        const homePlayer = game.participantHome?.displayName || 'N/A';
+        const awayPlayer = game.participantGuest?.displayName || 'N/A';
+        
+        // Determine text colors based on winner
+        const homeColor = winner === 'home' ? 'text-green-400' : 'text-white';
+        const awayColor = winner === 'away' ? 'text-green-400' : 'text-white';
+        
+        html += `
+          <div class="p-3 border-b border-gray-800 dark:border-gray-900 hover:bg-gray-800 dark:hover:bg-gray-900 transition-colors">
+            <div class="flex items-center gap-3">
+              <!-- Game Number in Board Circle -->
+              ${boardIcon}
+              
+              <!-- Game Number -->
+              <div class="text-gray-400 text-sm font-medium w-6">${game.gameNr || index + 1}</div>
+              
+              <!-- Home Player -->
+              <div class="flex-1 text-right ${homeColor} font-medium">
+                ${homePlayer}
+              </div>
+              
+              <!-- Score -->
+              <div class="text-2xl font-bold text-white px-4">
+                ${game.legsHome || 0}-${game.legsAway || 0}
+              </div>
+              
+              <!-- Away Player -->
+              <div class="flex-1 text-left ${awayColor} font-medium">
+                ${awayPlayer}
+              </div>
+              
+              <!-- Board Info -->
+              ${game.board ? `<div class="text-gray-500 text-xs">Board ${game.board}</div>` : ''}
+            </div>
+          </div>
+        `;
+      });
+      
+      html += `
+          </div>
+        </div>
+      `;
+    });
+
+    // Player Statistics
+    if (statsData && statsData.length > 0) {
+      // Separate MATCH and LEG statistics
+      const matchStats = statsData.filter(s => s.type === 'MATCH');
+      const legStats = statsData.filter(s => s.type === 'LEG');
+      
+      // Group by participant
+      const homeStats = matchStats.filter(s => 
+        data[0].participantHome.id === s.participantId || 
+        data[0].participantHome.displayName === s.displayName
+      );
+      const awayStats = matchStats.filter(s => 
+        data[0].participantGuest.id === s.participantId || 
+        data[0].participantGuest.displayName === s.displayName
+      );
+      
+      html += '<div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">';
+      html += '<div class="bg-gradient-to-r from-purple-500 to-purple-600 dark:from-purple-600 dark:to-purple-700 p-3 text-white font-bold">';
+      html += '📊 Spieler Statistiken';
+      html += '</div>';
+      
+      // Home Team Stats
+      if (homeStats.length > 0) {
+        html += '<div class="p-3 bg-blue-50 dark:bg-blue-950 border-b border-gray-200 dark:border-gray-700">';
+        html += '<div class="font-bold text-blue-900 dark:text-blue-100 mb-2">🏠 ' + homeTeamName + '</div>';
+        html += '<div class="overflow-x-auto">';
+        html += '<table class="w-full text-sm">';
+        html += '<thead class="text-xs text-blue-700 dark:text-blue-300 border-b border-blue-200 dark:border-blue-800">';
+        html += '<tr>';
+        html += '<th class="text-left p-2">Spieler</th>';
+        html += '<th class="text-center p-2">Legs</th>';
+        html += '<th class="text-center p-2">Ø Gesamt</th>';
+      
+        // Add leg headers for home team
+        const homePlayerLegs = legStats.filter(l => homeStats.some(h => h.participantId === l.participantId));
+        const uniqueLegs = [...new Set(homePlayerLegs.map(l => l.legIndex))].sort();
+        uniqueLegs.forEach(legIndex => {
+          html += '<th class="text-center p-2">Leg ' + (legIndex + 1) + '</th>';
+        });
+        
+        html += '</tr>';
+        html += '</thead>';
+        html += '<tbody class="text-blue-900 dark:text-blue-100">';
+      
+        homeStats.forEach(player => {
+          const playerLegs = legStats.filter(l => l.participantId === player.participantId).sort((a, b) => a.legIndex - b.legIndex);
+          const overallAvg = calculateAverage(player.scoreTotal, player.dartsTotal);
+          
+          html += '<tr class="border-b border-blue-100 dark:border-blue-900">';
+          html += '<td class="p-2 font-medium">' + player.displayName + '</td>';
+          html += '<td class="text-center p-2">' + player.legCount + '</td>';
+          html += '<td class="text-center p-2 font-bold text-lg">' + overallAvg + '</td>';
+          
+          // Add leg averages
+          uniqueLegs.forEach(legIndex => {
+            const leg = playerLegs.find(l => l.legIndex === legIndex);
+            if (leg) {
+              const legAvg = calculateAverage(leg.scoreTotal, leg.dartsTotal);
+              const wonClass = leg.won ? 'text-green-600 dark:text-green-400 font-bold' : '';
+              html += '<td class="text-center p-2 ' + wonClass + '">' + legAvg + '</td>';
+            } else {
+              html += '<td class="text-center p-2 text-gray-400">-</td>';
+            }
+          });
+          
+          html += '</tr>';
+        });
+        
+        html += '</tbody>';
+        html += '</table>';
+        html += '</div>';
+        html += '</div>';
+      }
+      
+      // Away Team Stats
+      if (awayStats.length > 0) {
+        html += '<div class="p-3 bg-green-50 dark:bg-green-950">';
+        html += '<div class="font-bold text-green-900 dark:text-green-100 mb-2">🚗 ' + awayTeamName + '</div>';
+        html += '<div class="overflow-x-auto">';
+        html += '<table class="w-full text-sm">';
+        html += '<thead class="text-xs text-green-700 dark:text-green-300 border-b border-green-200 dark:border-green-800">';
+        html += '<tr>';
+        html += '<th class="text-left p-2">Spieler</th>';
+        html += '<th class="text-center p-2">Legs</th>';
+        html += '<th class="text-center p-2">Ø Gesamt</th>';
+        
+        // Add leg headers for away team
+        const awayPlayerLegs = legStats.filter(l => awayStats.some(h => h.participantId === l.participantId));
+        const uniqueAwayLegs = [...new Set(awayPlayerLegs.map(l => l.legIndex))].sort();
+        uniqueAwayLegs.forEach(legIndex => {
+          html += '<th class="text-center p-2">Leg ' + (legIndex + 1) + '</th>';
+        });
+        
+        html += '</tr>';
+        html += '</thead>';
+        html += '<tbody class="text-green-900 dark:text-green-100">';
+      
+        awayStats.forEach(player => {
+          const playerLegs = legStats.filter(l => l.participantId === player.participantId).sort((a, b) => a.legIndex - b.legIndex);
+          const overallAvg = calculateAverage(player.scoreTotal, player.dartsTotal);
+          
+          html += '<tr class="border-b border-green-100 dark:border-green-900">';
+          html += '<td class="p-2 font-medium">' + player.displayName + '</td>';
+          html += '<td class="text-center p-2">' + player.legCount + '</td>';
+          html += '<td class="text-center p-2 font-bold text-lg">' + overallAvg + '</td>';
+          
+          // Add leg averages
+          uniqueAwayLegs.forEach(legIndex => {
+            const leg = playerLegs.find(l => l.legIndex === legIndex);
+            if (leg) {
+              const legAvg = calculateAverage(leg.scoreTotal, leg.dartsTotal);
+              const wonClass = leg.won ? 'text-green-600 dark:text-green-400 font-bold' : '';
+              html += '<td class="text-center p-2 ' + wonClass + '">' + legAvg + '</td>';
+            } else {
+              html += '<td class="text-center p-2 text-gray-400">-</td>';
+            }
+          });
+          
+          html += '</tr>';
+        });
+        
+        html += '</tbody>';
+        html += '</table>';
+        html += '</div>';
+        html += '</div>';
+      }
+      
+      html += '</div>';
+    }
+
+    // Compact Additional Info
+    const infoItems = [];
+    
+    if (firstMatch.matchReportBlock) {
+      infoItems.push(`Block ${firstMatch.matchReportBlock.blockIndex}: ${firstMatch.matchReportBlock.matchTypeCd} (${firstMatch.matchReportBlock.numberOfMatches} Spiele)`);
+    }
+    
+    if (firstMatch.phase) {
+      if (firstMatch.phase.numberOfGroups) infoItems.push(`${firstMatch.phase.numberOfGroups} Gruppen`);
+      if (firstMatch.phase.lineupCd) infoItems.push(`Lineup: ${firstMatch.phase.lineupCd}`);
+    }
+    
+    if (infoItems.length > 0) {
+      html += `
+        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+          <div class="flex flex-wrap gap-2 text-xs text-gray-600 dark:text-gray-400">
+            ${infoItems.map(item => `<span class="px-2 py-1 bg-gray-200 dark:bg-gray-600 rounded">${item}</span>`).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    // Debug section
+    html += `
+      <details class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4">
+        <summary class="font-bold text-gray-900 dark:text-gray-100 cursor-pointer">🐛 Debug: Raw API Data</summary>
+        <pre class="mt-2 text-xs overflow-auto bg-gray-200 dark:bg-gray-600 p-4 rounded text-gray-800 dark:text-gray-200 max-h-96">${JSON.stringify(data, null, 2)}</pre>
+      </details>
+    `;
+
+    container.innerHTML = html;
+  }
+
+  // Fetch data on page load
+  fetchMatchReport();
+</script>
+
+<style>
+  /* Dark mode transitions */
+  * {
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+  }
+</style>

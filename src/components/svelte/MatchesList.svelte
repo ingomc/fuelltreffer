@@ -1,15 +1,6 @@
 <script>
-  import MatchDetailsOverlay from './MatchDetailsOverlay.svelte';
-  
   export let matches = [];
   export let currentParticipantId = null; // ID des aktuell ausgewählten Teams
-  export let apiBaseUrl = '';
-
-  let hoveredTeamId = null; // ID des aktuell gehoverten Teams
-  let showMatchDetails = false;
-  let selectedMatchEventId = null;
-  let selectedMatchId = null;
-  let selectedMatchData = null; // Store original match data
 
   function formatDate(dateString) {
     const date = new Date(dateString);
@@ -36,28 +27,10 @@
     return statusMap[status] || { color: 'gray', text: status, icon: '' };
   }
 
-  function navigateToTeam(teamId) {
-    if (teamId && teamId.toString() !== currentParticipantId?.toString()) {
-      const url = new URL(window.location.href);
-      url.searchParams.set('team', teamId.toString());
-      window.location.href = url.toString();
-    }
-  }
-
-  function showMatchDetailsOverlay(eventId, matchId, matchData) {
-    selectedMatchEventId = eventId;
-    selectedMatchId = matchId;
-    selectedMatchData = matchData; // Store original match data
-    showMatchDetails = true;
-    document.body.classList.add('modal-open');
-  }
-
-  function closeMatchDetails() {
-    showMatchDetails = false;
-    selectedMatchEventId = null;
-    selectedMatchId = null;
-    selectedMatchData = null;
-    document.body.classList.remove('modal-open');
+  function navigateToMatchReport(eventId, matchId) {
+    // Include current team parameter for back navigation
+    const teamParam = currentParticipantId ? `?team=${currentParticipantId}` : '';
+    window.location.href = `/match/${eventId}/${matchId}/report${teamParam}`;
   }
 
   // Sort matches by date
@@ -118,7 +91,7 @@
         <button
           type="button"
           class="border border-gray-200 dark:border-gray-700 rounded-md p-2 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all duration-200 cursor-pointer w-full text-left"
-          on:click={() => showMatchDetailsOverlay(match.eventId, match.id, match)}
+          on:click={() => navigateToMatchReport(match.eventId, match.id)}
         >
           <!-- Einzeilige kompakte Darstellung -->
           <div class="flex items-center gap-2 text-xs">
@@ -165,13 +138,3 @@
     </div>
   {/if}
 </div>
-
-<!-- Match Details Overlay -->
-<MatchDetailsOverlay 
-  bind:isVisible={showMatchDetails}
-  eventId={selectedMatchEventId}
-  matchId={selectedMatchId}
-  originalMatchData={selectedMatchData}
-  {apiBaseUrl}
-  on:close={closeMatchDetails}
-/>
