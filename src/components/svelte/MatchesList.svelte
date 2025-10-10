@@ -111,105 +111,56 @@
       <p class="text-gray-500 dark:text-gray-400 mt-2 text-sm transition-colors duration-200">Keine Matches gefunden</p>
     </div>
   {:else}
-    <div class="space-y-4">
+    <div class="space-y-1">
       {#each sortedMatches as match}
         {@const status = getStatusBadge(match.statusCd)}
         {@const isHomeMatch = currentParticipantId && match.participantHome.id.toString() === currentParticipantId.toString()}
-        <div class="border border-gray-300 dark:border-gray-600 rounded-lg p-4 bg-white dark:bg-gray-800 transition-colors duration-200">
-          <!-- Kompakter Match Header -->
-          <div class="flex items-center justify-between mb-3">
-            <div class="flex items-center gap-2">
-              <span class="text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full transition-colors duration-200">{match.round.name}</span>
-              {#if isHomeMatch}
-                <span class="text-xs font-medium text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full transition-colors duration-200">🏠</span>
-              {/if}
-            </div>
-            <div class="flex items-center gap-2 rounded-full text-xs px-2 py-1 font-bold bg-{status.color}-100 dark:bg-{status.color}-900 text-{status.color}-800 dark:text-{status.color}-300 transition-colors duration-200">
-              <span class="inline-flex items-center">
-                {status.icon}
-              </span>
-              <div class="font-bold text-xs">
-                {formatDate(match.datePlanned)}
-              </div>
-            </div>
+        <button
+          type="button"
+          class="border border-gray-200 dark:border-gray-700 rounded-md p-2 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all duration-200 cursor-pointer w-full text-left"
+          on:click={() => showMatchDetailsOverlay(match.eventId, match.id, match)}
+        >
+          <!-- Einzeilige kompakte Darstellung -->
+          <div class="flex items-center gap-2 text-xs">
+            <!-- Date Badge -->
+            <span class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 py-1 rounded font-medium flex-shrink-0 text-[10px]">
+              {new Date(match.datePlanned).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' })}
+            </span>
+            
+            <!-- Status Icon -->
+            <span class="text-base flex-shrink-0">{status.icon}</span>
+            
+            <!-- Home Team -->
+            <span
+              class="flex-1 text-left font-medium truncate px-1 py-0.5"
+              class:text-blue-600={match.participantHome.id.toString() === currentParticipantId?.toString()}
+              class:dark:text-blue-400={match.participantHome.id.toString() === currentParticipantId?.toString()}
+              class:font-bold={match.participantHome.id.toString() === currentParticipantId?.toString()}
+              class:text-gray-700={match.participantHome.id.toString() !== currentParticipantId?.toString()}
+              class:dark:text-gray-300={match.participantHome.id.toString() !== currentParticipantId?.toString()}
+              title={match.participantHome.displayName + (isHomeMatch ? ' (Heimspiel)' : '')}
+            >
+              {#if isHomeMatch}🏠{/if}
+              {match.participantHome.displayName}
+            </span>
+            
+            <!-- Score/VS -->
+            <span class="font-bold text-gray-400 dark:text-gray-500 px-1">-</span>
+            
+            <!-- Guest Team -->
+            <span
+              class="flex-1 text-right font-medium truncate px-1 py-0.5"
+              class:text-blue-600={match.participantGuest.id.toString() === currentParticipantId?.toString()}
+              class:dark:text-blue-400={match.participantGuest.id.toString() === currentParticipantId?.toString()}
+              class:font-bold={match.participantGuest.id.toString() === currentParticipantId?.toString()}
+              class:text-gray-700={match.participantGuest.id.toString() !== currentParticipantId?.toString()}
+              class:dark:text-gray-300={match.participantGuest.id.toString() !== currentParticipantId?.toString()}
+              title={match.participantGuest.displayName}
+            >
+              {match.participantGuest.displayName}
+            </span>
           </div>
-          
-          <!-- Mobile-optimierte Player Info mit Details Button -->
-          <div class="space-y-3">
-            <!-- Home vs Guest in einer Zeile -->
-            <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-700 rounded-lg p-3 transition-colors duration-200">
-              <div class="flex-1 text-center">
-                <button 
-                  type="button"
-                  class="font-bold text-sm transition-colors duration-200 cursor-pointer rounded-md px-2 py-1 border-none bg-transparent w-full"
-                  class:text-blue-600={match.participantHome.id.toString() === currentParticipantId?.toString()}
-                  class:dark:text-blue-400={match.participantHome.id.toString() === currentParticipantId?.toString()}
-                  class:bg-blue-100={match.participantHome.id.toString() === currentParticipantId?.toString()}
-                  class:dark:bg-blue-900={match.participantHome.id.toString() === currentParticipantId?.toString()}
-                  class:text-purple-600={hoveredTeamId && match.participantHome.id.toString() === hoveredTeamId.toString()}
-                  class:dark:text-purple-400={hoveredTeamId && match.participantHome.id.toString() === hoveredTeamId.toString()}
-                  class:bg-purple-100={hoveredTeamId && match.participantHome.id.toString() === hoveredTeamId.toString()}
-                  class:dark:bg-purple-900={hoveredTeamId && match.participantHome.id.toString() === hoveredTeamId.toString()}
-                  class:text-gray-900={!hoveredTeamId && match.participantHome.id.toString() !== currentParticipantId?.toString()}
-                  class:dark:text-gray-100={!hoveredTeamId && match.participantHome.id.toString() !== currentParticipantId?.toString()}
-                  class:hover:text-purple-600={match.participantHome.id.toString() !== currentParticipantId?.toString()}
-                  class:dark:hover:text-purple-400={match.participantHome.id.toString() !== currentParticipantId?.toString()}
-                  class:hover:bg-purple-50={match.participantHome.id.toString() !== currentParticipantId?.toString()}
-                  class:dark:hover:bg-purple-900={match.participantHome.id.toString() !== currentParticipantId?.toString()}
-                  on:mouseenter={() => hoveredTeamId = match.participantHome.id}
-                  on:mouseleave={() => hoveredTeamId = null}
-                  on:click={() => navigateToTeam(match.participantHome.id)}
-                  title={match.participantHome.id.toString() !== currentParticipantId?.toString() ? 'Klicke um zu diesem Team zu wechseln' : 'Aktuell ausgewähltes Team'}
-                >
-                  {match.participantHome.displayName}
-                </button>
-                <div class="text-xs text-gray-500">#{match.participantHome.rankingPos || 'N/A'}</div>
-              </div>
-              <div class="px-3">
-                <span class="text-sm font-bold text-gray-400 dark:text-gray-500 transition-colors duration-200">VS</span>
-              </div>
-              <div class="flex-1 text-center">
-                <button 
-                  type="button"
-                  class="font-bold text-sm transition-colors duration-200 cursor-pointer rounded-md px-2 py-1 border-none bg-transparent w-full"
-                  class:text-blue-600={match.participantGuest.id.toString() === currentParticipantId?.toString()}
-                  class:dark:text-blue-400={match.participantGuest.id.toString() === currentParticipantId?.toString()}
-                  class:bg-blue-100={match.participantGuest.id.toString() === currentParticipantId?.toString()}
-                  class:dark:bg-blue-900={match.participantGuest.id.toString() === currentParticipantId?.toString()}
-                  class:text-purple-600={hoveredTeamId && match.participantGuest.id.toString() === hoveredTeamId.toString()}
-                  class:dark:text-purple-400={hoveredTeamId && match.participantGuest.id.toString() === hoveredTeamId.toString()}
-                  class:bg-purple-100={hoveredTeamId && match.participantGuest.id.toString() === hoveredTeamId.toString()}
-                  class:dark:bg-purple-900={hoveredTeamId && match.participantGuest.id.toString() === hoveredTeamId.toString()}
-                  class:text-gray-900={!hoveredTeamId && match.participantGuest.id.toString() !== currentParticipantId?.toString()}
-                  class:dark:text-gray-100={!hoveredTeamId && match.participantGuest.id.toString() !== currentParticipantId?.toString()}
-                  class:hover:text-purple-600={match.participantGuest.id.toString() !== currentParticipantId?.toString()}
-                  class:dark:hover:text-purple-400={match.participantGuest.id.toString() !== currentParticipantId?.toString()}
-                  class:hover:bg-purple-50={match.participantGuest.id.toString() !== currentParticipantId?.toString()}
-                  class:dark:hover:bg-purple-900={match.participantGuest.id.toString() !== currentParticipantId?.toString()}
-                  on:mouseenter={() => hoveredTeamId = match.participantGuest.id}
-                  on:mouseleave={() => hoveredTeamId = null}
-                  on:click={() => navigateToTeam(match.participantGuest.id)}
-                  title={match.participantGuest.id.toString() !== currentParticipantId?.toString() ? 'Klicke um zu diesem Team zu wechseln' : 'Aktuell ausgewähltes Team'}
-                >
-                  {match.participantGuest.displayName}
-                </button>
-                <div class="text-xs text-gray-500">#{match.participantGuest.rankingPos || 'N/A'}</div>
-              </div>
-            </div>
-
-            <!-- Details Button - Zentriert unter dem Match -->
-            <div class="flex justify-center">
-              <button
-                type="button"
-                on:click={() => showMatchDetailsOverlay(match.eventId, match.id, match)}
-                class="px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 bg-blue-100 dark:bg-blue-900 hover:bg-blue-200 dark:hover:bg-blue-800 rounded-lg transition-colors duration-200 flex items-center gap-2"
-                title="Match-Details anzeigen"
-              >
-                📊 <span>Match-Details</span>
-              </button>
-            </div>
-          </div>
-        </div>
+        </button>
       {/each}
     </div>
   {/if}
