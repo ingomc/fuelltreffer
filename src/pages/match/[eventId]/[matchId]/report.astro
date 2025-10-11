@@ -67,76 +67,43 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
       }
       
       const reportData = await reportResponse.json();
-      console.log('Report loaded, games:', reportData.length);
       
-      // Get round info from first game to fetch ALL matches of this round
       const firstGame = reportData[0];
-      const phaseId = firstGame.round?.phase?.id;
-      const roundIndex = firstGame.round?.roundIndex;
+      const phaseId = firstGame.round?.phase?.id || firstGame.phase?.id;
+      const roundIndex = firstGame.round?.roundIndex !== undefined ? firstGame.round.roundIndex : firstGame.roundNr;
       
-      console.log('🎯 Round info - Phase:', phaseId, 'Round:', roundIndex);
+      // Simpler approach: Just load statistics for each game in THIS match report
+      // We already have all games in reportData!
+      const gameStatsMap = new Map();
       
-      // Fetch ALL matches of this round (all teams playing on this match day)
-      let allRoundMatches = [];
-      if (phaseId && roundIndex !== undefined) {
-        try {
-          console.log('📥 Loading all matches for this round...');
-          const roundResponse = await fetch(`/api/round/${eventId}/${phaseId}/${roundIndex}`);
-          if (roundResponse.ok) {
-            const roundData = await roundResponse.json();
-            allRoundMatches = roundData.matches || [];
-            console.log('✅ Loaded', allRoundMatches.length, 'matches from round');
-          }
-        } catch (e) {
-          console.error('Failed to load round matches:', e);
-        }
-      }
-      
-      // Fetch statistics for EACH game in EACH match of the round
-      const allStats = [];
-      
-      for (const match of allRoundMatches) {
-        // Get the match report for each match
-        try {
-          const matchReportResponse = await fetch(`/api/match/${eventId}/${match.id}/report`);
-          if (matchReportResponse.ok) {
-            const matchGames = await matchReportResponse.json();
-            console.log(`📊 Match ${match.id}: ${matchGames.length} games`);
+      for (const game of reportData) {
+        if (game.id) {
+          try {
+            const statsResponse = await fetch(`/api/match/${eventId}/${game.id}/statistics`);
             
-            // For each game in the match, fetch statistics
-            for (const game of matchGames) {
-              if (game.hasPerformances) {
-                try {
-                  const statsResponse = await fetch(`/api/match/${eventId}/${game.id}/statistics`);
-                  if (statsResponse.ok) {
-                    const gameStats = await statsResponse.json();
-                    if (gameStats.length > 0) {
-                      console.log(`  ✅ Game ${game.gameNr}: ${gameStats.length} stats`);
-                      allStats.push(...gameStats);
-                    }
-                  }
-                } catch (e) {
-                  console.error(`Failed to load stats for game ${game.id}:`, e);
+            if (statsResponse.ok) {
+              const gameStats = await statsResponse.json();
+              if (gameStats.length > 0) {
+                // Store stats with the game ID as key
+                const matchStats = gameStats.filter(s => s.type === 'MATCH');
+                if (matchStats.length > 0) {
+                  gameStatsMap.set(game.id, matchStats);
                 }
               }
             }
+          } catch (e) {
+            console.error(`  ❌ Failed to load stats for game ${game.id}:`, e);
           }
-        } catch (e) {
-          console.error(`Failed to load match ${match.id}:`, e);
         }
       }
-      
-      console.log('📊 Total statistics loaded:', allStats.length, 'entries from all matches');
       
       // Load team roster if teamParam is provided
       let teamRoster = null;
       if (teamParam) {
         try {
-          console.log(`🔍 Loading roster for team ${teamParam}`);
           const rosterResponse = await fetch(`/api/participant/${teamParam}`);
           if (rosterResponse.ok) {
             teamRoster = await rosterResponse.json();
-            console.log(`✅ Team roster loaded: ${teamRoster?.members?.length || 0} members`);
           }
         } catch (e) {
           console.error('Failed to load team roster:', e);
@@ -150,7 +117,7 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
       contentEl.classList.remove('hidden');
       
       // Render the match report
-      renderMatchReport(reportData, allStats.length > 0 ? allStats : null, teamRoster, contentEl);
+      renderMatchReport(reportData, gameStatsMap, teamRoster, contentEl);
       
     } catch (error) {
       console.error('Error fetching match report:', error);
@@ -189,7 +156,7 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
     return (scoreTotal / dartsTotal * 3).toFixed(2);
   }
 
-  function renderMatchReport(data, statsData, teamRoster, container) {
+  function renderMatchReport(data, gameStatsMap, teamRoster, container) {
     if (!data || data.length === 0) {
       container.innerHTML = '<p class="text-center text-gray-500">Keine Daten verfügbar</p>';
       return;
@@ -336,6 +303,35 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
         const homePlayer = game.participantHome?.displayName || 'N/A';
         const awayPlayer = game.participantGuest?.displayName || 'N/A';
         
+        // Get player IDs
+        const homePlayerId = game.participantHome?.id;
+        const awayPlayerId = game.participantGuest?.id;
+        
+        // Find statistics for this specific game from the map
+        let homeAvg = '-';
+        let awayAvg = '-';
+        
+        const gameStats = gameStatsMap.get(game.id);
+        if (gameStats && gameStats.length > 0) {
+          // Find stats for home player
+          const homeStats = gameStats.find(s => 
+            s.participant?.id === homePlayerId || s.displayName === homePlayer
+          );
+          
+          // Find stats for away player
+          const awayStats = gameStats.find(s => 
+            s.participant?.id === awayPlayerId || s.displayName === awayPlayer
+          );
+          
+          if (homeStats && homeStats.dartsTotal > 0) {
+            homeAvg = calculateAverage(homeStats.scoreTotal, homeStats.dartsTotal);
+          }
+          
+          if (awayStats && awayStats.dartsTotal > 0) {
+            awayAvg = calculateAverage(awayStats.scoreTotal, awayStats.dartsTotal);
+          }
+        }
+        
         // Determine text colors based on winner
         const homeColor = winner === 'home' ? 'text-green-400' : 'text-white';
         const awayColor = winner === 'away' ? 'text-green-400' : 'text-white';
@@ -349,9 +345,10 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
               <!-- Game Number -->
               <div class="text-gray-400 text-sm font-medium w-6">${game.gameNr || index + 1}</div>
               
-              <!-- Home Player -->
-              <div class="flex-1 text-right ${homeColor} font-medium">
-                ${homePlayer}
+              <!-- Home Player with Average -->
+              <div class="flex-1 text-right">
+                <div class="${homeColor} font-medium">${homePlayer}</div>
+                <div class="text-xs ${homeAvg !== '-' ? 'text-blue-400' : 'text-gray-500'}">${homeAvg !== '-' ? 'Ø ' + homeAvg : ''}</div>
               </div>
               
               <!-- Score -->
@@ -359,9 +356,10 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
                 ${game.legsHome || 0}-${game.legsAway || 0}
               </div>
               
-              <!-- Away Player -->
-              <div class="flex-1 text-left ${awayColor} font-medium">
-                ${awayPlayer}
+              <!-- Away Player with Average -->
+              <div class="flex-1 text-left">
+                <div class="${awayColor} font-medium">${awayPlayer}</div>
+                <div class="text-xs ${awayAvg !== '-' ? 'text-blue-400' : 'text-gray-500'}">${awayAvg !== '-' ? 'Ø ' + awayAvg : ''}</div>
               </div>
               
               <!-- Board Info -->
@@ -378,15 +376,17 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
     });
 
     // Player Statistics - Alle Spieler mit ihren Spielen am Spieltag
-    console.log('Checking stats data...', statsData ? 'Available' : 'Not available');
-    
-    if (statsData && statsData.length > 0) {
-      console.log('📊 Rendering statistics - Stats Data:', statsData.length, 'entries');
+    if (gameStatsMap && gameStatsMap.size > 0) {
+      // Flatten all stats from the map
+      const allMatchStats = [];
+      gameStatsMap.forEach((stats, gameId) => {
+        // Add gameId to each stat for reference
+        stats.forEach(stat => {
+          allMatchStats.push({ ...stat, gameId: gameId });
+        });
+      });
       
-      // Get all MATCH statistics (one per player per EINZELSPIEL)
-      const matchStats = statsData.filter(s => s.type === 'MATCH');
-      
-      console.log('Match Stats (Einzelspiele):', matchStats.length);
+      const matchStats = allMatchStats;
       
       // Bestimme welches Team die ausgewählte Mannschaft ist (aus teamParam)
       const selectedTeamId = teamParam ? parseInt(teamParam) : null;
@@ -395,8 +395,6 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
       const firstGame = data[0];
       const homeTeamId = firstGame.participantHome?.teamSeason?.team?.id;
       const awayTeamId = firstGame.participantGuest?.teamSeason?.team?.id;
-      
-      console.log('🏠 Home Team ID:', homeTeamId, '🚗 Away Team ID:', awayTeamId, '🎯 Selected Team:', selectedTeamId);
       
       // Alle Spieler der ausgewählten Mannschaft (aus Team Roster)
       let allTeamPlayers = [];
@@ -426,46 +424,45 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
         playerStatsMap.get(key).push(stat);
       });
       
-      console.log('Players with stats:', playerStatsMap.size);
+      // Sammle ALLE Spieler die im Match gespielt haben (vom ausgewählten Team)
+      const allPlayedParticipants = new Map(); // name -> player info
       
-      // Baue Statistiken für ALLE Team-Spieler auf (auch ohne Spiele)
-      const teamPlayerStats = new Map();
-      
-      if (allTeamPlayers.length > 0) {
-        // Für jeden Spieler im Roster
-        allTeamPlayers.forEach(player => {
-          // Suche seine Statistiken
-          const stats = playerStatsMap.get(player.id) || 
-                       playerStatsMap.get(player.name) || 
-                       [];
-          
-          teamPlayerStats.set(player.name, stats);
-        });
-        console.log('✅ Team stats built for', teamPlayerStats.size, 'players');
-      } else {
-        // Fallback: Zeige nur Spieler mit Stats (alte Logik)
-        console.log('⚠️ No roster available, showing only players with stats');
+      data.forEach(game => {
+        let participant = null;
         
-        // Sammle alle Spieler die im Match gespielt haben
-        const allPlayedParticipants = new Set();
-        data.forEach(game => {
-          if (isHomeTeam) {
-            allPlayedParticipants.add(game.participantHome.displayName);
-          } else {
-            allPlayedParticipants.add(game.participantGuest.displayName);
-          }
-        });
+        if (isHomeTeam && game.participantHome) {
+          participant = game.participantHome;
+        } else if (!isHomeTeam && game.participantGuest) {
+          participant = game.participantGuest;
+        }
         
-        // Nur Spieler mit Stats von der ausgewählten Seite
-        playerStatsMap.forEach((stats, key) => {
-          const playerName = stats[0]?.displayName || key;
-          if (allPlayedParticipants.has(playerName)) {
-            teamPlayerStats.set(playerName, stats);
-          }
+        if (participant) {
+          const name = participant.displayName || 'N/A';
+          if (!allPlayedParticipants.has(name)) {
+            allPlayedParticipants.set(name, {
+              id: participant.id,
+          name: name,
+          games: []
         });
       }
+      // Track which games this player played
+      allPlayedParticipants.get(name).games.push(game.id);
+    }
+  });      // Baue Statistiken für ALLE Spieler auf
+      const teamPlayerStats = new Map();
       
-      html += '<div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden mt-6">';
+      allPlayedParticipants.forEach((playerInfo, playerName) => {
+        // Suche seine Statistiken (über ID oder Name)
+        const stats = playerStatsMap.get(playerInfo.id) || 
+                     playerStatsMap.get(playerName) || 
+                     [];
+        
+        teamPlayerStats.set(playerName, {
+          stats: stats,
+          gamesPlayed: playerInfo.games.length,
+      gameIds: playerInfo.games
+    });
+  });      html += '<div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden mt-6">';
       html += '<div class="bg-gradient-to-r from-purple-500 to-purple-600 dark:from-purple-600 dark:to-purple-700 p-3 text-white font-bold">';
       html += '📊 Spieler Statistiken';
       html += '</div>';
@@ -489,8 +486,8 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
         
         // Find max number of games any player played
         let maxGames = 0;
-        teamPlayerStats.forEach(stats => {
-          if (stats.length > maxGames) maxGames = stats.length;
+        teamPlayerStats.forEach(playerData => {
+          if (playerData.stats.length > maxGames) maxGames = playerData.stats.length;
         });
         
         for (let i = 0; i < maxGames; i++) {
@@ -501,7 +498,9 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
         html += '</thead>';
         html += '<tbody class="text-' + colorScheme + '-900 dark:text-' + colorScheme + '-100">';
       
-        teamPlayerStats.forEach((playerGames, playerName) => {
+        teamPlayerStats.forEach((playerData, playerName) => {
+          const playerGames = playerData.stats;
+          
           // Calculate overall stats
           const totalDarts = playerGames.reduce((sum, g) => sum + g.dartsTotal, 0);
           const totalScore = playerGames.reduce((sum, g) => sum + g.scoreTotal, 0);
@@ -510,7 +509,7 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
           
           html += '<tr class="border-b border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800 hover:bg-' + colorScheme + '-100 dark:hover:bg-' + colorScheme + '-900">';
           html += '<td class="p-2 font-medium border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800">' + playerName + '</td>';
-          html += '<td class="text-center p-2 border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800">' + (playerGames.length || '-') + '</td>';
+          html += '<td class="text-center p-2 border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800">' + playerData.gamesPlayed + '</td>';
           html += '<td class="text-center p-2 border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800">' + (totalLegsWon || '-') + '</td>';
           html += '<td class="text-center p-2 font-bold text-lg border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800 bg-' + colorScheme + '-100 dark:bg-' + colorScheme + '-900">' + overallAvg + '</td>';
           
@@ -537,8 +536,6 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
       
       html += '</div>';
     } else {
-      console.log('No stats data available:', statsData ? 'Empty array' : 'Null/undefined');
-      
       // Show message that no statistics are available
       html += '<div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden mt-6">';
       html += '<div class="bg-gradient-to-r from-purple-500 to-purple-600 dark:from-purple-600 dark:to-purple-700 p-3 text-white font-bold">';
