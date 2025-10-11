@@ -415,57 +415,75 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
         playerStatsMap.get(key).push(stat);
       });
       
-      // Sammle ALLE Spieler die im Match gespielt haben (vom ausgewählten Team)
-      const allPlayedParticipants = new Map(); // name -> player info
+      // Sammle ALLE Spieler von BEIDEN Teams
+      const allHomeParticipants = new Map(); // name -> player info
+      const allAwayParticipants = new Map(); // name -> player info
       
       data.forEach(game => {
-        let participant = null;
-        
-        if (isHomeTeam && game.participantHome) {
-          participant = game.participantHome;
-        } else if (!isHomeTeam && game.participantGuest) {
-          participant = game.participantGuest;
+        // Home team
+        if (game.participantHome) {
+          const name = game.participantHome.displayName || 'N/A';
+          if (!allHomeParticipants.has(name)) {
+            allHomeParticipants.set(name, {
+              id: game.participantHome.id,
+              name: name,
+              games: []
+            });
+          }
+          allHomeParticipants.get(name).games.push(game.id);
         }
         
-        if (participant) {
-          const name = participant.displayName || 'N/A';
-          if (!allPlayedParticipants.has(name)) {
-            allPlayedParticipants.set(name, {
-              id: participant.id,
-          name: name,
-          games: []
-        });
-      }
-      // Track which games this player played
-      allPlayedParticipants.get(name).games.push(game.id);
-    }
-  });      // Baue Statistiken für ALLE Spieler auf
-      const teamPlayerStats = new Map();
+        // Away team
+        if (game.participantGuest) {
+          const name = game.participantGuest.displayName || 'N/A';
+          if (!allAwayParticipants.has(name)) {
+            allAwayParticipants.set(name, {
+              id: game.participantGuest.id,
+              name: name,
+              games: []
+            });
+          }
+          allAwayParticipants.get(name).games.push(game.id);
+        }
+      });
       
-      allPlayedParticipants.forEach((playerInfo, playerName) => {
-        // Suche seine Statistiken (über ID oder Name)
+      // Baue Statistiken für Heim-Team
+      const homePlayerStats = new Map();
+      allHomeParticipants.forEach((playerInfo, playerName) => {
         const stats = playerStatsMap.get(playerInfo.id) || 
                      playerStatsMap.get(playerName) || 
                      [];
         
-        teamPlayerStats.set(playerName, {
+        homePlayerStats.set(playerName, {
           stats: stats,
           gamesPlayed: playerInfo.games.length,
-      gameIds: playerInfo.games
-    });
-  });      html += '<div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden mt-6">';
+          gameIds: playerInfo.games
+        });
+      });
+      
+      // Baue Statistiken für Gast-Team
+      const awayPlayerStats = new Map();
+      allAwayParticipants.forEach((playerInfo, playerName) => {
+        const stats = playerStatsMap.get(playerInfo.id) || 
+                     playerStatsMap.get(playerName) || 
+                     [];
+        
+        awayPlayerStats.set(playerName, {
+          stats: stats,
+          gamesPlayed: playerInfo.games.length,
+          gameIds: playerInfo.games
+        });
+      });      html += '<div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden mt-6">';
       html += '<div class="bg-gradient-to-r from-purple-500 to-purple-600 dark:from-purple-600 dark:to-purple-700 p-3 text-white font-bold">';
       html += '📊 Spieler Statistiken';
       html += '</div>';
       
-      // Show stats for selected team only
-      if (teamPlayerStats.size > 0) {
-        const teamDisplayName = isHomeTeam ? homeTeamName : awayTeamName;
-        const teamIcon = isHomeTeam ? '🏠' : '🚗';
-        const colorScheme = isHomeTeam ? 'blue' : 'green';
+      // Home Team Stats
+      if (homePlayerStats.size > 0) {
+        const colorScheme = 'blue';
         
         html += '<div class="p-3 bg-' + colorScheme + '-50 dark:bg-' + colorScheme + '-950 border-b border-gray-200 dark:border-gray-700">';
-        html += '<div class="font-bold text-' + colorScheme + '-900 dark:text-' + colorScheme + '-100 mb-3">' + teamIcon + ' ' + teamDisplayName + '</div>';
+        html += '<div class="font-bold text-' + colorScheme + '-900 dark:text-' + colorScheme + '-100 mb-3">🏠 ' + homeTeamName + '</div>';
         html += '<div class="overflow-x-auto">';
         html += '<table class="w-full text-sm border-collapse">';
         html += '<thead class="text-xs text-' + colorScheme + '-700 dark:text-' + colorScheme + '-300 bg-' + colorScheme + '-100 dark:bg-' + colorScheme + '-900">';
@@ -477,7 +495,7 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
         
         // Find max number of games any player played
         let maxGames = 0;
-        teamPlayerStats.forEach(playerData => {
+        homePlayerStats.forEach(playerData => {
           if (playerData.stats.length > maxGames) maxGames = playerData.stats.length;
         });
         
@@ -489,7 +507,7 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
         html += '</thead>';
         html += '<tbody class="text-' + colorScheme + '-900 dark:text-' + colorScheme + '-100">';
       
-        teamPlayerStats.forEach((playerData, playerName) => {
+        homePlayerStats.forEach((playerData, playerName) => {
           const playerGames = playerData.stats;
           
           // Calculate overall stats
@@ -518,6 +536,131 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
           
           html += '</tr>';
         });
+        
+        // Team Average Row
+        let teamTotalDarts = 0;
+        let teamTotalScore = 0;
+        let teamTotalLegsWon = 0;
+        let teamTotalGamesPlayed = 0;
+        
+        homePlayerStats.forEach((playerData) => {
+          playerData.stats.forEach(game => {
+            teamTotalDarts += game.dartsTotal;
+            teamTotalScore += game.scoreTotal;
+            teamTotalLegsWon += game.legCount;
+          });
+          teamTotalGamesPlayed += playerData.gamesPlayed;
+        });
+        
+        const teamAvg = teamTotalDarts > 0 ? calculateAverage(teamTotalScore, teamTotalDarts) : '-';
+        
+        html += '<tr class="bg-' + colorScheme + '-200 dark:bg-' + colorScheme + '-800 font-bold">';
+        html += '<td class="p-2 border border-' + colorScheme + '-300 dark:border-' + colorScheme + '-700">Team Durchschnitt</td>';
+        html += '<td class="text-center p-2 border border-' + colorScheme + '-300 dark:border-' + colorScheme + '-700">' + homePlayerStats.size + '</td>';
+        html += '<td class="text-center p-2 border border-' + colorScheme + '-300 dark:border-' + colorScheme + '-700">' + teamTotalLegsWon + '</td>';
+        html += '<td class="text-center p-2 text-xl border border-' + colorScheme + '-300 dark:border-' + colorScheme + '-700 bg-' + colorScheme + '-300 dark:bg-' + colorScheme + '-700">' + teamAvg + '</td>';
+        
+        // Empty cells for individual games
+        for (let i = 0; i < maxGames; i++) {
+          html += '<td class="border border-' + colorScheme + '-300 dark:border-' + colorScheme + '-700"></td>';
+        }
+        
+        html += '</tr>';
+        
+        html += '</tbody>';
+        html += '</table>';
+        html += '</div>';
+        html += '</div>';
+      }
+      
+      // Away Team Stats
+      if (awayPlayerStats.size > 0) {
+        const colorScheme = 'green';
+        
+        html += '<div class="p-3 bg-' + colorScheme + '-50 dark:bg-' + colorScheme + '-950">';
+        html += '<div class="font-bold text-' + colorScheme + '-900 dark:text-' + colorScheme + '-100 mb-3">🚗 ' + awayTeamName + '</div>';
+        html += '<div class="overflow-x-auto">';
+        html += '<table class="w-full text-sm border-collapse">';
+        html += '<thead class="text-xs text-' + colorScheme + '-700 dark:text-' + colorScheme + '-300 bg-' + colorScheme + '-100 dark:bg-' + colorScheme + '-900">';
+        html += '<tr>';
+        html += '<th class="text-left p-2 border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800">Spieler</th>';
+        html += '<th class="text-center p-2 border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800">Spiele</th>';
+        html += '<th class="text-center p-2 border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800">Legs Won</th>';
+        html += '<th class="text-center p-2 border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800 bg-' + colorScheme + '-200 dark:bg-' + colorScheme + '-800">Ø Gesamt</th>';
+        
+        // Find max number of games any player played
+        let maxAwayGames = 0;
+        awayPlayerStats.forEach(playerData => {
+          if (playerData.stats.length > maxAwayGames) maxAwayGames = playerData.stats.length;
+        });
+        
+        for (let i = 0; i < maxAwayGames; i++) {
+          html += '<th class="text-center p-2 border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800">Spiel ' + (i + 1) + '</th>';
+        }
+        
+        html += '</tr>';
+        html += '</thead>';
+        html += '<tbody class="text-' + colorScheme + '-900 dark:text-' + colorScheme + '-100">';
+      
+        awayPlayerStats.forEach((playerData, playerName) => {
+          const playerGames = playerData.stats;
+          
+          // Calculate overall stats
+          const totalDarts = playerGames.reduce((sum, g) => sum + g.dartsTotal, 0);
+          const totalScore = playerGames.reduce((sum, g) => sum + g.scoreTotal, 0);
+          const totalLegsWon = playerGames.reduce((sum, g) => sum + g.legCount, 0);
+          const overallAvg = playerGames.length > 0 ? calculateAverage(totalScore, totalDarts) : '-';
+          
+          html += '<tr class="border-b border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800">';
+          html += '<td class="p-2 font-medium border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800">' + playerName + '</td>';
+          html += '<td class="text-center p-2 border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800">' + playerData.gamesPlayed + '</td>';
+          html += '<td class="text-center p-2 border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800">' + (totalLegsWon || '-') + '</td>';
+          html += '<td class="text-center p-2 font-bold text-lg border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800 bg-' + colorScheme + '-100 dark:bg-' + colorScheme + '-900">' + overallAvg + '</td>';
+          
+          // Add individual game averages
+          for (let i = 0; i < maxAwayGames; i++) {
+            if (i < playerGames.length) {
+              const game = playerGames[i];
+              const gameAvg = calculateAverage(game.scoreTotal, game.dartsTotal);
+              const wonClass = game.won ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 font-bold' : '';
+              html += '<td class="text-center p-2 border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800 ' + wonClass + '">' + gameAvg + '</td>';
+            } else {
+              html += '<td class="text-center p-2 border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800 text-gray-400">-</td>';
+            }
+          }
+          
+          html += '</tr>';
+        });
+        
+        // Team Average Row
+        let teamTotalDarts = 0;
+        let teamTotalScore = 0;
+        let teamTotalLegsWon = 0;
+        let teamTotalGamesPlayed = 0;
+        
+        awayPlayerStats.forEach((playerData) => {
+          playerData.stats.forEach(game => {
+            teamTotalDarts += game.dartsTotal;
+            teamTotalScore += game.scoreTotal;
+            teamTotalLegsWon += game.legCount;
+          });
+          teamTotalGamesPlayed += playerData.gamesPlayed;
+        });
+        
+        const teamAvg = teamTotalDarts > 0 ? calculateAverage(teamTotalScore, teamTotalDarts) : '-';
+        
+        html += '<tr class="bg-' + colorScheme + '-200 dark:bg-' + colorScheme + '-800 font-bold">';
+        html += '<td class="p-2 border border-' + colorScheme + '-300 dark:border-' + colorScheme + '-700">Team Durchschnitt</td>';
+        html += '<td class="text-center p-2 border border-' + colorScheme + '-300 dark:border-' + colorScheme + '-700">' + awayPlayerStats.size + '</td>';
+        html += '<td class="text-center p-2 border border-' + colorScheme + '-300 dark:border-' + colorScheme + '-700">' + teamTotalLegsWon + '</td>';
+        html += '<td class="text-center p-2 text-xl border border-' + colorScheme + '-300 dark:border-' + colorScheme + '-700 bg-' + colorScheme + '-300 dark:bg-' + colorScheme + '-700">' + teamAvg + '</td>';
+        
+        // Empty cells for individual games
+        for (let i = 0; i < maxAwayGames; i++) {
+          html += '<td class="border border-' + colorScheme + '-300 dark:border-' + colorScheme + '-700"></td>';
+        }
+        
+        html += '</tr>';
         
         html += '</tbody>';
         html += '</table>';
