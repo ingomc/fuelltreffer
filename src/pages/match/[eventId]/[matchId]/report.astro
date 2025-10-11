@@ -507,7 +507,7 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
           const totalLegsWon = playerGames.reduce((sum, g) => sum + g.legCount, 0);
           const overallAvg = playerGames.length > 0 ? calculateAverage(totalScore, totalDarts) : '-';
           
-          html += '<tr class="border-b border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800 hover:bg-' + colorScheme + '-100 dark:hover:bg-' + colorScheme + '-900">';
+          html += '<tr class="border-b border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800">';
           html += '<td class="p-2 font-medium border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800">' + playerName + '</td>';
           html += '<td class="text-center p-2 border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800">' + playerData.gamesPlayed + '</td>';
           html += '<td class="text-center p-2 border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800">' + (totalLegsWon || '-') + '</td>';
