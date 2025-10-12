@@ -8,27 +8,38 @@
   let tableData = [];
   let loading = false;
   let error = null;
-  let eventId = null;
+  let eventId = 15995; // Liga E Event ID
+  let phaseId = 0;
+  let roundIndex = 0;
 
   async function loadLeagueTable() {
-    if (!eventId) {
-      console.log('No eventId, loading demo data...');
-      loadDemoData();
-      return;
-    }
-    
     loading = true;
     error = null;
 
     try {
-      const response = await fetch(`${apiBaseUrl}/api/league-table/${eventId}`);
+      const response = await fetch(`/api/round/${eventId}/${phaseId}/${roundIndex}/table`);
       
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
 
       const data = await response.json();
-      tableData = data.standings || [];
+      const entries = data.tableEntries?.[0]?.tableEntries || [];
+      
+      // Transform API data to our format
+      tableData = entries.map(entry => ({
+        position: parseInt(entry.placement),
+        team: entry.participantName,
+        games: entry.matchCount,
+        wins: entry.win,
+        draws: entry.tie,
+        losses: entry.lost,
+        points: entry.points1,
+        legs: `${entry.sets1}:${entry.sets2}`,
+        legDiff: entry.sets1 - entry.sets2,
+        isCurrentTeam: entry.participantId === parseInt(currentParticipantId)
+      }));
+      
     } catch (err) {
       console.error('Error loading league table:', err);
       error = err.message || 'Fehler beim Laden der Tabelle';
@@ -142,8 +153,7 @@
 
   onMount(() => {
     console.log('LeagueTable mounted, loading data...');
-    // Für Demo-Zwecke laden wir direkt die Demo-Daten
-    loadDemoData();
+    loadLeagueTable();
   });
 </script>
 
