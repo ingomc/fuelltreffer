@@ -35,8 +35,10 @@
         draws: entry.tie,
         losses: entry.lost,
         points: entry.points1,
-        legs: `${entry.sets1}:${entry.sets2}`,
-        legDiff: entry.sets1 - entry.sets2,
+        sets: `${entry.sets1}:${entry.sets2}`,
+        setDiff: entry.sets1 - entry.sets2,
+        legs: `${entry.legs1}:${entry.legs2}`,
+        legDiff: entry.legs1 - entry.legs2,
         isCurrentTeam: entry.participantId === parseInt(currentParticipantId)
       }));
       
@@ -60,6 +62,8 @@
         draws: 0,
         losses: 0,
         points: 0,
+        sets: '0:0',
+        setDiff: 0,
         legs: '0:0',
         legDiff: 0,
         isCurrentTeam: true
@@ -72,6 +76,8 @@
         draws: 0,
         losses: 0,
         points: 0,
+        sets: '0:0',
+        setDiff: 0,
         legs: '0:0',
         legDiff: 0,
         isCurrentTeam: false
@@ -84,6 +90,8 @@
         draws: 0,
         losses: 0,
         points: 0,
+        sets: '0:0',
+        setDiff: 0,
         legs: '0:0',
         legDiff: 0,
         isCurrentTeam: false
@@ -96,6 +104,8 @@
         draws: 0,
         losses: 0,
         points: 0,
+        sets: '0:0',
+        setDiff: 0,
         legs: '0:0',
         legDiff: 0,
         isCurrentTeam: false
@@ -108,6 +118,8 @@
         draws: 0,
         losses: 0,
         points: 0,
+        sets: '0:0',
+        setDiff: 0,
         legs: '0:0',
         legDiff: 0,
         isCurrentTeam: false
@@ -120,6 +132,8 @@
         draws: 0,
         losses: 0,
         points: 0,
+        sets: '0:0',
+        setDiff: 0,
         legs: '0:0',
         legDiff: 0,
         isCurrentTeam: false
@@ -132,6 +146,8 @@
         draws: 0,
         losses: 0,
         points: 0,
+        sets: '0:0',
+        setDiff: 0,
         legs: '0:0',
         legDiff: 0,
         isCurrentTeam: false
@@ -144,6 +160,8 @@
         draws: 0,
         losses: 0,
         points: 0,
+        sets: '0:0',
+        setDiff: 0,
         legs: '0:0',
         legDiff: 0,
         isCurrentTeam: false
@@ -178,15 +196,21 @@
         <!-- Table Header -->
         <thead>
           <tr class="bg-gray-600 dark:bg-gray-700 text-white">
-            <th class="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider">Pl.</th>
-            <th class="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider">Mannschaft</th>
-            <th class="px-3 py-3 text-center text-xs font-medium uppercase tracking-wider">Spiele</th>
-            <th class="px-3 py-3 text-center text-xs font-medium uppercase tracking-wider">S</th>
-            <th class="px-3 py-3 text-center text-xs font-medium uppercase tracking-wider">U</th>
-            <th class="px-3 py-3 text-center text-xs font-medium uppercase tracking-wider">N</th>
-            <th class="px-3 py-3 text-center text-xs font-medium uppercase tracking-wider">Punkte</th>
-            <th class="px-3 py-3 text-center text-xs font-medium uppercase tracking-wider">Legs</th>
-            <th class="px-3 py-3 text-center text-xs font-medium uppercase tracking-wider">+/-</th>
+            <th rowspan="2" class="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider align-middle">Pl.</th>
+            <th rowspan="2" class="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider align-middle">Mannschaft</th>
+            <th rowspan="2" class="px-3 py-3 text-center text-xs font-medium uppercase tracking-wider align-middle">Spiele</th>
+            <th rowspan="2" class="px-3 py-3 text-center text-xs font-medium uppercase tracking-wider align-middle">S</th>
+            <th rowspan="2" class="px-3 py-3 text-center text-xs font-medium uppercase tracking-wider align-middle">U</th>
+            <th rowspan="2" class="px-3 py-3 text-center text-xs font-medium uppercase tracking-wider align-middle">N</th>
+            <th rowspan="2" class="px-3 py-3 text-center text-xs font-medium uppercase tracking-wider align-middle">Punkte</th>
+            <th colspan="2" class="px-3 py-2 text-center text-xs font-medium uppercase tracking-wider border-l-2 border-gray-500">Sets</th>
+            <th colspan="2" class="px-3 py-2 text-center text-xs font-medium uppercase tracking-wider border-l-2 border-gray-500">Legs</th>
+          </tr>
+          <tr class="bg-gray-600 dark:bg-gray-700 text-white">
+            <th class="px-2 py-2 text-center text-xs font-medium border-l-2 border-gray-500"></th>
+            <th class="px-2 py-2 text-center text-xs font-medium">+/-</th>
+            <th class="px-2 py-2 text-center text-xs font-medium border-l-2 border-gray-500"></th>
+            <th class="px-2 py-2 text-center text-xs font-medium">+/-</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -203,7 +227,9 @@
               <td class="px-3 py-4 whitespace-nowrap text-sm text-center text-gray-900 dark:text-white">{team.draws}</td>
               <td class="px-3 py-4 whitespace-nowrap text-sm text-center text-gray-900 dark:text-white">{team.losses}</td>
               <td class="px-3 py-4 whitespace-nowrap text-sm text-center text-gray-900 dark:text-white font-semibold">{team.points}</td>
-              <td class="px-3 py-4 whitespace-nowrap text-sm text-center text-gray-900 dark:text-white">{team.legs}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-center text-gray-900 dark:text-white border-l-2 border-gray-200 dark:border-gray-700">{team.sets}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-center text-gray-900 dark:text-white">{team.setDiff}</td>
+              <td class="px-3 py-4 whitespace-nowrap text-sm text-center text-gray-900 dark:text-white border-l-2 border-gray-200 dark:border-gray-700">{team.legs}</td>
               <td class="px-3 py-4 whitespace-nowrap text-sm text-center text-gray-900 dark:text-white">{team.legDiff}</td>
             </tr>
           {/each}
@@ -227,7 +253,7 @@
             <span class="text-gray-900 dark:text-white font-bold text-lg">{team.points}</span>
           </div>
           
-          <div class="grid grid-cols-3 gap-4 text-sm">
+          <div class="grid grid-cols-4 gap-4 text-sm">
             <div class="text-center">
               <div class="text-gray-500 dark:text-gray-400">Spiele</div>
               <div class="text-gray-900 dark:text-white font-medium">{team.games}</div>
@@ -235,6 +261,10 @@
             <div class="text-center">
               <div class="text-gray-500 dark:text-gray-400">S/U/N</div>
               <div class="text-gray-900 dark:text-white font-medium">{team.wins}/{team.draws}/{team.losses}</div>
+            </div>
+            <div class="text-center">
+              <div class="text-gray-500 dark:text-gray-400">Games</div>
+              <div class="text-gray-900 dark:text-white font-medium">{team.sets}</div>
             </div>
             <div class="text-center">
               <div class="text-gray-500 dark:text-gray-400">Legs</div>
