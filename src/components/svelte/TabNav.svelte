@@ -18,9 +18,10 @@
 
     // Manually track page view in Umami if available
     if (typeof window !== 'undefined' && window.umami && typeof window.umami.track === 'function') {
-      window.umami.track({
+      window.umami.track(props => ({
+        ...props,
         url: window.location.pathname + window.location.search
-      });
+      }));
     }
   }
   
