@@ -15,6 +15,11 @@
     
     // Update URL without page reload
     window.history.replaceState({}, '', url.toString());
+
+    // Manually track page view in Umami if available
+    if (typeof window !== 'undefined' && window.umami && typeof window.umami.track === 'function') {
+      window.umami.track();
+    }
   }
   
   onMount(() => {
