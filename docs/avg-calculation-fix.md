@@ -80,29 +80,42 @@ homePlayerStats.set(playerName, {
 
 ## AVG Calculation Formula Documentation
 
+### Overall AVG Calculation Method
+
+The overall AVG is calculated as the **simple arithmetic mean of individual game averages**.
+
 ### The Formula
 ```
-AVG = (totalScore / totalDarts) × 3
+Overall AVG = (sum of all game averages) / (number of games)
 ```
 
-### Components
-- **totalScore**: Sum of all points scored across all of the player's games
-- **totalDarts**: Sum of all darts thrown across all of the player's games
-- **× 3**: Conversion factor to get 3-dart average (standard measurement in darts)
-
-### Why Multiply by 3?
-In darts, the standard way to express a player's average is the "3-dart average" - the average score per visit to the board (where each visit allows 3 darts). This is the universal measurement used in professional darts.
+### Why This Method?
+This method treats each game equally, regardless of how many darts were thrown. It calculates the average of the already-shown individual game averages.
 
 ### Example Calculation
-**Scenario:** A player throws 9 darts and scores 180 points total
+**Scenario:** A player plays 2 games
 
+**Game 1:**
+- 180 points with 9 darts
+- Game AVG = (180 / 9) × 3 = 60.00
+
+**Game 2:**
+- 60 points with 6 darts
+- Game AVG = (60 / 6) × 3 = 30.00
+
+**Overall AVG:**
 ```
-AVG = (180 / 9) × 3
-    = 20 × 3
-    = 60.00
+Overall AVG = (60.00 + 30.00) / 2 = 45.00
 ```
 
-**Interpretation:** This player averages 60 points per 3-dart visit to the board.
+### Alternative Method (NOT Used)
+The weighted average method would be:
+```
+Weighted AVG = (total score / total darts) × 3
+             = (240 / 15) × 3 = 48.00
+```
+
+The simple average method (45.00) treats each game equally, while the weighted method (48.00) gives more weight to games with more darts thrown.
 
 ### Implementation
 The calculation is performed in the `calculateAverage()` function:
@@ -125,18 +138,24 @@ function calculateAverage(scoreTotal, dartsTotal) {
 
 ### Overall AVG Calculation
 For each player, the overall average is calculated by:
-1. Summing all darts thrown across all their games: `totalDarts`
-2. Summing all scores across all their games: `totalScore`
-3. Applying the formula: `calculateAverage(totalScore, totalDarts)`
+1. Calculate the average for each individual game
+2. Sum all the game averages
+3. Divide by the number of games
 
 ```javascript
 // Calculate overall stats for this player
-// - Sum all darts thrown across all games where this player participated
-// - Sum all scores across all games where this player participated
-// - Calculate overall AVG using the standard formula: (totalScore / totalDarts) * 3
-const totalDarts = playerGames.reduce((sum, g) => sum + g.dartsTotal, 0);
-const totalScore = playerGames.reduce((sum, g) => sum + g.scoreTotal, 0);
-const overallAvg = playerGames.length > 0 ? calculateAverage(totalScore, totalDarts) : '-';
+// Overall AVG is calculated as the average of individual game averages
+// (not weighted by darts - simple arithmetic mean of game AVGs)
+let overallAvg = '-';
+if (playerGames.length > 0) {
+  // Calculate average for each game, then average those averages
+  const gameAverages = playerGames.map(g => {
+    const avg = calculateAverage(g.scoreTotal, g.dartsTotal);
+    return parseFloat(avg);
+  });
+  const sumOfAverages = gameAverages.reduce((sum, avg) => sum + avg, 0);
+  overallAvg = (sumOfAverages / gameAverages.length).toFixed(2);
+}
 ```
 
 ## Testing
