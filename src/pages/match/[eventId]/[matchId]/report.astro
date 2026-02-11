@@ -548,12 +548,17 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
           let overallAvg = '-';
           if (playerGames.length > 0) {
             // Calculate average for each game, then average those averages
-            const gameAverages = playerGames.map(g => {
-              const avg = calculateAverage(g.scoreTotal, g.dartsTotal);
-              return parseFloat(avg);
-            });
-            const sumOfAverages = gameAverages.reduce((sum, avg) => sum + avg, 0);
-            overallAvg = (sumOfAverages / gameAverages.length).toFixed(2);
+            const gameAverages = playerGames
+              .map(g => {
+                const avg = calculateAverage(g.scoreTotal, g.dartsTotal);
+                return parseFloat(avg);
+              })
+              .filter(avg => !isNaN(avg) && avg > 0); // Filter out invalid or zero averages
+            
+            if (gameAverages.length > 0) {
+              const sumOfAverages = gameAverages.reduce((sum, avg) => sum + avg, 0);
+              overallAvg = (sumOfAverages / gameAverages.length).toFixed(2);
+            }
           }
           
           html += '<tr class="border-b border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800">';
@@ -653,12 +658,17 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
           let overallAvg = '-';
           if (playerGames.length > 0) {
             // Calculate average for each game, then average those averages
-            const gameAverages = playerGames.map(g => {
-              const avg = calculateAverage(g.scoreTotal, g.dartsTotal);
-              return parseFloat(avg);
-            });
-            const sumOfAverages = gameAverages.reduce((sum, avg) => sum + avg, 0);
-            overallAvg = (sumOfAverages / gameAverages.length).toFixed(2);
+            const gameAverages = playerGames
+              .map(g => {
+                const avg = calculateAverage(g.scoreTotal, g.dartsTotal);
+                return parseFloat(avg);
+              })
+              .filter(avg => !isNaN(avg) && avg > 0); // Filter out invalid or zero averages
+            
+            if (gameAverages.length > 0) {
+              const sumOfAverages = gameAverages.reduce((sum, avg) => sum + avg, 0);
+              overallAvg = (sumOfAverages / gameAverages.length).toFixed(2);
+            }
           }
           
           html += '<tr class="border-b border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800">';
