@@ -151,6 +151,22 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')} min`;
   }
 
+  /**
+   * Calculate the 3-dart average for darts
+   * 
+   * @param {number} scoreTotal - Total points scored
+   * @param {number} dartsTotal - Total number of darts thrown
+   * @returns {string|number} - The 3-dart average as a string with 2 decimal places, or 0 if no darts thrown
+   * 
+   * Formula: (scoreTotal / dartsTotal) * 3
+   * 
+   * Example:
+   * - If a player scores 180 points with 9 darts:
+   *   AVG = (180 / 9) * 3 = 60.00
+   * 
+   * The multiplication by 3 converts the per-dart average to a 3-dart average,
+   * which is the standard measurement in darts.
+   */
   function calculateAverage(scoreTotal, dartsTotal) {
     if (!dartsTotal || dartsTotal === 0) return 0;
     return (scoreTotal / dartsTotal * 3).toFixed(2);
@@ -454,9 +470,14 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
       // Baue Statistiken für Heim-Team
       const homePlayerStats = new Map();
       allHomeParticipants.forEach((playerInfo, playerName) => {
-        const stats = playerStatsMap.get(playerInfo.id) || 
-                     playerStatsMap.get(playerName) || 
-                     [];
+        // Get all stats for this player (by ID or name)
+        const allPlayerStats = playerStatsMap.get(playerInfo.id) || 
+                               playerStatsMap.get(playerName) || 
+                               [];
+        
+        // Filter stats to only include games this player actually participated in
+        // This ensures the overall AVG is calculated only from the player's actual games
+        const stats = allPlayerStats.filter(stat => playerInfo.games.includes(stat.gameId));
         
         homePlayerStats.set(playerName, {
           stats: stats,
@@ -468,9 +489,14 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
       // Baue Statistiken für Gast-Team
       const awayPlayerStats = new Map();
       allAwayParticipants.forEach((playerInfo, playerName) => {
-        const stats = playerStatsMap.get(playerInfo.id) || 
-                     playerStatsMap.get(playerName) || 
-                     [];
+        // Get all stats for this player (by ID or name)
+        const allPlayerStats = playerStatsMap.get(playerInfo.id) || 
+                               playerStatsMap.get(playerName) || 
+                               [];
+        
+        // Filter stats to only include games this player actually participated in
+        // This ensures the overall AVG is calculated only from the player's actual games
+        const stats = allPlayerStats.filter(stat => playerInfo.games.includes(stat.gameId));
         
         awayPlayerStats.set(playerName, {
           stats: stats,
@@ -514,7 +540,10 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
         homePlayerStats.forEach((playerData, playerName) => {
           const playerGames = playerData.stats;
           
-          // Calculate overall stats
+          // Calculate overall stats for this player
+          // - Sum all darts thrown across all games where this player participated
+          // - Sum all scores across all games where this player participated
+          // - Calculate overall AVG using the standard formula: (totalScore / totalDarts) * 3
           const totalDarts = playerGames.reduce((sum, g) => sum + g.dartsTotal, 0);
           const totalScore = playerGames.reduce((sum, g) => sum + g.scoreTotal, 0);
           const totalLegsWon = playerGames.reduce((sum, g) => sum + g.legCount, 0);
@@ -609,7 +638,10 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
         awayPlayerStats.forEach((playerData, playerName) => {
           const playerGames = playerData.stats;
           
-          // Calculate overall stats
+          // Calculate overall stats for this player
+          // - Sum all darts thrown across all games where this player participated
+          // - Sum all scores across all games where this player participated
+          // - Calculate overall AVG using the standard formula: (totalScore / totalDarts) * 3
           const totalDarts = playerGames.reduce((sum, g) => sum + g.dartsTotal, 0);
           const totalScore = playerGames.reduce((sum, g) => sum + g.scoreTotal, 0);
           const totalLegsWon = playerGames.reduce((sum, g) => sum + g.legCount, 0);
