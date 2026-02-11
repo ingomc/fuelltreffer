@@ -139,8 +139,9 @@ function calculateAverage(scoreTotal, dartsTotal) {
 ### Overall AVG Calculation
 For each player, the overall average is calculated by:
 1. Calculate the average for each individual game
-2. Sum all the game averages
-3. Divide by the number of games
+2. Filter out any invalid values (NaN)
+3. Sum all the valid game averages
+4. Divide by the number of valid games
 
 ```javascript
 // Calculate overall stats for this player
@@ -149,14 +150,21 @@ For each player, the overall average is calculated by:
 let overallAvg = '-';
 if (playerGames.length > 0) {
   // Calculate average for each game, then average those averages
-  const gameAverages = playerGames.map(g => {
-    const avg = calculateAverage(g.scoreTotal, g.dartsTotal);
-    return parseFloat(avg);
-  });
-  const sumOfAverages = gameAverages.reduce((sum, avg) => sum + avg, 0);
-  overallAvg = (sumOfAverages / gameAverages.length).toFixed(2);
+  const gameAverages = playerGames
+    .map(g => {
+      const avg = calculateAverage(g.scoreTotal, g.dartsTotal);
+      return parseFloat(avg);
+    })
+    .filter(avg => !isNaN(avg)); // Filter out only invalid values, keep zero
+  
+  if (gameAverages.length > 0) {
+    const sumOfAverages = gameAverages.reduce((sum, avg) => sum + avg, 0);
+    overallAvg = (sumOfAverages / gameAverages.length).toFixed(2);
+  }
 }
 ```
+
+**Note:** Zero averages are included in the calculation. If a player legitimately scores zero points in a game, that 0.00 average is counted in the overall average.
 
 ## Testing
 
