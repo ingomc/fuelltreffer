@@ -541,13 +541,20 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
           const playerGames = playerData.stats;
           
           // Calculate overall stats for this player
-          // - Sum all darts thrown across all games where this player participated
-          // - Sum all scores across all games where this player participated
-          // - Calculate overall AVG using the standard formula: (totalScore / totalDarts) * 3
-          const totalDarts = playerGames.reduce((sum, g) => sum + g.dartsTotal, 0);
-          const totalScore = playerGames.reduce((sum, g) => sum + g.scoreTotal, 0);
+          // Overall AVG is calculated as the average of individual game averages
+          // (not weighted by darts - simple arithmetic mean of game AVGs)
           const totalLegsWon = playerGames.reduce((sum, g) => sum + g.legCount, 0);
-          const overallAvg = playerGames.length > 0 ? calculateAverage(totalScore, totalDarts) : '-';
+          
+          let overallAvg = '-';
+          if (playerGames.length > 0) {
+            // Calculate average for each game, then average those averages
+            const gameAverages = playerGames.map(g => {
+              const avg = calculateAverage(g.scoreTotal, g.dartsTotal);
+              return parseFloat(avg);
+            });
+            const sumOfAverages = gameAverages.reduce((sum, avg) => sum + avg, 0);
+            overallAvg = (sumOfAverages / gameAverages.length).toFixed(2);
+          }
           
           html += '<tr class="border-b border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800">';
           html += '<td class="p-2 font-medium border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800">' + playerName + '</td>';
@@ -639,13 +646,20 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
           const playerGames = playerData.stats;
           
           // Calculate overall stats for this player
-          // - Sum all darts thrown across all games where this player participated
-          // - Sum all scores across all games where this player participated
-          // - Calculate overall AVG using the standard formula: (totalScore / totalDarts) * 3
-          const totalDarts = playerGames.reduce((sum, g) => sum + g.dartsTotal, 0);
-          const totalScore = playerGames.reduce((sum, g) => sum + g.scoreTotal, 0);
+          // Overall AVG is calculated as the average of individual game averages
+          // (not weighted by darts - simple arithmetic mean of game AVGs)
           const totalLegsWon = playerGames.reduce((sum, g) => sum + g.legCount, 0);
-          const overallAvg = playerGames.length > 0 ? calculateAverage(totalScore, totalDarts) : '-';
+          
+          let overallAvg = '-';
+          if (playerGames.length > 0) {
+            // Calculate average for each game, then average those averages
+            const gameAverages = playerGames.map(g => {
+              const avg = calculateAverage(g.scoreTotal, g.dartsTotal);
+              return parseFloat(avg);
+            });
+            const sumOfAverages = gameAverages.reduce((sum, avg) => sum + avg, 0);
+            overallAvg = (sumOfAverages / gameAverages.length).toFixed(2);
+          }
           
           html += '<tr class="border-b border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800">';
           html += '<td class="p-2 font-medium border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800">' + playerName + '</td>';
