@@ -23,7 +23,7 @@ services:
       - STREAMER_PASSWORD=${STREAMER_PASSWORD}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.fuelltreffer-andre-bellmann-de.rule=Host(\`fuelltreffer.andre-bellmann.de\`)"
+      - "traefik.http.routers.fuelltreffer-andre-bellmann-de.rule=Host(`fuelltreffer.andre-bellmann.de`)"
       - "traefik.http.routers.fuelltreffer-andre-bellmann-de.entrypoints=websecure"
       - "traefik.http.routers.fuelltreffer-andre-bellmann-de.tls.certResolver=letsencrypt"
       - "traefik.http.services.fuelltreffer-andre-bellmann-de.loadbalancer.server.port=4000"
