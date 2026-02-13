@@ -11,15 +11,30 @@ export async function GET({ params }) {
   }
 
   try {
+    const start = Date.now();
+    const requestId = `${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
     // Get the 2k software API URL from environment or use default
     const apiUrl = process.env.TWOK_SOFTWARE_API_URL || 'https://backend4.2k-dart-software.com/2k-backend4/api/v1/frontend';
-    const apiResponse = await fetch(`${apiUrl}/event/${eventId}/phase/${phaseId}/round/${roundIndex}/table`, {
+    const upstreamUrl = `${apiUrl}/event/${eventId}/phase/${phaseId}/round/${roundIndex}/table`;
+    console.info(
+      `[proxy:round-table] requestId=${requestId} start eventId=${eventId} phaseId=${phaseId} roundIndex=${roundIndex} upstream=${upstreamUrl}`
+    );
+
+    const apiResponse = await fetch(upstreamUrl, {
       headers: {
         'User-Agent': 'Fuelltreffer-SSR/1.0'
       }
     });
+
+    console.info(
+      `[proxy:round-table] requestId=${requestId} upstream_status=${apiResponse.status} duration_ms=${Date.now() - start}`
+    );
     
     if (!apiResponse.ok) {
+      const upstreamBody = await apiResponse.text();
+      console.error(
+        `[proxy:round-table] requestId=${requestId} upstream_error_status=${apiResponse.status} body=${upstreamBody.slice(0, 500)}`
+      );
       throw new Error(`2k software API responded with status: ${apiResponse.status}`);
     }
     
@@ -33,7 +48,13 @@ export async function GET({ params }) {
       },
     });
   } catch (error) {
-    console.error('Error fetching table:', error);
+    console.error('[proxy:round-table] fetch_error', {
+      message: error?.message,
+      name: error?.name,
+      code: error?.code,
+      cause: error?.cause ? String(error.cause) : undefined,
+      stack: error?.stack,
+    });
     
     return new Response(JSON.stringify({ 
       error: 'Failed to fetch table',
