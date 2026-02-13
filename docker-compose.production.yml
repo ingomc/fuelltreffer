@@ -19,3 +19,9 @@ services:
       # Streamer Authentication
       - STREAMER_EMAIL=${STREAMER_EMAIL}
       - STREAMER_PASSWORD=${STREAMER_PASSWORD}
+    networks:
+      - dokploy-network
+
+networks:
+  dokploy-network:
+    external: true
