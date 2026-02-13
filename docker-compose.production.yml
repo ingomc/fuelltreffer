@@ -3,9 +3,6 @@ services:
     build: .
     ports:
       - "${FRONTEND_PORT:-4000}:4000"
-    labels:
-      - traefik.http.middlewares.fuelltreffer-compress.compress=true
-      - traefik.http.routers.darts-2k-wlibtr-62-websecure.middlewares=fuelltreffer-compress
 
     restart: unless-stopped
     environment:
