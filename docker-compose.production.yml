@@ -23,9 +23,10 @@ services:
       - STREAMER_PASSWORD=${STREAMER_PASSWORD}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.fuelltreffer.rule=Host(`${APP_DOMAIN:-fuelltreffer.andre-bellmann.de}`)"
-      - "traefik.http.services.fuelltreffer.loadbalancer.server.port=4000"
-      - "traefik.docker.network=dokploy-network"
+      - "traefik.http.routers.fuelltreffer-andre-bellmann-de.rule=Host(\`fuelltreffer.andre-bellmann.de\`)"
+      - "traefik.http.routers.fuelltreffer-andre-bellmann-de.entrypoints=websecure"
+      - "traefik.http.routers.fuelltreffer-andre-bellmann-de.tls.certResolver=letsencrypt"
+      - "traefik.http.services.fuelltreffer-andre-bellmann-de.loadbalancer.server.port=4000"
     networks:
       - dokploy-network
 
