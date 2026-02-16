@@ -106,13 +106,16 @@ docker-compose down
 2. **Connect Git repository**
 3. **Configure environment variables**:
    - `TWOK_SOFTWARE_API_URL`: Your 2k software API URL
-   - `FRONTEND_PORT`: 4000 (default)
+  - `APP_DOMAIN`: Public domain of this app (e.g. `fuelltreffer.example.com`)
+  - `FRONTEND_PORT`: 4000 (default)
 4. **Deploy** using the included Dockerfile
 
 ### Dokploy Environment Variables
 
 ```env
 NODE_ENV=production
+APP_DOMAIN=fuelltreffer.example.com
+ORIGIN=https://fuelltreffer.example.com
 TWOK_SOFTWARE_API_URL=https://backend4.2k-dart-software.com/2k-backend4/api/v1/frontend
 FRONTEND_PORT=4000
 ```

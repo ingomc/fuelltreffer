@@ -15,7 +15,11 @@ export async function GET({ params }) {
   }
 
   try {
-    const apiUrl = `https://backend4.2k-dart-software.com/2k-backend4/api/v1/frontend/event/${eventId}/match/${matchId}/report`;
+    const start = Date.now();
+    const requestId = `${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
+    const apiBaseUrl = process.env.TWOK_SOFTWARE_API_URL || 'https://backend4.2k-dart-software.com/2k-backend4/api/v1/frontend';
+    const apiUrl = `${apiBaseUrl}/event/${eventId}/match/${matchId}/report`;
+    console.info(`[proxy:match-report] requestId=${requestId} start eventId=${eventId} matchId=${matchId} upstream=${apiUrl}`);
     
     const response = await fetch(apiUrl, {
       headers: {
@@ -23,7 +27,15 @@ export async function GET({ params }) {
       }
     });
 
+    console.info(
+      `[proxy:match-report] requestId=${requestId} upstream_status=${response.status} duration_ms=${Date.now() - start}`
+    );
+
     if (!response.ok) {
+      const upstreamBody = await response.text();
+      console.error(
+        `[proxy:match-report] requestId=${requestId} upstream_error_status=${response.status} body=${upstreamBody.slice(0, 500)}`
+      );
       throw new Error(`API responded with status: ${response.status}`);
     }
 
@@ -37,7 +49,13 @@ export async function GET({ params }) {
       }
     });
   } catch (error) {
-    console.error('Error fetching match report:', error);
+    console.error('[proxy:match-report] fetch_error', {
+      message: error?.message,
+      name: error?.name,
+      code: error?.code,
+      cause: error?.cause ? String(error.cause) : undefined,
+      stack: error?.stack,
+    });
     
     return new Response(JSON.stringify({ 
       error: 'Failed to fetch match report',

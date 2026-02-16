@@ -1,17 +1,16 @@
 services:
   fuelltreffer:
     build: .
-    ports:
-      - "${FRONTEND_PORT:-4000}:4000"
-    labels:
-      - traefik.http.middlewares.fuelltreffer-compress.compress=true
-      - traefik.http.routers.darts-2k-wlibtr-62-websecure.middlewares=fuelltreffer-compress
+    container_name: fuelltreffer
+    expose:
+      - "4000"
 
     restart: unless-stopped
     environment:
       - NODE_ENV=production
       - HOST=0.0.0.0
       - PORT=4000
+      - ORIGIN=${ORIGIN:-https://${APP_DOMAIN:-fuelltreffer.andre-bellmann.de}}
       - TWOK_SOFTWARE_API_URL=${TWOK_SOFTWARE_API_URL:-https://backend4.2k-dart-software.com/2k-backend4/api/v1/frontend}
       # LiveKit Environment Variables
       - LIVEKIT_URL=${LIVEKIT_URL}
@@ -22,3 +21,15 @@ services:
       # Streamer Authentication
       - STREAMER_EMAIL=${STREAMER_EMAIL}
       - STREAMER_PASSWORD=${STREAMER_PASSWORD}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.fuelltreffer-andre-bellmann-de.rule=Host(`fuelltreffer.andre-bellmann.de`)"
+      - "traefik.http.routers.fuelltreffer-andre-bellmann-de.entrypoints=websecure"
+      - "traefik.http.routers.fuelltreffer-andre-bellmann-de.tls.certResolver=letsencrypt"
+      - "traefik.http.services.fuelltreffer-andre-bellmann-de.loadbalancer.server.port=4000"
+    networks:
+      - dokploy-network
+
+networks:
+  dokploy-network:
+    external: true
