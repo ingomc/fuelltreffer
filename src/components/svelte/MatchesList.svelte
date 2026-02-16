@@ -35,6 +35,7 @@
 
   function getFinalScore(match) {
     const scoreCandidates = [
+      [match?.setsHome, match?.setsAway],
       [match?.legsHome, match?.legsAway],
       [match?.scoreHome, match?.scoreGuest],
       [match?.resultHome, match?.resultGuest],
