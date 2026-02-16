@@ -103,7 +103,16 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
         try {
           const rosterResponse = await fetch(`/api/participant/${teamParam}`);
           if (rosterResponse.ok) {
-            teamRoster = await rosterResponse.json();
+            const rosterData = await rosterResponse.json();
+            const rosterMembers = rosterData?.participant?.teamSeason?.teamMembers || [];
+            const matchSummary = (rosterData?.matches || []).find(
+              (match) => String(match?.id) === String(matchId)
+            ) || null;
+
+            teamRoster = {
+              members: rosterMembers,
+              match: matchSummary
+            };
           }
         } catch (e) {
           console.error('Failed to load team roster:', e);
@@ -185,6 +194,8 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
     // Group by home/away and collect unique team names
     const homeTeams = new Set();
     const awayTeams = new Set();
+    const summaryHomeTeamName = teamRoster?.match?.participantHome?.displayName || null;
+    const summaryAwayTeamName = teamRoster?.match?.participantGuest?.displayName || null;
     
     data.forEach(match => {
       const homeName = match.participantHome?.teamSeason?.team?.name || match.participantHome?.displayName;
@@ -193,12 +204,14 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
       if (awayName) awayTeams.add(awayName);
     });
     
-    const homeTeamName = homeTeams.size === 1 ? [...homeTeams][0] : 
+    const homeTeamName = summaryHomeTeamName ||
+                         (homeTeams.size === 1 ? [...homeTeams][0] : 
                          firstMatch.participantHome?.teamSeason?.team?.name || firstMatch.participantHome?.displayName || 
-                         'Heimteam';
-    const awayTeamName = awayTeams.size === 1 ? [...awayTeams][0] : 
+                         'Heimteam');
+    const awayTeamName = summaryAwayTeamName ||
+                         (awayTeams.size === 1 ? [...awayTeams][0] : 
                          firstMatch.participantGuest?.teamSeason?.team?.name || firstMatch.participantGuest?.displayName || 
-                         'Gastteam';
+                         'Gastteam');
     
     let html = '';
 
