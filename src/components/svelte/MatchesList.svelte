@@ -27,6 +27,33 @@
     return statusMap[status] || { color: 'gray', text: status, icon: '' };
   }
 
+  function getFinalScore(match) {
+    const scoreCandidates = [
+      [match?.scoreHome, match?.scoreGuest],
+      [match?.resultHome, match?.resultGuest],
+      [match?.homeScore, match?.guestScore],
+      [match?.homePoints, match?.guestPoints],
+      [match?.participantHome?.score, match?.participantGuest?.score],
+      [match?.participantHome?.points, match?.participantGuest?.points],
+      [match?.participantHome?.result, match?.participantGuest?.result]
+    ];
+
+    const scorePair = scoreCandidates.find(([home, guest]) => home != null && guest != null);
+    if (scorePair) {
+      return `${scorePair[0]}:${scorePair[1]}`;
+    }
+
+    if (typeof match?.result === 'string' && match.result.includes(':')) {
+      return match.result;
+    }
+
+    if (typeof match?.score === 'string' && match.score.includes(':')) {
+      return match.score;
+    }
+
+    return null;
+  }
+
   function navigateToMatchReport(eventId, matchId) {
     // Include current team parameter for back navigation
     const teamParam = currentParticipantId ? `?team=${currentParticipantId}` : '';
@@ -88,6 +115,7 @@
       {#each sortedMatches as match}
         {@const status = getStatusBadge(match.statusCd)}
         {@const isHomeMatch = currentParticipantId && match.participantHome.id.toString() === currentParticipantId.toString()}
+        {@const finalScore = match.statusCd === 'FINISHED' ? getFinalScore(match) : null}
         <button
           type="button"
           class="border border-gray-200 dark:border-gray-700 rounded-md p-2 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all duration-200 cursor-pointer w-full text-left"
@@ -101,7 +129,7 @@
             </span>
             
             <!-- Status Icon -->
-            <span class="text-base flex-shrink-0">{status.icon}</span>
+            <span class="text-base flex-shrink-0" title={status.text}>{status.icon}</span>
             
             <!-- Home Team -->
             <span
@@ -118,7 +146,13 @@
             </span>
             
             <!-- Score/VS -->
-            <span class="font-bold text-gray-400 dark:text-gray-500 px-1">-</span>
+            <span class="font-bold px-1" class:text-green-700={!!finalScore} class:dark:text-green-400={!!finalScore} class:text-gray-400={!finalScore} class:dark:text-gray-500={!finalScore}>
+              {#if match.statusCd === 'FINISHED'}
+                {finalScore || 'n.v.'}
+              {:else}
+                vs
+              {/if}
+            </span>
             
             <!-- Guest Team -->
             <span
