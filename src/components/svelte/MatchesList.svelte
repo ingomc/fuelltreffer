@@ -148,7 +148,7 @@
             <!-- Score/VS -->
             <span class="font-bold px-1" class:text-green-700={!!finalScore} class:dark:text-green-400={!!finalScore} class:text-gray-400={!finalScore} class:dark:text-gray-500={!finalScore}>
               {#if match.statusCd === 'FINISHED'}
-                {finalScore || 'n.v.'}
+                {finalScore || 'N/A'}
               {:else}
                 vs
               {/if}
