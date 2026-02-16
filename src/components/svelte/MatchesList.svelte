@@ -19,8 +19,8 @@
   function getStatusBadge(status) {
     const statusMap = {
       'ACTIVE': { color: 'green', text: 'Aktiv', icon: '🟢' },
-      'FINISHED': { color: 'blue', text: 'Beendet', icon: '✅' },
-      'FINISH': { color: 'blue', text: 'Beendet', icon: '✅' },
+      'FINISHED': { color: 'blue', text: 'Beendet', icon: '' },
+      'FINISH': { color: 'blue', text: 'Beendet', icon: '' },
       'PLANNED': { color: 'yellow', text: 'Geplant', icon: '📅' },
       'CANCELLED': { color: 'red', text: 'Abgesagt', icon: '❌' }
     };
@@ -137,7 +137,9 @@
             </span>
             
             <!-- Status Icon -->
-            <span class="text-base flex-shrink-0" title={status.text}>{status.icon}</span>
+            {#if status.icon}
+              <span class="text-base flex-shrink-0" title={status.text}>{status.icon}</span>
+            {/if}
             
             <!-- Home Team -->
             <span
