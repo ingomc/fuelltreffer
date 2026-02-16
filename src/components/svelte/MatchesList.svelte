@@ -20,6 +20,7 @@
     const statusMap = {
       'ACTIVE': { color: 'green', text: 'Aktiv', icon: '🟢' },
       'FINISHED': { color: 'blue', text: 'Beendet', icon: '✅' },
+      'FINISH': { color: 'blue', text: 'Beendet', icon: '✅' },
       'PLANNED': { color: 'yellow', text: 'Geplant', icon: '📅' },
       'CANCELLED': { color: 'red', text: 'Abgesagt', icon: '❌' }
     };
@@ -27,8 +28,14 @@
     return statusMap[status] || { color: 'gray', text: status, icon: '' };
   }
 
+  function isFinishedMatch(match) {
+    const status = match?.statusCd || match?.status;
+    return ['FINISHED', 'FINISH', 'ENDED', 'COMPLETE'].includes(status);
+  }
+
   function getFinalScore(match) {
     const scoreCandidates = [
+      [match?.legsHome, match?.legsAway],
       [match?.scoreHome, match?.scoreGuest],
       [match?.resultHome, match?.resultGuest],
       [match?.homeScore, match?.guestScore],
@@ -70,8 +77,8 @@
   // Calculate statistics
   $: stats = {
     total: matches.length,
-    finished: matches.filter(m => m.statusCd === 'FINISHED').length,
-    planned: matches.filter(m => m.statusCd === 'PLANNED').length,
+    finished: matches.filter(m => isFinishedMatch(m)).length,
+    planned: matches.filter(m => (m.statusCd || m.status) === 'PLANNED').length,
     active: matches.filter(m => m.active).length
   };
 </script>
@@ -113,9 +120,9 @@
   {:else}
     <div class="space-y-1">
       {#each sortedMatches as match}
-        {@const status = getStatusBadge(match.statusCd)}
+        {@const status = getStatusBadge(match.statusCd || match.status)}
         {@const isHomeMatch = currentParticipantId && match.participantHome.id.toString() === currentParticipantId.toString()}
-        {@const finalScore = match.statusCd === 'FINISHED' ? getFinalScore(match) : null}
+        {@const finalScore = isFinishedMatch(match) ? getFinalScore(match) : null}
         <button
           type="button"
           class="border border-gray-200 dark:border-gray-700 rounded-md p-2 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all duration-200 cursor-pointer w-full text-left"
@@ -147,7 +154,7 @@
             
             <!-- Score/VS -->
             <span class="font-bold px-1" class:text-green-700={!!finalScore} class:dark:text-green-400={!!finalScore} class:text-gray-400={!finalScore} class:dark:text-gray-500={!finalScore}>
-              {#if match.statusCd === 'FINISHED'}
+              {#if isFinishedMatch(match)}
                 {finalScore || 'N/A'}
               {:else}
                 vs
