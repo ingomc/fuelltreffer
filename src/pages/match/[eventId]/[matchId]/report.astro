@@ -187,17 +187,17 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
     const awayTeams = new Set();
     
     data.forEach(match => {
-      const homeName = match.participantHome?.displayName || match.participantHome?.teamSeason?.team?.name;
-      const awayName = match.participantGuest?.displayName || match.participantGuest?.teamSeason?.team?.name;
+      const homeName = match.participantHome?.teamSeason?.team?.name || match.participantHome?.displayName;
+      const awayName = match.participantGuest?.teamSeason?.team?.name || match.participantGuest?.displayName;
       if (homeName) homeTeams.add(homeName);
       if (awayName) awayTeams.add(awayName);
     });
     
     const homeTeamName = homeTeams.size === 1 ? [...homeTeams][0] : 
-                         firstMatch.participantHome?.displayName || firstMatch.participantHome?.teamSeason?.team?.name || 
+                         firstMatch.participantHome?.teamSeason?.team?.name || firstMatch.participantHome?.displayName || 
                          'Heimteam';
     const awayTeamName = awayTeams.size === 1 ? [...awayTeams][0] : 
-                         firstMatch.participantGuest?.displayName || firstMatch.participantGuest?.teamSeason?.team?.name || 
+                         firstMatch.participantGuest?.teamSeason?.team?.name || firstMatch.participantGuest?.displayName || 
                          'Gastteam';
     
     let html = '';
