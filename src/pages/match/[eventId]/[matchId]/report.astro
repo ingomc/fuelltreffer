@@ -187,19 +187,17 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
     const awayTeams = new Set();
     
     data.forEach(match => {
-      if (match.participantHome?.teamSeason?.team?.name) {
-        homeTeams.add(match.participantHome.teamSeason.team.name);
-      }
-      if (match.participantGuest?.teamSeason?.team?.name) {
-        awayTeams.add(match.participantGuest.teamSeason.team.name);
-      }
+      const homeName = match.participantHome?.displayName || match.participantHome?.teamSeason?.team?.name;
+      const awayName = match.participantGuest?.displayName || match.participantGuest?.teamSeason?.team?.name;
+      if (homeName) homeTeams.add(homeName);
+      if (awayName) awayTeams.add(awayName);
     });
     
     const homeTeamName = homeTeams.size === 1 ? [...homeTeams][0] : 
-                         firstMatch.participantHome?.teamSeason?.team?.name || 
+                         firstMatch.participantHome?.displayName || firstMatch.participantHome?.teamSeason?.team?.name || 
                          'Heimteam';
     const awayTeamName = awayTeams.size === 1 ? [...awayTeams][0] : 
-                         firstMatch.participantGuest?.teamSeason?.team?.name || 
+                         firstMatch.participantGuest?.displayName || firstMatch.participantGuest?.teamSeason?.team?.name || 
                          'Gastteam';
     
     let html = '';
@@ -220,7 +218,7 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
         <div class="grid grid-cols-3 gap-4 items-center">
           <!-- Home Team -->
           <div class="text-center">
-            <div class="text-xs opacity-75 mb-1">🏠 Heim</div>
+            <div class="text-xs opacity-75 mb-1">🏠 ${homeTeamName}</div>
             <div class="text-lg font-bold mb-1">${homeTeamName}</div>
             <div class="text-3xl font-bold">${totalGamesHome}</div>
             <div class="text-xs opacity-75 mt-1">${totalLegsHome} Legs</div>
@@ -239,7 +237,7 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
           
           <!-- Away Team -->
           <div class="text-center">
-            <div class="text-xs opacity-75 mb-1">🚗 Gast</div>
+            <div class="text-xs opacity-75 mb-1">🚗 ${awayTeamName}</div>
             <div class="text-lg font-bold mb-1">${awayTeamName}</div>
             <div class="text-3xl font-bold">${totalGamesAway}</div>
             <div class="text-xs opacity-75 mt-1">${totalLegsAway} Legs</div>
