@@ -21,6 +21,9 @@ services:
       # Streamer Authentication
       - STREAMER_EMAIL=${STREAMER_EMAIL}
       - STREAMER_PASSWORD=${STREAMER_PASSWORD}
+      # Umami Analytics
+      - PUBLIC_UMAMI_URL=${PUBLIC_UMAMI_URL}
+      - PUBLIC_UMAMI_WEBSITE_ID=${PUBLIC_UMAMI_WEBSITE_ID}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.fuelltreffer-andre-bellmann-de.rule=Host(`fuelltreffer.andre-bellmann.de`)"

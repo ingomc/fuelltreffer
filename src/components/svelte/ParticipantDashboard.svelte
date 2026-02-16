@@ -5,6 +5,7 @@
   import MatchesList from './MatchesList.svelte';
   import TeamInfoHeader from './TeamInfoHeader.svelte';
   import LeagueTable from './LeagueTable.svelte';
+  import { trackDartEvents, trackEvent } from '/src/utils/umami.js';
 
   // Props
   export let initialData = null;
@@ -32,6 +33,9 @@
     error = null;
     currentParticipantId = participantId; // Update current participant ID
 
+    // Track participant view
+    trackDartEvents.participantView(participantId);
+
     try {
       const response = await fetch(`${apiBaseUrl}/api/participant/${participantId}`);
       
@@ -41,9 +45,23 @@
       }
 
       data = await response.json();
+      
+      // Track successful data load
+      trackEvent('participant_data_loaded', {
+        participant_id: participantId,
+        team_name: data?.participant?.teamSeason?.team?.displayName,
+        team_members_count: teamMembersCount
+      });
+      
     } catch (err) {
       console.error('Error loading participant data:', err);
       error = err.message || 'Fehler beim Laden der Daten';
+      
+      // Track error
+      trackEvent('participant_data_error', {
+        participant_id: participantId,
+        error_type: err.message || 'unknown'
+      });
     } finally {
       loading = false;
     }

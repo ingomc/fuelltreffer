@@ -1,12 +1,22 @@
 <script>
   import { onMount } from 'svelte';
+  import { trackEvent } from '/src/utils/umami.js';
   
   export let tabs = [];
   export let activeTab = '';
 
   function setActiveTab(tabId) {
+    const previousTab = activeTab;
     activeTab = tabId;
     updateURL(tabId);
+    
+    // Track tab switch
+    trackEvent('tab_switch', {
+      from_tab: previousTab,
+      to_tab: tabId,
+      tabs_available: tabs.map(t => t.id).join(','),
+      page: window.location.pathname
+    });
   }
   
   function updateURL(tabId) {

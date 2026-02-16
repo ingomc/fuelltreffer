@@ -1,5 +1,6 @@
 <script>
   import { createEventDispatcher } from 'svelte';
+  import { trackDartEvents, trackEvent } from '/src/utils/umami.js';
   
   export let defaultParticipantId = '308868';
   
@@ -23,6 +24,15 @@
   function handleTeamSelect() {
     if (selectedTeam) {
       isLoading = true;
+      
+      // Track team selection
+      const selectedTeamData = knownTeams.find(t => t.id === selectedTeam);
+      trackEvent('team_selected', {
+        team_id: selectedTeam,
+        team_name: selectedTeamData?.name || 'Unknown',
+        page: window.location.pathname
+      });
+      
       dispatch('search', { participantId: selectedTeam });
       
       // Reset loading state after a delay (parent will handle the actual loading)

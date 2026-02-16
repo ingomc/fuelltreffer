@@ -50,6 +50,27 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
   </main>
 </Layout>
 
+<script type="module">
+  import { trackEvent, trackDartEvents } from '/src/utils/umami.js';
+  
+  // Get variables from Astro
+  const eventId = '{eventId}';
+  const matchId = '{matchId}';
+  const teamParam = '{teamParam}';
+  
+  // Track initial page load
+  trackEvent('match_report_loaded', {
+    event_id: String(eventId),
+    match_id: String(matchId),
+    has_team_param: !!teamParam && teamParam !== '',
+    team_param: teamParam && teamParam !== '' ? teamParam : null
+  });
+
+  // Expose to window for use in other parts of the script
+  window.trackEvent = trackEvent;
+  window.trackDartEvents = trackDartEvents;
+</script>
+
 <script define:vars={{ eventId, matchId, teamParam }}>
   // Fetch match report data
   async function fetchMatchReport() {
@@ -125,11 +146,32 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
       // Show content
       contentEl.classList.remove('hidden');
       
+      // Track successful report load
+      if (window.trackEvent) {
+        window.trackEvent('match_report_success', {
+          event_id: String(eventId),
+          match_id: String(matchId),
+          games_count: reportData.length,
+          has_team_roster: !!teamRoster,
+          stats_games_count: gameStatsMap.size
+        });
+      }
+      
       // Render the match report
       renderMatchReport(reportData, gameStatsMap, teamRoster, contentEl);
       
     } catch (error) {
       console.error('Error fetching match report:', error);
+      
+      // Track error
+      if (window.trackEvent) {
+        window.trackEvent('match_report_error', {
+          event_id: String(eventId),
+          match_id: String(matchId),
+          error_message: error.message,
+          error_type: 'fetch_error'
+        });
+      }
       
       // Hide loading
       loadingEl.classList.add('hidden');

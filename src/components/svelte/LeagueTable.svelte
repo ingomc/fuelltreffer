@@ -1,6 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import SectionHeader from './SectionHeader.svelte';
+  import { trackDartEvents, trackEvent } from '/src/utils/umami.js';
 
   export let currentParticipantId = '';
   export let apiBaseUrl = '';
@@ -17,6 +18,9 @@
     error = null;
 
     try {
+      // Track league table view
+      trackDartEvents.leagueTableView(eventId);
+      
       const response = await fetch(`/api/round/${eventId}/${phaseId}/${roundIndex}/table`);
       
       if (!response.ok) {
@@ -42,9 +46,24 @@
         isCurrentTeam: entry.participantId === parseInt(currentParticipantId)
       }));
       
+      // Track successful data load
+      trackEvent('league_table_loaded', {
+        event_id: eventId,
+        teams_count: tableData.length,
+        current_participant_id: currentParticipantId
+      });
+      
     } catch (err) {
       console.error('Error loading league table:', err);
       error = err.message || 'Fehler beim Laden der Tabelle';
+      
+      // Track error
+      trackEvent('league_table_error', {
+        event_id: eventId,
+        error_type: err.message || 'unknown',
+        fallback_to_demo: true
+      });
+      
       loadDemoData();
     } finally {
       loading = false;

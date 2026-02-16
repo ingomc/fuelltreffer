@@ -1,6 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import { theme } from '../../stores/theme.js';
+  import { trackEvent } from '/src/utils/umami.js';
 
   let currentTheme = 'system';
   
@@ -14,6 +15,13 @@
   });
 
   function setTheme(newTheme) {
+    // Track theme change
+    trackEvent('theme_changed', {
+      from_theme: currentTheme,
+      to_theme: newTheme,
+      page: window.location.pathname
+    });
+    
     theme.set(newTheme);
   }
 
@@ -57,6 +65,8 @@
         class:dark:hover:bg-gray-600={currentTheme !== themeOption.id}
         on:click={() => setTheme(themeOption.id)}
         title={themeOption.description}
+        data-track="theme-switch"
+        data-track-value={themeOption.id}
       >
         <span class="text-sm">{themeOption.icon}</span>
         <span>{themeOption.label}</span>

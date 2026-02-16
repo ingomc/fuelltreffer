@@ -19,6 +19,10 @@ const socialImageURL = new URL(image, Astro.url.origin);
 
 // Ensure absolute URL for social sharing
 const absoluteImageURL = socialImageURL.toString();
+
+// Umami Analytics configuration
+const umamiUrl = import.meta.env.PUBLIC_UMAMI_URL;
+const umamiWebsiteId = import.meta.env.PUBLIC_UMAMI_WEBSITE_ID;
 ---
 
 <!doctype html>
@@ -75,7 +79,9 @@ const absoluteImageURL = socialImageURL.toString();
     <meta name="color-scheme" content="light dark" />
     
     <!-- Umami Analytics -->
-    <script async src="https://analytics.ingomc.de/script.js" data-website-id="d44a284e-297a-45a2-bfb7-eeec1171b60d" data-include-search="true" data-include-query="true"></script>
+    {umamiUrl && umamiWebsiteId && (
+      <script async src={`${umamiUrl}/script.js`} data-website-id={umamiWebsiteId} data-include-search="true" data-include-query="true"></script>
+    )}
     
     <!-- Theme initialization script - runs before page renders -->
     <script is:inline>
@@ -87,6 +93,12 @@ const absoluteImageURL = socialImageURL.toString();
           document.documentElement.classList.add('dark');
         }
       })();
+    </script>
+    
+    <!-- Umami Extended Tracking -->
+    <script type="module">
+      import { initializeTracking } from '/src/utils/umami.js';
+      initializeTracking();
     </script>
   </head>
   <body class="bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-200">

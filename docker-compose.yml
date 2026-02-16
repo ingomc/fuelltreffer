@@ -9,3 +9,6 @@ services:
       - HOST=0.0.0.0
       - PORT=4000
       - TWOK_SOFTWARE_API_URL=${TWOK_SOFTWARE_API_URL:-https://backend4.2k-dart-software.com/2k-backend4/api/v1/frontend}
+      # Umami Analytics
+      - PUBLIC_UMAMI_URL=${PUBLIC_UMAMI_URL}
+      - PUBLIC_UMAMI_WEBSITE_ID=${PUBLIC_UMAMI_WEBSITE_ID}

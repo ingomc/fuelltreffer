@@ -1,4 +1,6 @@
 <script>
+  import { trackDartEvents } from '/src/utils/umami.js';
+  
   export let matches = [];
   export let currentParticipantId = null; // ID des aktuell ausgewählten Teams
 
@@ -63,6 +65,9 @@
   }
 
   function navigateToMatchReport(eventId, matchId) {
+    // Track match view
+    trackDartEvents.matchView(matchId, eventId);
+    
     // Include current team parameter for back navigation
     const teamParam = currentParticipantId ? `?team=${currentParticipantId}` : '';
     window.location.href = `/match/${eventId}/${matchId}/report${teamParam}`;
