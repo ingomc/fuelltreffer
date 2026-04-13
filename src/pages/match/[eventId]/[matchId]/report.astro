@@ -72,6 +72,12 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
 </script>
 
 <script define:vars={{ eventId, matchId, teamParam }}>
+  function normalizeStatisticsResponse(payload) {
+    if (Array.isArray(payload)) return payload;
+    if (payload && Array.isArray(payload.statistics)) return payload.statistics;
+    return [];
+  }
+
   // Fetch match report data
   async function fetchMatchReport() {
     const loadingEl = document.getElementById('loading');
@@ -103,7 +109,8 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
             const statsResponse = await fetch(`/api/match/${eventId}/${game.id}/statistics`);
             
             if (statsResponse.ok) {
-              const gameStats = await statsResponse.json();
+              const statsPayload = await statsResponse.json();
+              const gameStats = normalizeStatisticsResponse(statsPayload);
               if (gameStats.length > 0) {
                 // Store stats with the game ID as key
                 const matchStats = gameStats.filter(s => s.type === 'MATCH');
