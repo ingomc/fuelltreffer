@@ -682,8 +682,8 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
             if (i < playerGames.length) {
               const game = playerGames[i];
               const gameAvg = calculateAverage(game.scoreTotal, game.dartsTotal);
-              const wonClass = game.won ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 font-bold' : '';
-              html += '<td class="text-center p-2 border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800 ' + wonClass + '">' + gameAvg + '</td>';
+              const gameAvgDisplay = game.won ? gameAvg + ' 🏆' : gameAvg;
+              html += '<td class="text-center p-2 border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800">' + gameAvgDisplay + '</td>';
             } else {
               html += '<td class="text-center p-2 border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800 text-gray-400">-</td>';
             }
@@ -792,8 +792,8 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
             if (i < playerGames.length) {
               const game = playerGames[i];
               const gameAvg = calculateAverage(game.scoreTotal, game.dartsTotal);
-              const wonClass = game.won ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 font-bold' : '';
-              html += '<td class="text-center p-2 border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800 ' + wonClass + '">' + gameAvg + '</td>';
+              const gameAvgDisplay = game.won ? gameAvg + ' 🏆' : gameAvg;
+              html += '<td class="text-center p-2 border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800">' + gameAvgDisplay + '</td>';
             } else {
               html += '<td class="text-center p-2 border border-' + colorScheme + '-200 dark:border-' + colorScheme + '-800 text-gray-400">-</td>';
             }
