@@ -39,6 +39,10 @@
   import ParticipantsList from './ParticipantsList.svelte';
   import ChatWidget from './ChatWidget.svelte';
   import DeviceSelector from './DeviceSelector.svelte';
+  import GridLayout from './GridLayout.svelte';
+  import CameraGridItem from './CameraGridItem.svelte';
+  import ScreenshareGridItem from './ScreenshareGridItem.svelte';
+  import ChatGridItem from './ChatGridItem.svelte';
   import { get } from 'svelte/store';
 
   let localVideo = null;
@@ -221,12 +225,14 @@
 
 <div class="streamer-view">
   <div class="streamer-content">
-    <VideoGrid 
-      isStreamer={true} 
-      bind:localVideo 
-      bind:noCameraDiv 
+    <!-- Grid Layout System -->
+    <GridLayout 
+      cameraComponent={CameraGridItem}
+      screenshareComponent={ScreenshareGridItem}
+      chatComponent={ChatGridItem}
+      bind:localVideo
+      bind:noCameraDiv
       bind:screenShareVideo
-      hasRemoteScreenShare={false}
     />
     
     <!-- Device Selection Panel -->
@@ -317,10 +323,6 @@
     
     <ParticipantsList />
   </div>
-  
-  <div class="chat-sidebar">
-    <ChatWidget />
-  </div>
 </div>
 
 <style>
@@ -328,6 +330,7 @@
   
   .streamer-view {
     display: flex;
+    flex-direction: column;
     gap: 16px;
     width: 100%;
     max-width: 1400px;
@@ -336,12 +339,7 @@
 
   .streamer-content {
     flex: 1;
-    min-width: 0; /* Important for flex shrinking */
-  }
-
-  .chat-sidebar {
-    width: 300px;
-    flex-shrink: 0;
+    min-width: 0;
   }
 
   /* Active state for media control buttons */
@@ -356,13 +354,7 @@
 
   @media (max-width: 1024px) {
     .streamer-view {
-      flex-direction: column;
-    }
-
-    .chat-sidebar {
-      width: 100%;
-      max-width: 600px;
-      margin: 0 auto;
+      gap: 12px;
     }
   }
 </style>
