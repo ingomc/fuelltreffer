@@ -1,5 +1,6 @@
 <script>
   import { createEventDispatcher } from 'svelte';
+  import { CURRENT_LEAGUE } from '../../config/league';
   
   export let eventId;
   export let matchId;
@@ -22,8 +23,9 @@
     try {
       // Always try the new round API first if we have phase data
       if (originalMatchData.phase?.id) {
-        // Always use round index 0 since all matches are stored there
-        const roundResponse = await fetch(`${apiBaseUrl}/api/round/${eventId}/${originalMatchData.phase.id}/0`);
+        const roundResponse = await fetch(
+          `${apiBaseUrl}/api/round/${eventId}/${originalMatchData.phase.id}/${CURRENT_LEAGUE.tableRoundIndex}`
+        );
         
         if (roundResponse.ok) {
           const roundData = await roundResponse.json();
@@ -228,7 +230,7 @@
                   </div>
                   <div>
                     <span class="font-medium text-gray-600 dark:text-gray-400">Event:</span>
-                    <span class="ml-2 text-gray-900 dark:text-gray-100">{originalMatchData?.event?.name || 'Liga E'}</span>
+                    <span class="ml-2 text-gray-900 dark:text-gray-100">{originalMatchData?.event?.name || CURRENT_LEAGUE.name}</span>
                   </div>
                   <div>
                     <span class="font-medium text-gray-600 dark:text-gray-400">Phase:</span>

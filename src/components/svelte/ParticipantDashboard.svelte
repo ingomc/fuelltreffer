@@ -6,11 +6,12 @@
   import TeamInfoHeader from './TeamInfoHeader.svelte';
   import LeagueTable from './LeagueTable.svelte';
   import { trackDartEvents, trackEvent } from '/src/utils/umami.js';
+  import { CURRENT_LEAGUE } from '../../config/league';
 
   // Props
   export let initialData = null;
   export let apiBaseUrl = '';
-  export let defaultParticipantId = '308868';
+  export let defaultParticipantId = CURRENT_LEAGUE.defaultParticipantId;
 
   // State
   let activeTab = 'matches'; // Matches als Default

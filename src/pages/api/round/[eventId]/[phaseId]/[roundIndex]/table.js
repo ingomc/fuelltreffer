@@ -1,3 +1,5 @@
+import { CURRENT_LEAGUE } from '@/config/league';
+
 export async function GET({ params }) {
   const { eventId, phaseId, roundIndex } = params;
   
@@ -13,8 +15,8 @@ export async function GET({ params }) {
   try {
     const start = Date.now();
     const requestId = `${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
-    // Get the 2k software API URL from environment or use default
-    const apiUrl = process.env.TWOK_SOFTWARE_API_URL || 'https://backend4.2k-dart-software.com/2k-backend4/api/v1/frontend';
+    // API-URL aus der zentralen Liga-Konfiguration
+    const apiUrl = CURRENT_LEAGUE.api.twokSoftwareBaseUrl;
     const upstreamUrl = `${apiUrl}/event/${eventId}/phase/${phaseId}/round/${roundIndex}/table`;
     console.info(
       `[proxy:round-table] requestId=${requestId} start eventId=${eventId} phaseId=${phaseId} roundIndex=${roundIndex} upstream=${upstreamUrl}`

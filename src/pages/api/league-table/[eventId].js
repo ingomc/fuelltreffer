@@ -1,3 +1,5 @@
+import { CURRENT_LEAGUE } from '@/config/league';
+
 export async function GET({ params }) {
   const { eventId } = params;
   
@@ -14,8 +16,8 @@ export async function GET({ params }) {
   try {
     const start = Date.now();
     const requestId = `${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
-    // API Basis-URL aus Umgebungsvariablen
-    const baseUrl = import.meta.env.API_BASE_URL || 'http://localhost:3001';
+    // API-Basis-URL aus der zentralen Liga-Konfiguration
+    const baseUrl = CURRENT_LEAGUE.api.leagueTableBaseUrl;
     const upstreamUrl = `${baseUrl}/api/league-table/${eventId}`;
     console.info(`[proxy:league-table] requestId=${requestId} start eventId=${eventId} upstream=${upstreamUrl}`);
     

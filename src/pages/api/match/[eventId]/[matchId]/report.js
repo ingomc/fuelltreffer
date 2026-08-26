@@ -2,6 +2,8 @@
  * API route to fetch match report details from 2k software API
  * GET /api/match/:eventId/:matchId/report
  */
+import { CURRENT_LEAGUE } from '@/config/league';
+
 export async function GET({ params }) {
   const { eventId, matchId } = params;
   
@@ -17,7 +19,7 @@ export async function GET({ params }) {
   try {
     const start = Date.now();
     const requestId = `${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
-    const apiBaseUrl = process.env.TWOK_SOFTWARE_API_URL || 'https://backend4.2k-dart-software.com/2k-backend4/api/v1/frontend';
+    const apiBaseUrl = CURRENT_LEAGUE.api.twokSoftwareBaseUrl;
     const apiUrl = `${apiBaseUrl}/event/${eventId}/match/${matchId}/report`;
     console.info(`[proxy:match-report] requestId=${requestId} start eventId=${eventId} matchId=${matchId} upstream=${apiUrl}`);
     

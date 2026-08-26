@@ -32,6 +32,7 @@ Diese App nutzt Umami Analytics für privacy-friendly Website-Tracking unter `ht
 ### Basis-Funktionen
 ```javascript
 import { trackEvent, trackDartEvents } from '/src/utils/umami.js';
+import { CURRENT_LEAGUE } from '/src/config/league';
 
 // Einfache Events
 trackEvent('custom_event', {
@@ -40,8 +41,8 @@ trackEvent('custom_event', {
 });
 
 // Dart-spezifische Events
-trackDartEvents.matchView('123456', '15995');
-trackDartEvents.teamView('308868');
+trackDartEvents.matchView(matchId, CURRENT_LEAGUE.eventId);
+trackDartEvents.teamView(CURRENT_LEAGUE.defaultParticipantId);
 ```
 
 ### Automatische Initialisierung

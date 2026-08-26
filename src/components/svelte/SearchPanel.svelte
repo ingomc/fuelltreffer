@@ -1,25 +1,16 @@
 <script>
   import { createEventDispatcher } from 'svelte';
   import { trackDartEvents, trackEvent } from '/src/utils/umami.js';
+  import { CURRENT_LEAGUE } from '../../config/league';
   
-  export let defaultParticipantId = '308868';
+  export let defaultParticipantId = CURRENT_LEAGUE.defaultParticipantId;
   
   const dispatch = createEventDispatcher();
   
   let selectedTeam = defaultParticipantId;
   let isLoading = false;
 
-  // Bekannte Teams mit aussagekräftigen Namen
-  const knownTeams = [
-    { id: '308868', name: 'SCO-Darts Team Fülltreffer', short: 'Fülltreffer' },
-    { id: '308860', name: 'Flightclub Schottenstein 2', short: 'Schottenstein 2' },
-    { id: '308859', name: 'DC Golden Village Isling 2', short: 'Golden Village 2' },
-    { id: '308865', name: '1. DC DownFillCreek 2', short: 'DownFillCreek 2' },
-    { id: '308863', name: 'VFB Einberg 2', short: 'Einberg 2' },
-    { id: '308866', name: 'DC Fire and Ice', short: 'Fire and Ice' },
-    { id: '308864', name: 'ESV Darter', short: 'ESV Darter' },
-    { id: '308862', name: 'TSG 2005 Bamberg 1', short: 'Bamberg 1' }
-  ];
+  const knownTeams = CURRENT_LEAGUE.teams;
 
   function handleTeamSelect() {
     if (selectedTeam) {

@@ -1,13 +1,14 @@
 ---
 import type { ApiResponse } from '../types/api';
 import ParticipantDashboard from './svelte/ParticipantDashboard.svelte';
+import { CURRENT_LEAGUE } from '../config/league';
 
 // Get team ID from props or use default
 export interface Props {
   teamId?: string;
 }
 
-const { teamId = '308868' } = Astro.props;
+const { teamId = CURRENT_LEAGUE.defaultParticipantId } = Astro.props;
 let participantData: ApiResponse | null = null;
 
 try {

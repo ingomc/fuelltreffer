@@ -11,7 +11,6 @@ services:
       - HOST=0.0.0.0
       - PORT=4000
       - ORIGIN=${ORIGIN:-https://${APP_DOMAIN:-fuelltreffer.andre-bellmann.de}}
-      - TWOK_SOFTWARE_API_URL=${TWOK_SOFTWARE_API_URL:-https://backend4.2k-dart-software.com/2k-backend4/api/v1/frontend}
       # LiveKit Environment Variables
       - LIVEKIT_URL=${LIVEKIT_URL}
       - LIVEKIT_API_KEY=${LIVEKIT_API_KEY}

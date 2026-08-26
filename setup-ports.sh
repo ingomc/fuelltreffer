@@ -67,7 +67,6 @@ BACKEND_URL=$BACKEND_URL
 
 # Astro Public Variables (available in frontend)
 PUBLIC_BACKEND_URL=$BACKEND_URL
-PUBLIC_DEFAULT_PARTICIPANT_ID=308868
 EOF
 
 # Schreibe backend/.env

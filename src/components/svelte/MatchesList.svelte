@@ -24,6 +24,7 @@
       'FINISHED': { color: 'blue', text: 'Beendet', icon: '' },
       'FINISH': { color: 'blue', text: 'Beendet', icon: '' },
       'PLANNED': { color: 'yellow', text: 'Geplant', icon: '📅' },
+      'OPEN': { color: 'yellow', text: 'Geplant', icon: '📅' },
       'CANCELLED': { color: 'red', text: 'Abgesagt', icon: '❌' }
     };
     
@@ -84,7 +85,7 @@
   $: stats = {
     total: matches.length,
     finished: matches.filter(m => isFinishedMatch(m)).length,
-    planned: matches.filter(m => (m.statusCd || m.status) === 'PLANNED').length,
+    planned: matches.filter(m => ['PLANNED', 'OPEN'].includes(m.statusCd || m.status)).length,
     active: matches.filter(m => m.active).length
   };
 </script>

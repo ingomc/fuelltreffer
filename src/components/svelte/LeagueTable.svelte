@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import SectionHeader from './SectionHeader.svelte';
   import { trackDartEvents, trackEvent } from '/src/utils/umami.js';
+  import { CURRENT_LEAGUE, CURRENT_LEAGUE_TITLE } from '../../config/league';
 
   export let currentParticipantId = '';
   export let apiBaseUrl = '';
@@ -9,9 +10,7 @@
   let tableData = [];
   let loading = false;
   let error = null;
-  let eventId = 15995; // Liga E Event ID
-  let phaseId = 0;
-  let roundIndex = 0;
+  const { eventId, phaseId, tableRoundIndex: roundIndex } = CURRENT_LEAGUE;
 
   async function loadLeagueTable() {
     loading = true;
@@ -60,132 +59,11 @@
       // Track error
       trackEvent('league_table_error', {
         event_id: eventId,
-        error_type: err.message || 'unknown',
-        fallback_to_demo: true
+        error_type: err.message || 'unknown'
       });
-      
-      loadDemoData();
     } finally {
       loading = false;
     }
-  }
-
-  function loadDemoData() {
-    console.log('Loading demo data for league table...');
-    tableData = [
-      {
-        position: 1,
-        team: 'SCO-Darts Team Fülltreffer',
-        games: 0,
-        wins: 0,
-        draws: 0,
-        losses: 0,
-        points: 0,
-        sets: '0:0',
-        setDiff: 0,
-        legs: '0:0',
-        legDiff: 0,
-        isCurrentTeam: true
-      },
-      {
-        position: 2,
-        team: 'TSG 2005 Bamberg 2',
-        games: 0,
-        wins: 0,
-        draws: 0,
-        losses: 0,
-        points: 0,
-        sets: '0:0',
-        setDiff: 0,
-        legs: '0:0',
-        legDiff: 0,
-        isCurrentTeam: false
-      },
-      {
-        position: 3,
-        team: 'Erlauer SV',
-        games: 0,
-        wins: 0,
-        draws: 0,
-        losses: 0,
-        points: 0,
-        sets: '0:0',
-        setDiff: 0,
-        legs: '0:0',
-        legDiff: 0,
-        isCurrentTeam: false
-      },
-      {
-        position: 4,
-        team: 'ESV Darter',
-        games: 0,
-        wins: 0,
-        draws: 0,
-        losses: 0,
-        points: 0,
-        sets: '0:0',
-        setDiff: 0,
-        legs: '0:0',
-        legDiff: 0,
-        isCurrentTeam: false
-      },
-      {
-        position: 5,
-        team: 'DC DownFillCreek 2',
-        games: 0,
-        wins: 0,
-        draws: 0,
-        losses: 0,
-        points: 0,
-        sets: '0:0',
-        setDiff: 0,
-        legs: '0:0',
-        legDiff: 0,
-        isCurrentTeam: false
-      },
-      {
-        position: 6,
-        team: 'DC Fire and Ice',
-        games: 0,
-        wins: 0,
-        draws: 0,
-        losses: 0,
-        points: 0,
-        sets: '0:0',
-        setDiff: 0,
-        legs: '0:0',
-        legDiff: 0,
-        isCurrentTeam: false
-      },
-      {
-        position: 7,
-        team: 'LTV Gauerstadt',
-        games: 0,
-        wins: 0,
-        draws: 0,
-        losses: 0,
-        points: 0,
-        sets: '0:0',
-        setDiff: 0,
-        legs: '0:0',
-        legDiff: 0,
-        isCurrentTeam: false
-      },
-      {
-        position: 8,
-        team: 'VFB Einberg 2',
-        games: 0,
-        wins: 0,
-        draws: 0,
-        losses: 0,
-        points: 0,
-        sets: '0:0',
-        setDiff: 0,
-        legs: '0:0',
-        legDiff: 0,
-        isCurrentTeam: false
-      }
-    ];
   }
 
   onMount(() => {
@@ -198,7 +76,7 @@
   <!-- Header -->
   <SectionHeader 
     title="Liga-Tabelle" 
-    subtitle="Liga E • Saison 2025-2" 
+    subtitle={CURRENT_LEAGUE_TITLE}
     size="large" 
   />
 
@@ -296,7 +174,7 @@
   {:else}
     <!-- Empty State -->
     <div class="text-center py-12">
-      <p class="text-gray-500 dark:text-gray-400">Keine Tabellendaten verfügbar</p>
+      <p class="text-gray-500 dark:text-gray-400">Die Tabelle wird nach dem ersten gewerteten Spiel angezeigt.</p>
     </div>
   {/if}
 
@@ -308,7 +186,7 @@
         <div>
           <h3 class="text-sm font-medium text-red-800 dark:text-red-200">Fehler</h3>
           <p class="mt-1 text-sm text-red-700 dark:text-red-300">{error}</p>
-          <p class="mt-2 text-xs text-red-600 dark:text-red-400">Demo-Daten werden angezeigt</p>
+          <p class="mt-2 text-xs text-red-600 dark:text-red-400">Es werden keine Ersatzdaten angezeigt.</p>
         </div>
       </div>
     </div>

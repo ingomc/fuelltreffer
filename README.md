@@ -44,18 +44,14 @@ npm run dev
 
 ## 🔧 Configuration
 
-Create a `.env` file:
+Der Entwicklungsport kann bei Bedarf über `FRONTEND_PORT` gesetzt werden; die
+fachliche Konfiguration wird nicht über Umgebungsvariablen gesteuert.
 
-```env
-# Port configuration
-FRONTEND_PORT=4000
+## 🏆 Saisonkonfiguration
 
-# 2k Software API
-TWOK_SOFTWARE_API_URL=https://backend4.2k-dart-software.com/2k-backend4/api/v1/frontend
-
-# Default participant for testing
-DEFAULT_PARTICIPANT_ID=308868
-```
+Alle Angaben liegen zentral in `src/config/league.ts`: Liga- und Saisonname,
+Event- und Phasen-ID, Tabellenrunde, Standardteam, alle Vereine und die URLs der
+API-Proxys. Für einen Saisonwechsel wird nur diese Datei angepasst.
 
 ## 🚀 Development
 
@@ -82,9 +78,7 @@ npm run astro check
 docker build -t fuelltreffer .
 
 # Run container
-docker run -p 4000:4000 \
-  -e TWOK_SOFTWARE_API_URL=https://backend4.2k-dart-software.com/2k-backend4/api/v1/frontend \
-  fuelltreffer
+docker run -p 4000:4000 fuelltreffer
 ```
 
 ### Docker Compose
@@ -105,7 +99,6 @@ docker-compose down
 1. **Create new project** in Dokploy
 2. **Connect Git repository**
 3. **Configure environment variables**:
-   - `TWOK_SOFTWARE_API_URL`: Your 2k software API URL
   - `APP_DOMAIN`: Public domain of this app (e.g. `fuelltreffer.example.com`)
   - `FRONTEND_PORT`: 4000 (default)
 4. **Deploy** using the included Dockerfile
@@ -116,7 +109,6 @@ docker-compose down
 NODE_ENV=production
 APP_DOMAIN=fuelltreffer.example.com
 ORIGIN=https://fuelltreffer.example.com
-TWOK_SOFTWARE_API_URL=https://backend4.2k-dart-software.com/2k-backend4/api/v1/frontend
 FRONTEND_PORT=4000
 ```
 
@@ -147,18 +139,17 @@ fuelltreffer/
 ### Internal API Routes
 
 - `GET /api/participant/{id}` - Fetch participant data
-  - Proxies to: `{TWOK_SOFTWARE_API_URL}/participant/{id}`
+  - Proxies to: `{CURRENT_LEAGUE.api.twokSoftwareBaseUrl}/participant/{id}`
   - Returns: Complete participant data with team info and matches
 
 ### Frontend Routes
 
 - `/` - Main dashboard with auto-loaded participant data
 
-## 🧪 Testing Known Participant IDs
+## 🧪 Testing League Data
 
-- `308868` (default)
-- `308860`, `308859`, `308865`
-- `308863`, `308866`, `308864`, `308862`
+Die aktuelle Standard-ID und alle verfügbaren Teams stehen in
+`src/config/league.ts` unter `CURRENT_LEAGUE`.
 
 ## 🔍 Features Overview
 
@@ -202,7 +193,7 @@ docker exec -it <container-id> sh
 
 ### API Connection Issues
 
-- Verify `TWOK_SOFTWARE_API_URL` environment variable
+- Verify the API URLs in `src/config/league.ts`
 - Check network connectivity to 2k software backend
 - Monitor browser console for JavaScript errors
 
