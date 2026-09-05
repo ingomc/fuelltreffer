@@ -1,24 +1,26 @@
 ---
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
+import { HOME_SEO, SITE_NAME, type SocialImage } from '../config/seo';
 
 export interface Props {
   title: string;
   description?: string;
-  image?: string;
+  image?: SocialImage;
   showTeamSelector?: boolean;
 }
 
 const { 
   title, 
-  description = "Fülltreffer Dashboard - Dein persönliches Dart-Team Management mit 2k Software Integration. Verfolge Matches, Team-Stats und mehr.",
-  image = "/og-image.png",
+  description = HOME_SEO.description,
+  image = HOME_SEO.image,
   showTeamSelector = true
 } = Astro.props;
 
 const publicOrigin = Astro.site ?? Astro.url.origin;
-const canonicalURL = new URL(Astro.url.pathname, publicOrigin);
-const socialImageURL = new URL(image, publicOrigin);
+const canonicalPath = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const canonicalURL = new URL(canonicalPath, publicOrigin);
+const socialImageURL = new URL(image.path, publicOrigin);
 
 // Ensure absolute URL for social sharing
 const absoluteImageURL = socialImageURL.toString();
@@ -29,7 +31,7 @@ const umamiWebsiteId = import.meta.env.PUBLIC_UMAMI_WEBSITE_ID;
 ---
 
 <!doctype html>
-<html lang="de">
+<html lang="de" prefix="og: https://ogp.me/ns#">
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
@@ -47,7 +49,6 @@ const umamiWebsiteId = import.meta.env.PUBLIC_UMAMI_WEBSITE_ID;
     <link rel="canonical" href={canonicalURL} />
     <meta name="robots" content="index, follow" />
     <meta name="author" content="Fülltreffer Team" />
-    <meta name="keywords" content="Darts, Dashboard, Team Management, 2k Software, Fülltreffer, Dart Liga, Dart Verein" />
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
@@ -56,26 +57,19 @@ const umamiWebsiteId = import.meta.env.PUBLIC_UMAMI_WEBSITE_ID;
     <meta property="og:description" content={description} />
     <meta property="og:image" content={absoluteImageURL} />
     <meta property="og:image:secure_url" content={absoluteImageURL} />
-    <meta property="og:image:type" content="image/png" />
-    <meta property="og:image:width" content="120" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Fülltreffer Dashboard - Dart Team Management" />
-    <meta property="og:site_name" content="Fülltreffer Dashboard" />
+    <meta property="og:image:type" content={image.type} />
+    <meta property="og:image:width" content={String(image.width)} />
+    <meta property="og:image:height" content={String(image.height)} />
+    <meta property="og:image:alt" content={image.alt} />
+    <meta property="og:site_name" content={SITE_NAME} />
     <meta property="og:locale" content="de_DE" />
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content={canonicalURL} />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={absoluteImageURL} />
-    <meta name="twitter:image:alt" content="Fülltreffer Dashboard - Dart Team Management" />
-    <meta name="twitter:creator" content="@ingomc" />
-    <meta name="twitter:site" content="@ingomc" />
-    
-    <!-- WhatsApp optimized -->
-    <meta property="og:image:url" content={absoluteImageURL} />
-    <meta name="thumbnail" content={absoluteImageURL} />
+    <meta name="twitter:image:alt" content={image.alt} />
     
     <!-- Theme -->
     <meta name="theme-color" content="#1e40af" />

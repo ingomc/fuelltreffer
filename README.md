@@ -76,6 +76,10 @@ Liga, Saison, Event-/Phasen-ID, Tabellenrunde, Standardteam und alle zehn Teams 
 
 Es sind keine neuen ENV-Variablen oder Dienste erforderlich. `TWOK_SOFTWARE_API_URL` muss für eine abweichende Datenquelle bereits beim Build verfügbar sein. Canonical- und Social-URLs verwenden die öffentliche Domain aus `astro.config.mjs`. Datenpflege, Quellen und Prüfungen stehen in [docs/spielorte.md](docs/spielorte.md).
 
+## Link-Vorschauen
+
+Startseite und Spielorte haben eigene Open-Graph-Texte und statische Vorschaubilder (1200 × 630 JPEG). Texte, Alt-Texte und Bildpfade stehen in `src/config/seo.ts`. Bildquellen und Hinweise zur Aktualisierung sind in [docs/open-graph.md](docs/open-graph.md) dokumentiert.
+
 ## 🚀 Development
 
 ```bash

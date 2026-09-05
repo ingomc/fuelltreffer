@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { CURRENT_LEAGUE, CURRENT_LEAGUE_TITLE } from '../config/league';
+import { VENUES_SEO } from '../config/seo';
 import { groupVenues, loadVenues } from '../lib/venue-data';
 import snapshot from '../data/venues.snapshot.json';
 import locations from '../data/venue-locations.json';
@@ -18,8 +19,7 @@ const mapData = JSON.stringify(groups).replace(/</g, '\\u003c');
 ---
 
 <Layout
-  title={`Spielorte | ${CURRENT_LEAGUE_TITLE} | Fülltreffer`}
-  description={`Alle ${entries.length} Teams der ${CURRENT_LEAGUE.name} mit Spielstätten, Adressen und gemeinsamer OpenStreetMap-Karte.`}
+  {...VENUES_SEO}
   showTeamSelector={false}
 >
   <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
