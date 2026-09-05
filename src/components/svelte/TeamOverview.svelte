@@ -39,7 +39,7 @@
   });
 </script>
 
-<div class="p-3 space-y-4 min-h-[600px] transition-colors duration-200">
+<div class="min-h-[600px] space-y-4 p-2 transition-colors duration-200 sm:p-3">
   <!-- Kompakte Team Members Section -->
   <div>
     <div class="flex items-center justify-between mb-3">

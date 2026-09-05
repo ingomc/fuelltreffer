@@ -99,7 +99,7 @@
     <TeamInfoHeader teamData={data} />
   {/if}
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+  <div class="max-w-7xl mx-auto px-0 sm:px-6 lg:px-8 pt-4">
     <!-- Loading State -->
     {#if loading}
       <div class="flex items-center justify-center py-12">
@@ -110,7 +110,7 @@
 
   <!-- Error State -->
   {#if error}
-    <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
+    <div class="mx-2 sm:mx-0 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
       <div class="flex">
         <span class="text-red-400 text-xl mr-3">⚠️</span>
         <div>
@@ -124,12 +124,12 @@
   <!-- Content -->
   {#if data && !loading}
     <!-- Mobile Tab Navigation -->
-    <div class="mb-4">
+    <div class="mb-4 px-2 sm:px-0">
       <TabNav {tabs} bind:activeTab />
     </div>
 
     <!-- Tab Content -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 min-h-[400px] transition-colors duration-200">
+    <div class="min-h-[400px] transition-colors duration-200 sm:rounded-lg sm:border sm:border-gray-200 sm:bg-white sm:shadow-sm dark:sm:border-gray-700 dark:sm:bg-gray-800">
       {#if activeTab === 'matches'}
         <MatchesList matches={data?.matches || []} {currentParticipantId} />
       {:else if activeTab === 'team'}

@@ -72,7 +72,7 @@
   });
 </script>
 
-<div class="p-4 sm:p-6">
+<div class="p-2 sm:p-6">
   <!-- Header -->
   <SectionHeader 
     title="Liga-Tabelle" 
