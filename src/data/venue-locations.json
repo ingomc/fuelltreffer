@@ -1,0 +1,72 @@
+[
+  {
+    "venueId": "90",
+    "addressKey": "vorderer floßanger 31|96450|coburg",
+    "lat": 50.2706711,
+    "lon": 10.9699171,
+    "source": "https://www.openstreetmap.org/node/5430297624"
+  },
+  {
+    "venueId": "92",
+    "addressKey": "unterer markt 8|96515|sonneberg",
+    "lat": 50.3652167,
+    "lon": 11.1754362,
+    "source": "https://www.openstreetmap.org/node/6982860135"
+  },
+  {
+    "venueId": "94",
+    "addressKey": "neustadter str. 113|96515|sonneberg",
+    "lat": 50.3500365,
+    "lon": 11.1564107,
+    "source": "https://www.openstreetmap.org/node/684342430"
+  },
+  {
+    "venueId": "1957",
+    "addressKey": "schlossstrasse 13|96489|niederfüllbach",
+    "lat": 50.2205727,
+    "lon": 10.9919021,
+    "source": "https://www.openstreetmap.org/node/3313225918"
+  },
+  {
+    "venueId": "1963",
+    "addressKey": "lützelbucherstrasse 7|96237|ebersdorf bei coburg",
+    "lat": 50.2489496,
+    "lon": 11.0534892,
+    "source": "https://www.openstreetmap.org/way/372893659"
+  },
+  {
+    "venueId": "1964",
+    "addressKey": "galgenfuhr 30|96050|bamberg",
+    "lat": 49.8789607,
+    "lon": 10.9067036,
+    "source": "https://www.openstreetmap.org/way/122048507"
+  },
+  {
+    "venueId": "1965",
+    "addressKey": "am sportplatz 19|96472|rödental",
+    "lat": 50.2829765,
+    "lon": 11.0471362,
+    "source": "https://www.openstreetmap.org/node/3777744180"
+  },
+  {
+    "venueId": "2311",
+    "addressKey": "zur sandgrube 4|98673|eisfeld",
+    "lat": 50.4173865,
+    "lon": 10.9021244,
+    "source": "https://www.openstreetmap.org/way/52583798"
+  },
+  {
+    "venueId": "2468",
+    "addressKey": "st. johannesstrasse|96342|stockheim",
+    "lat": 50.2883504,
+    "lon": 11.2911213,
+    "source": "https://www.openstreetmap.org/way/975202829"
+  },
+  {
+    "venueId": "3246",
+    "addressKey": "dorfstraße 7|98630|römhild ot eicha",
+    "lat": 50.3502588,
+    "lon": 10.5723776,
+    "source": "https://www.openstreetmap.org/way/41213757"
+  }
+]

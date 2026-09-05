@@ -10,7 +10,8 @@
     "astro": "astro",
     "build:docker": "docker build -t fuelltreffer .",
     "lint": "eslint src/",
-    "lint:fix": "eslint src/ --fix"
+    "lint:fix": "eslint src/ --fix",
+    "test": "node --experimental-strip-types --test tests/*.test.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.0",
@@ -18,15 +19,15 @@
     "@astrojs/svelte": "^6.0.2",
     "@astrojs/tailwind": "^5.1.0",
     "astro": "^4.15.0",
-    "dotenv": "^17.2.2",
-    "livekit-client": "^2.15.6",
-    "livekit-server-sdk": "^2.13.3",
+    "leaflet": "1.9.4",
     "svelte": "^5.38.6",
     "tailwindcss": "^3.4.0",
     "typescript": "^5.5.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.35.0",
+    "@types/leaflet": "^1.9.22",
+    "@types/node": "^22.20.1",
     "@typescript-eslint/eslint-plugin": "^8.42.0",
     "@typescript-eslint/parser": "^8.42.0",
     "concurrently": "^8.2.2",

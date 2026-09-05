@@ -6,16 +6,19 @@ export interface Props {
   title: string;
   description?: string;
   image?: string;
+  showTeamSelector?: boolean;
 }
 
 const { 
   title, 
   description = "Fülltreffer Dashboard - Dein persönliches Dart-Team Management mit 2k Software Integration. Verfolge Matches, Team-Stats und mehr.",
-  image = "/og-image.png"
+  image = "/og-image.png",
+  showTeamSelector = true
 } = Astro.props;
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.url.origin);
-const socialImageURL = new URL(image, Astro.url.origin);
+const publicOrigin = Astro.site ?? Astro.url.origin;
+const canonicalURL = new URL(Astro.url.pathname, publicOrigin);
+const socialImageURL = new URL(image, publicOrigin);
 
 // Ensure absolute URL for social sharing
 const absoluteImageURL = socialImageURL.toString();
@@ -48,7 +51,7 @@ const umamiWebsiteId = import.meta.env.PUBLIC_UMAMI_WEBSITE_ID;
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={Astro.url} />
+    <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={absoluteImageURL} />
@@ -62,7 +65,7 @@ const umamiWebsiteId = import.meta.env.PUBLIC_UMAMI_WEBSITE_ID;
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content={Astro.url} />
+    <meta name="twitter:url" content={canonicalURL} />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={absoluteImageURL} />
@@ -96,13 +99,13 @@ const umamiWebsiteId = import.meta.env.PUBLIC_UMAMI_WEBSITE_ID;
     </script>
     
     <!-- Umami Extended Tracking -->
-    <script type="module">
-      import { initializeTracking } from '/src/utils/umami.js';
+    <script>
+      import { initializeTracking } from '../utils/umami.js';
       initializeTracking();
     </script>
   </head>
   <body class="bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-200">
-    <Header />
+    <Header showTeamSelector={showTeamSelector} />
     <main>
       <slot />
     </main>

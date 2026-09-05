@@ -1,0 +1,115 @@
+{
+  "updatedAt": "2026-09-05",
+  "teams": [
+    {
+      "teamId": "633505",
+      "teamName": "SCO-Darts Team Fülltreffer",
+      "venue": {
+        "id": "1963",
+        "name": "Sportheim Oberfüllbach",
+        "street": "Lützelbucherstrasse 7",
+        "postalCode": "96237",
+        "city": "Ebersdorf bei Coburg"
+      }
+    },
+    {
+      "teamId": "632085",
+      "teamName": "1. DC DownFillCreek 3",
+      "venue": {
+        "id": "1957",
+        "name": "TSG Sportheim Niederfüllbach",
+        "street": "Schlossstrasse 13",
+        "postalCode": "96489",
+        "city": "Niederfüllbach"
+      }
+    },
+    {
+      "teamId": "632082",
+      "teamName": "Cowtails Eisfeld 1",
+      "venue": {
+        "id": "2311",
+        "name": "Sportplatz Eisfeld",
+        "street": "Zur Sandgrube 4",
+        "postalCode": "98673",
+        "city": "Eisfeld"
+      }
+    },
+    {
+      "teamId": "632077",
+      "teamName": "DC Condor Lautertal 2",
+      "venue": {
+        "id": "90",
+        "name": "Café Q",
+        "street": "Vorderer Floßanger 31",
+        "postalCode": "96450",
+        "city": "Coburg"
+      }
+    },
+    {
+      "teamId": "632081",
+      "teamName": "DC Teutonia Hasslach",
+      "venue": {
+        "id": "2468",
+        "name": "Teutonenlaube",
+        "street": "St. Johannesstrasse",
+        "postalCode": "96342",
+        "city": "Stockheim"
+      }
+    },
+    {
+      "teamId": "632086",
+      "teamName": "DC Unantastbar 2",
+      "venue": {
+        "id": "92",
+        "name": "Vereinsheim Unantastbar",
+        "street": "Unterer Markt 8",
+        "postalCode": "96515",
+        "city": "Sonneberg"
+      }
+    },
+    {
+      "teamId": "632080",
+      "teamName": "Drächer Bull´s Eichen",
+      "venue": {
+        "id": "3246",
+        "name": "Vereinsheim TSV 1924 Eicha",
+        "street": "Dorfstraße 7",
+        "postalCode": "98630",
+        "city": "Römhild OT Eicha"
+      }
+    },
+    {
+      "teamId": "632076",
+      "teamName": "SDC Cafe Q",
+      "venue": {
+        "id": "94",
+        "name": "Sport und Spiel Oase Cafe Q",
+        "street": "Neustadter Str. 113",
+        "postalCode": "96515",
+        "city": "Sonneberg"
+      }
+    },
+    {
+      "teamId": "632075",
+      "teamName": "TSG 2005 Bamberg 2",
+      "venue": {
+        "id": "1964",
+        "name": "Vereinsheim TSG 05 Bamberg",
+        "street": "Galgenfuhr 30",
+        "postalCode": "96050",
+        "city": "Bamberg"
+      }
+    },
+    {
+      "teamId": "632079",
+      "teamName": "VFB Einberg 1",
+      "venue": {
+        "id": "1965",
+        "name": "VFB Sportheim Einberg",
+        "street": "Am Sportplatz 19",
+        "postalCode": "96472",
+        "city": "Rödental"
+      }
+    }
+  ]
+}

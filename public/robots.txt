@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://fuelltreffer.andre-bellmann.de/sitemap.xml
+Sitemap: https://darts.sc-oberfuellbach.de/sitemap.xml

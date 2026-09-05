@@ -1,0 +1,910 @@
+{
+  "Lützelbucherstrasse 7, 96237 Ebersdorf bei Coburg, Deutschland": [
+    {
+      "lat": "50.2492522",
+      "lon": "11.0525279",
+      "osm_type": "way",
+      "osm_id": 25264368,
+      "display_name": "Lützelbucher Straße, Oberfüllbach, Ebersdorf b.Coburg, Landkreis Coburg, Bayern, 96237, Deutschland",
+      "type": "residential",
+      "addresstype": "road",
+      "address": {
+        "road": "Lützelbucher Straße",
+        "suburb": "Oberfüllbach",
+        "village": "Oberfüllbach",
+        "county": "Landkreis Coburg",
+        "state": "Bayern",
+        "ISO3166-2-lvl4": "DE-BY",
+        "postcode": "96237",
+        "country": "Deutschland",
+        "country_code": "de"
+      },
+      "boundingbox": [
+        "50.2480650",
+        "50.2503630",
+        "11.0520086",
+        "11.0526756"
+      ]
+    },
+    {
+      "lat": "50.2479084",
+      "lon": "11.0522502",
+      "osm_type": "way",
+      "osm_id": 25264237,
+      "display_name": "Lützelbucher Straße, Oberfüllbach, Ebersdorf b.Coburg, Landkreis Coburg, Bayern, 96237, Deutschland",
+      "type": "unclassified",
+      "addresstype": "road",
+      "address": {
+        "road": "Lützelbucher Straße",
+        "suburb": "Oberfüllbach",
+        "village": "Oberfüllbach",
+        "county": "Landkreis Coburg",
+        "state": "Bayern",
+        "ISO3166-2-lvl4": "DE-BY",
+        "postcode": "96237",
+        "country": "Deutschland",
+        "country_code": "de"
+      },
+      "boundingbox": [
+        "50.2478191",
+        "50.2480650",
+        "11.0518650",
+        "11.0526145"
+      ]
+    }
+  ],
+  "Schlossstrasse 13, 96489 Niederfüllbach, Deutschland": [
+    {
+      "lat": "50.2204795",
+      "lon": "10.9918901",
+      "osm_type": "way",
+      "osm_id": 233382216,
+      "display_name": "13, Schloßstraße, Niederfüllbach, Grub am Forst (VGem), Landkreis Coburg, Bayern, 96489, Deutschland",
+      "type": "yes",
+      "addresstype": "building",
+      "address": {
+        "house_number": "13",
+        "road": "Schloßstraße",
+        "village": "Niederfüllbach",
+        "city": "Niederfüllbach",
+        "municipality": "Grub am Forst (VGem)",
+        "county": "Landkreis Coburg",
+        "state": "Bayern",
+        "ISO3166-2-lvl4": "DE-BY",
+        "postcode": "96489",
+        "country": "Deutschland",
+        "country_code": "de"
+      },
+      "boundingbox": [
+        "50.2204024",
+        "50.2206944",
+        "10.9916808",
+        "10.9922798"
+      ]
+    },
+    {
+      "lat": "50.2205727",
+      "lon": "10.9919021",
+      "osm_type": "node",
+      "osm_id": 3313225918,
+      "display_name": "Sportheim TSG Niederfüllbach 07 e.V., 13, Schloßstraße, Niederfüllbach, Grub am Forst (VGem), Landkreis Coburg, Bayern, 96489, Deutschland",
+      "type": "restaurant",
+      "addresstype": "amenity",
+      "address": {
+        "amenity": "Sportheim TSG Niederfüllbach 07 e.V.",
+        "house_number": "13",
+        "road": "Schloßstraße",
+        "village": "Niederfüllbach",
+        "city": "Niederfüllbach",
+        "municipality": "Grub am Forst (VGem)",
+        "county": "Landkreis Coburg",
+        "state": "Bayern",
+        "ISO3166-2-lvl4": "DE-BY",
+        "postcode": "96489",
+        "country": "Deutschland",
+        "country_code": "de"
+      },
+      "boundingbox": [
+        "50.2205227",
+        "50.2206227",
+        "10.9918521",
+        "10.9919521"
+      ]
+    }
+  ],
+  "Zur Sandgrube 4, 98673 Eisfeld, Deutschland": [
+    {
+      "lat": "50.4173865",
+      "lon": "10.9021244",
+      "osm_type": "way",
+      "osm_id": 52583798,
+      "display_name": "4, Zur Sandgrube, Steudach, Bockstadt, Eisfeld, Landkreis Hildburghausen, Thüringen, 98673, Deutschland",
+      "type": "yes",
+      "addresstype": "building",
+      "address": {
+        "house_number": "4",
+        "road": "Zur Sandgrube",
+        "suburb": "Steudach",
+        "village": "Bockstadt",
+        "town": "Eisfeld",
+        "county": "Landkreis Hildburghausen",
+        "state": "Thüringen",
+        "ISO3166-2-lvl4": "DE-TH",
+        "postcode": "98673",
+        "country": "Deutschland",
+        "country_code": "de"
+      },
+      "boundingbox": [
+        "50.4172904",
+        "50.4174754",
+        "10.9019093",
+        "10.9024797"
+      ]
+    }
+  ],
+  "Vorderer Floßanger 31, 96450 Coburg, Deutschland": [
+    {
+      "lat": "50.2706319",
+      "lon": "10.9700117",
+      "osm_type": "node",
+      "osm_id": 372759356,
+      "display_name": "31, Vorderer Floßanger, Neuses bei Coburg, Bertelsdorf, Coburg, Bayern, 96450, Deutschland",
+      "type": "house",
+      "addresstype": "place",
+      "address": {
+        "house_number": "31",
+        "road": "Vorderer Floßanger",
+        "suburb": "Neuses bei Coburg",
+        "village": "Bertelsdorf",
+        "town": "Coburg",
+        "state": "Bayern",
+        "ISO3166-2-lvl4": "DE-BY",
+        "postcode": "96450",
+        "country": "Deutschland",
+        "country_code": "de"
+      },
+      "boundingbox": [
+        "50.2705819",
+        "50.2706819",
+        "10.9699617",
+        "10.9700617"
+      ]
+    },
+    {
+      "lat": "50.2706711",
+      "lon": "10.9699171",
+      "osm_type": "node",
+      "osm_id": 5430297624,
+      "display_name": "Café Q, 31, Vorderer Floßanger, Neuses bei Coburg, Bertelsdorf, Coburg, Bayern, 96450, Deutschland",
+      "type": "cafe",
+      "addresstype": "amenity",
+      "address": {
+        "amenity": "Café Q",
+        "house_number": "31",
+        "road": "Vorderer Floßanger",
+        "suburb": "Neuses bei Coburg",
+        "village": "Bertelsdorf",
+        "town": "Coburg",
+        "state": "Bayern",
+        "ISO3166-2-lvl4": "DE-BY",
+        "postcode": "96450",
+        "country": "Deutschland",
+        "country_code": "de"
+      },
+      "boundingbox": [
+        "50.2706211",
+        "50.2707211",
+        "10.9698671",
+        "10.9699671"
+      ]
+    }
+  ],
+  "St. Johannesstrasse, 96342 Stockheim, Deutschland": [
+    {
+      "lat": "50.2894357",
+      "lon": "11.2911941",
+      "osm_type": "way",
+      "osm_id": 96260602,
+      "display_name": "St.-Johannes-Straße, Haßlach b.Kronach, Stockheim, Landkreis Kronach, Bayern, 96342, Deutschland",
+      "type": "residential",
+      "addresstype": "road",
+      "address": {
+        "road": "St.-Johannes-Straße",
+        "village": "Haßlach b.Kronach",
+        "city": "Stockheim",
+        "county": "Landkreis Kronach",
+        "state": "Bayern",
+        "ISO3166-2-lvl4": "DE-BY",
+        "postcode": "96342",
+        "country": "Deutschland",
+        "country_code": "de"
+      },
+      "boundingbox": [
+        "50.2894282",
+        "50.2904484",
+        "11.2900769",
+        "11.2928225"
+      ]
+    }
+  ],
+  "Unterer Markt 8, 96515 Sonneberg, Deutschland": [
+    {
+      "lat": "50.3652167",
+      "lon": "11.1754362",
+      "osm_type": "node",
+      "osm_id": 6982860135,
+      "display_name": "8, Unterer Markt, Wehd, Neufang, Sonneberg, Landkreis Sonneberg, Thüringen, 96515, Deutschland",
+      "type": "house",
+      "addresstype": "place",
+      "address": {
+        "house_number": "8",
+        "road": "Unterer Markt",
+        "suburb": "Wehd",
+        "village": "Neufang",
+        "town": "Sonneberg",
+        "county": "Landkreis Sonneberg",
+        "state": "Thüringen",
+        "ISO3166-2-lvl4": "DE-TH",
+        "postcode": "96515",
+        "country": "Deutschland",
+        "country_code": "de"
+      },
+      "boundingbox": [
+        "50.3651667",
+        "50.3652667",
+        "11.1753862",
+        "11.1754862"
+      ]
+    }
+  ],
+  "Dorfstraße 7, 98630 Römhild OT Eicha, Deutschland": [],
+  "Neustadter Str. 113, 96515 Sonneberg, Deutschland": [
+    {
+      "lat": "50.3502242",
+      "lon": "11.1563866",
+      "osm_type": "way",
+      "osm_id": 263116186,
+      "display_name": "113, Neustadter Straße, Wolkenrasen II, Hönbach, Sonneberg, Landkreis Sonneberg, Thüringen, 96515, Deutschland",
+      "type": "yes",
+      "addresstype": "building",
+      "address": {
+        "house_number": "113",
+        "road": "Neustadter Straße",
+        "neighbourhood": "Wolkenrasen II",
+        "city_district": "Hönbach",
+        "town": "Sonneberg",
+        "county": "Landkreis Sonneberg",
+        "state": "Thüringen",
+        "ISO3166-2-lvl4": "DE-TH",
+        "postcode": "96515",
+        "country": "Deutschland",
+        "country_code": "de"
+      },
+      "boundingbox": [
+        "50.3499393",
+        "50.3505277",
+        "11.1560771",
+        "11.1566917"
+      ]
+    },
+    {
+      "lat": "50.3500365",
+      "lon": "11.1564107",
+      "osm_type": "node",
+      "osm_id": 684342430,
+      "display_name": "Café Q, 113, Neustadter Straße, Wolkenrasen II, Hönbach, Sonneberg, Landkreis Sonneberg, Thüringen, 96515, Deutschland",
+      "type": "cafe",
+      "addresstype": "amenity",
+      "address": {
+        "amenity": "Café Q",
+        "house_number": "113",
+        "road": "Neustadter Straße",
+        "neighbourhood": "Wolkenrasen II",
+        "city_district": "Hönbach",
+        "town": "Sonneberg",
+        "county": "Landkreis Sonneberg",
+        "state": "Thüringen",
+        "ISO3166-2-lvl4": "DE-TH",
+        "postcode": "96515",
+        "country": "Deutschland",
+        "country_code": "de"
+      },
+      "boundingbox": [
+        "50.3499865",
+        "50.3500865",
+        "11.1563607",
+        "11.1564607"
+      ]
+    }
+  ],
+  "Galgenfuhr 30, 96050 Bamberg, Deutschland": [
+    {
+      "lat": "49.8789607",
+      "lon": "10.9067036",
+      "osm_type": "way",
+      "osm_id": 122048507,
+      "display_name": "30, Galgenfuhr, Haingebiet, Gereuth, Bug, Bamberg, Bayern, 96050, Deutschland",
+      "type": "sports_centre",
+      "addresstype": "building",
+      "address": {
+        "house_number": "30",
+        "road": "Galgenfuhr",
+        "quarter": "Haingebiet",
+        "suburb": "Gereuth",
+        "village": "Bug",
+        "town": "Bamberg",
+        "state": "Bayern",
+        "ISO3166-2-lvl4": "DE-BY",
+        "postcode": "96050",
+        "country": "Deutschland",
+        "country_code": "de"
+      },
+      "boundingbox": [
+        "49.8788359",
+        "49.8791023",
+        "10.9063029",
+        "10.9072162"
+      ]
+    },
+    {
+      "lat": "49.8789566",
+      "lon": "10.9067631",
+      "osm_type": "node",
+      "osm_id": 3106661629,
+      "display_name": "30, Galgenfuhr, Haingebiet, Gereuth, Bug, Bamberg, Bayern, 96050, Deutschland",
+      "type": "toilets",
+      "addresstype": "amenity",
+      "address": {
+        "house_number": "30",
+        "road": "Galgenfuhr",
+        "quarter": "Haingebiet",
+        "suburb": "Gereuth",
+        "village": "Bug",
+        "town": "Bamberg",
+        "state": "Bayern",
+        "ISO3166-2-lvl4": "DE-BY",
+        "postcode": "96050",
+        "country": "Deutschland",
+        "country_code": "de"
+      },
+      "boundingbox": [
+        "49.8789066",
+        "49.8790066",
+        "10.9067131",
+        "10.9068131"
+      ]
+    },
+    {
+      "lat": "49.8789328",
+      "lon": "10.9066512",
+      "osm_type": "node",
+      "osm_id": 12568331823,
+      "display_name": "30, Galgenfuhr, Haingebiet, Gereuth, Bug, Bamberg, Bayern, 96050, Deutschland",
+      "type": "defibrillator",
+      "addresstype": "emergency",
+      "address": {
+        "house_number": "30",
+        "road": "Galgenfuhr",
+        "quarter": "Haingebiet",
+        "suburb": "Gereuth",
+        "village": "Bug",
+        "town": "Bamberg",
+        "state": "Bayern",
+        "ISO3166-2-lvl4": "DE-BY",
+        "postcode": "96050",
+        "country": "Deutschland",
+        "country_code": "de"
+      },
+      "boundingbox": [
+        "49.8788828",
+        "49.8789828",
+        "10.9066012",
+        "10.9067012"
+      ]
+    }
+  ],
+  "Am Sportplatz 19, 96472 Rödental, Deutschland": [
+    {
+      "lat": "50.2830134",
+      "lon": "11.0470901",
+      "osm_type": "way",
+      "osm_id": 293901757,
+      "display_name": "19, Am Sportplatz, Theißenstein, Einberg, Rödental, Landkreis Coburg, Bayern, 96472, Deutschland",
+      "type": "yes",
+      "addresstype": "building",
+      "address": {
+        "house_number": "19",
+        "road": "Am Sportplatz",
+        "hamlet": "Theißenstein",
+        "village": "Einberg",
+        "town": "Rödental",
+        "county": "Landkreis Coburg",
+        "state": "Bayern",
+        "ISO3166-2-lvl4": "DE-BY",
+        "postcode": "96472",
+        "country": "Deutschland",
+        "country_code": "de"
+      },
+      "boundingbox": [
+        "50.2828983",
+        "50.2831343",
+        "11.0469097",
+        "11.0472799"
+      ]
+    },
+    {
+      "lat": "50.2829765",
+      "lon": "11.0471362",
+      "osm_type": "node",
+      "osm_id": 3777744180,
+      "display_name": "Sportheim VfB Einberg 1923 e.V., 19, Am Sportplatz, Theißenstein, Einberg, Rödental, Landkreis Coburg, Bayern, 96472, Deutschland",
+      "type": "restaurant",
+      "addresstype": "amenity",
+      "address": {
+        "amenity": "Sportheim VfB Einberg 1923 e.V.",
+        "house_number": "19",
+        "road": "Am Sportplatz",
+        "hamlet": "Theißenstein",
+        "village": "Einberg",
+        "town": "Rödental",
+        "county": "Landkreis Coburg",
+        "state": "Bayern",
+        "ISO3166-2-lvl4": "DE-BY",
+        "postcode": "96472",
+        "country": "Deutschland",
+        "country_code": "de"
+      },
+      "boundingbox": [
+        "50.2829265",
+        "50.2830265",
+        "11.0470862",
+        "11.0471862"
+      ]
+    },
+    {
+      "lat": "50.2829351",
+      "lon": "11.0471034",
+      "osm_type": "node",
+      "osm_id": 12864349102,
+      "display_name": "19, Am Sportplatz, Theißenstein, Einberg, Rödental, Landkreis Coburg, Bayern, 96472, Deutschland",
+      "type": "defibrillator",
+      "addresstype": "emergency",
+      "address": {
+        "house_number": "19",
+        "road": "Am Sportplatz",
+        "hamlet": "Theißenstein",
+        "village": "Einberg",
+        "town": "Rödental",
+        "county": "Landkreis Coburg",
+        "state": "Bayern",
+        "ISO3166-2-lvl4": "DE-BY",
+        "postcode": "96472",
+        "country": "Deutschland",
+        "country_code": "de"
+      },
+      "boundingbox": [
+        "50.2828851",
+        "50.2829851",
+        "11.0470534",
+        "11.0471534"
+      ]
+    }
+  ],
+  "Sportheim Oberfüllbach, Deutschland": [],
+  "Teutonenlaube, Haßlach, Deutschland": [],
+  "Dorfstraße 7, Eicha, Deutschland": [
+    {
+      "lat": "51.3038566",
+      "lon": "12.5663001",
+      "osm_type": "way",
+      "osm_id": 528770603,
+      "display_name": "7, Dorfstraße, Albrechtshain, Erdmannshain, Eicha und Albrechtshain, Naunhof, Verwaltungsgemeinschaft Naunhof, Landkreis Leipzig, Sachsen, 04683, Deutschland",
+      "type": "yes",
+      "addresstype": "building",
+      "address": {
+        "house_number": "7",
+        "road": "Dorfstraße",
+        "suburb": "Albrechtshain",
+        "city_district": "Erdmannshain, Eicha und Albrechtshain",
+        "city": "Naunhof",
+        "municipality": "Verwaltungsgemeinschaft Naunhof",
+        "county": "Landkreis Leipzig",
+        "state": "Sachsen",
+        "ISO3166-2-lvl4": "DE-SN",
+        "postcode": "04683",
+        "country": "Deutschland",
+        "country_code": "de"
+      },
+      "boundingbox": [
+        "51.3037868",
+        "51.3039264",
+        "12.5661905",
+        "12.5664096"
+      ]
+    }
+  ],
+  "SC Oberfüllbach, Deutschland": [
+    {
+      "lat": "50.2495570",
+      "lon": "11.0531729",
+      "osm_type": "node",
+      "osm_id": 275601669,
+      "display_name": "Oberfüllbach, Ebersdorf b.Coburg, Landkreis Coburg, Bayern, 96237, Deutschland",
+      "type": "village",
+      "addresstype": "village",
+      "address": {
+        "village": "Oberfüllbach",
+        "county": "Landkreis Coburg",
+        "state": "Bayern",
+        "ISO3166-2-lvl4": "DE-BY",
+        "postcode": "96237",
+        "country": "Deutschland",
+        "country_code": "de"
+      },
+      "boundingbox": [
+        "50.2295570",
+        "50.2695570",
+        "11.0331729",
+        "11.0731729"
+      ]
+    },
+    {
+      "lat": "50.2511720",
+      "lon": "11.0581690",
+      "osm_type": "relation",
+      "osm_id": 14396555,
+      "display_name": "Oberfüllbach, Ebersdorf b.Coburg, Landkreis Coburg, Bayern, Deutschland",
+      "type": "administrative",
+      "addresstype": "suburb",
+      "address": {
+        "suburb": "Oberfüllbach",
+        "village": "Ebersdorf b.Coburg",
+        "county": "Landkreis Coburg",
+        "state": "Bayern",
+        "ISO3166-2-lvl4": "DE-BY",
+        "country": "Deutschland",
+        "country_code": "de"
+      },
+      "boundingbox": [
+        "50.2384226",
+        "50.2635446",
+        "11.0304873",
+        "11.0684949"
+      ]
+    }
+  ],
+  "FC Teutonia Haßlach, Deutschland": [
+    {
+      "lat": "50.2883504",
+      "lon": "11.2911213",
+      "osm_type": "way",
+      "osm_id": 975202829,
+      "display_name": "FC Teutonia Haßlach bei Kronach, B 89, Haßlach b.Kronach, Stockheim, Landkreis Kronach, Bayern, 96342, Deutschland",
+      "type": "sports_centre",
+      "addresstype": "leisure",
+      "address": {
+        "leisure": "FC Teutonia Haßlach bei Kronach",
+        "road": "B 89",
+        "village": "Haßlach b.Kronach",
+        "city": "Stockheim",
+        "county": "Landkreis Kronach",
+        "state": "Bayern",
+        "ISO3166-2-lvl4": "DE-BY",
+        "postcode": "96342",
+        "country": "Deutschland",
+        "country_code": "de"
+      },
+      "boundingbox": [
+        "50.2879219",
+        "50.2890125",
+        "11.2900837",
+        "11.2920661"
+      ]
+    }
+  ],
+  "Dorfstraße 7, 98630 Römhild, Deutschland": [
+    {
+      "lat": "50.3722952",
+      "lon": "10.5989408",
+      "osm_type": "way",
+      "osm_id": 106785690,
+      "display_name": "7, Obere Dorfstraße, Gleichamberg, Römhild, Landkreis Hildburghausen, Thüringen, 98630, Deutschland",
+      "type": "detached",
+      "addresstype": "building",
+      "address": {
+        "house_number": "7",
+        "road": "Obere Dorfstraße",
+        "village": "Gleichamberg",
+        "municipality": "Römhild",
+        "county": "Landkreis Hildburghausen",
+        "state": "Thüringen",
+        "ISO3166-2-lvl4": "DE-TH",
+        "postcode": "98630",
+        "country": "Deutschland",
+        "country_code": "de"
+      },
+      "boundingbox": [
+        "50.3721916",
+        "50.3723655",
+        "10.5988521",
+        "10.5990161"
+      ]
+    },
+    {
+      "lat": "50.3703203",
+      "lon": "10.5984325",
+      "osm_type": "way",
+      "osm_id": 102322225,
+      "display_name": "7, Untere Dorfstraße, Gleichamberg, Römhild, Landkreis Hildburghausen, Thüringen, 98630, Deutschland",
+      "type": "detached",
+      "addresstype": "building",
+      "address": {
+        "house_number": "7",
+        "road": "Untere Dorfstraße",
+        "village": "Gleichamberg",
+        "municipality": "Römhild",
+        "county": "Landkreis Hildburghausen",
+        "state": "Thüringen",
+        "ISO3166-2-lvl4": "DE-TH",
+        "postcode": "98630",
+        "country": "Deutschland",
+        "country_code": "de"
+      },
+      "boundingbox": [
+        "50.3702610",
+        "50.3703528",
+        "10.5983348",
+        "10.5985301"
+      ]
+    },
+    {
+      "lat": "50.4157095",
+      "lon": "10.5466327",
+      "osm_type": "node",
+      "osm_id": 11962391122,
+      "display_name": "7, Hintere Dorfstraße, Haina, Römhild, Landkreis Hildburghausen, Thüringen, 98630, Deutschland",
+      "type": "house",
+      "addresstype": "place",
+      "address": {
+        "house_number": "7",
+        "road": "Hintere Dorfstraße",
+        "village": "Haina",
+        "municipality": "Römhild",
+        "county": "Landkreis Hildburghausen",
+        "state": "Thüringen",
+        "ISO3166-2-lvl4": "DE-TH",
+        "postcode": "98630",
+        "country": "Deutschland",
+        "country_code": "de"
+      },
+      "boundingbox": [
+        "50.4156595",
+        "50.4157595",
+        "10.5465827",
+        "10.5466827"
+      ]
+    }
+  ],
+  "TSV 1924 Eicha, Deutschland": [],
+  "Dorfstraße, Eicha, Römhild, Deutschland": [
+    {
+      "lat": "50.3512129",
+      "lon": "10.5714384",
+      "osm_type": "way",
+      "osm_id": 41213756,
+      "display_name": "Dorfstraße, Eicha, Gleichamberg, Römhild, Landkreis Hildburghausen, Thüringen, 98630, Deutschland",
+      "type": "residential",
+      "addresstype": "road",
+      "address": {
+        "road": "Dorfstraße",
+        "village": "Eicha",
+        "municipality": "Römhild",
+        "county": "Landkreis Hildburghausen",
+        "state": "Thüringen",
+        "ISO3166-2-lvl4": "DE-TH",
+        "postcode": "98630",
+        "country": "Deutschland",
+        "country_code": "de"
+      },
+      "boundingbox": [
+        "50.3500211",
+        "50.3520906",
+        "10.5710226",
+        "10.5731420"
+      ]
+    },
+    {
+      "lat": "50.3498145",
+      "lon": "10.5720806",
+      "osm_type": "way",
+      "osm_id": 41213754,
+      "display_name": "Dorfstraße, Eicha, Gleichamberg, Römhild, Landkreis Hildburghausen, Thüringen, 98630, Deutschland",
+      "type": "secondary",
+      "addresstype": "road",
+      "address": {
+        "road": "Dorfstraße",
+        "village": "Eicha",
+        "municipality": "Römhild",
+        "county": "Landkreis Hildburghausen",
+        "state": "Thüringen",
+        "ISO3166-2-lvl4": "DE-TH",
+        "postcode": "98630",
+        "country": "Deutschland",
+        "country_code": "de"
+      },
+      "boundingbox": [
+        "50.3493481",
+        "50.3498625",
+        "10.5714269",
+        "10.5725782"
+      ]
+    }
+  ],
+  "Sportplatz Oberfüllbach, Deutschland": [],
+  "Dorfstraße 7, Eicha, Römhild, Deutschland": [
+    {
+      "lat": "50.3512129",
+      "lon": "10.5714384",
+      "osm_type": "way",
+      "osm_id": 41213756,
+      "display_name": "Dorfstraße, Eicha, Gleichamberg, Römhild, Landkreis Hildburghausen, Thüringen, 98630, Deutschland",
+      "type": "residential",
+      "addresstype": "road",
+      "address": {
+        "road": "Dorfstraße",
+        "village": "Eicha",
+        "municipality": "Römhild",
+        "county": "Landkreis Hildburghausen",
+        "state": "Thüringen",
+        "ISO3166-2-lvl4": "DE-TH",
+        "postcode": "98630",
+        "country": "Deutschland",
+        "country_code": "de"
+      },
+      "boundingbox": [
+        "50.3500211",
+        "50.3520906",
+        "10.5710226",
+        "10.5731420"
+      ]
+    },
+    {
+      "lat": "50.3498145",
+      "lon": "10.5720806",
+      "osm_type": "way",
+      "osm_id": 41213754,
+      "display_name": "Dorfstraße, Eicha, Gleichamberg, Römhild, Landkreis Hildburghausen, Thüringen, 98630, Deutschland",
+      "type": "secondary",
+      "addresstype": "road",
+      "address": {
+        "road": "Dorfstraße",
+        "village": "Eicha",
+        "municipality": "Römhild",
+        "county": "Landkreis Hildburghausen",
+        "state": "Thüringen",
+        "ISO3166-2-lvl4": "DE-TH",
+        "postcode": "98630",
+        "country": "Deutschland",
+        "country_code": "de"
+      },
+      "boundingbox": [
+        "50.3493481",
+        "50.3498625",
+        "10.5714269",
+        "10.5725782"
+      ]
+    }
+  ],
+  "Lützelbucher Straße 7, Oberfüllbach, Deutschland": [
+    {
+      "lat": "50.2492522",
+      "lon": "11.0525279",
+      "osm_type": "way",
+      "osm_id": 25264368,
+      "display_name": "Lützelbucher Straße, Oberfüllbach, Ebersdorf b.Coburg, Landkreis Coburg, Bayern, 96237, Deutschland",
+      "type": "residential",
+      "addresstype": "road",
+      "address": {
+        "road": "Lützelbucher Straße",
+        "suburb": "Oberfüllbach",
+        "village": "Oberfüllbach",
+        "county": "Landkreis Coburg",
+        "state": "Bayern",
+        "ISO3166-2-lvl4": "DE-BY",
+        "postcode": "96237",
+        "country": "Deutschland",
+        "country_code": "de"
+      },
+      "boundingbox": [
+        "50.2480650",
+        "50.2503630",
+        "11.0520086",
+        "11.0526756"
+      ]
+    },
+    {
+      "lat": "50.2479084",
+      "lon": "11.0522502",
+      "osm_type": "way",
+      "osm_id": 25264237,
+      "display_name": "Lützelbucher Straße, Oberfüllbach, Ebersdorf b.Coburg, Landkreis Coburg, Bayern, 96237, Deutschland",
+      "type": "unclassified",
+      "addresstype": "road",
+      "address": {
+        "road": "Lützelbucher Straße",
+        "suburb": "Oberfüllbach",
+        "village": "Oberfüllbach",
+        "county": "Landkreis Coburg",
+        "state": "Bayern",
+        "ISO3166-2-lvl4": "DE-BY",
+        "postcode": "96237",
+        "country": "Deutschland",
+        "country_code": "de"
+      },
+      "boundingbox": [
+        "50.2478191",
+        "50.2480650",
+        "11.0518650",
+        "11.0526145"
+      ]
+    }
+  ],
+  "Dorfgemeinschaftshaus Eicha, Römhild": [],
+  "Gemeindezentrum Eicha, Römhild": [
+    {
+      "lat": "50.3502588",
+      "lon": "10.5723776",
+      "osm_type": "way",
+      "osm_id": 41213757,
+      "display_name": "Gemeindezentrum, Dorfstraße, Eicha, Gleichamberg, Römhild, Landkreis Hildburghausen, Thüringen, 98630, Deutschland",
+      "type": "community_centre",
+      "addresstype": "amenity",
+      "address": {
+        "amenity": "Gemeindezentrum",
+        "road": "Dorfstraße",
+        "village": "Eicha",
+        "municipality": "Römhild",
+        "county": "Landkreis Hildburghausen",
+        "state": "Thüringen",
+        "ISO3166-2-lvl4": "DE-TH",
+        "postcode": "98630",
+        "country": "Deutschland",
+        "country_code": "de"
+      },
+      "boundingbox": [
+        "50.3501219",
+        "50.3503921",
+        "10.5720692",
+        "10.5726732"
+      ]
+    }
+  ],
+  "lookup:W372893659": [
+    {
+      "lat": "50.2489496",
+      "lon": "11.0534892",
+      "osm_type": "way",
+      "osm_id": 372893659,
+      "display_name": "Am Füllbach, Oberfüllbach, Ebersdorf b.Coburg, Landkreis Coburg, Bayern, 96237, Deutschland",
+      "type": "pitch",
+      "addresstype": "leisure",
+      "address": {
+        "road": "Am Füllbach",
+        "suburb": "Oberfüllbach",
+        "village": "Oberfüllbach",
+        "county": "Landkreis Coburg",
+        "state": "Bayern",
+        "ISO3166-2-lvl4": "DE-BY",
+        "postcode": "96237",
+        "country": "Deutschland",
+        "country_code": "de"
+      },
+      "boundingbox": [
+        "50.2484663",
+        "50.2494328",
+        "11.0528444",
+        "11.0541340"
+      ]
+    }
+  ]
+}

@@ -49,6 +49,9 @@ export default [
       '@typescript-eslint': tsPlugin
     },
     rules: {
+      // TypeScript checks undefined names; its rule also understands type-only bindings.
+      'no-undef': 'off',
+      'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': ['warn', { 
         argsIgnorePattern: '^_',
         varsIgnorePattern: '^_',

@@ -225,8 +225,8 @@ function setupTracking() {
   // Track initial page load
   trackEvent('page_loaded', {
     page: window.location.pathname,
-    user_agent: navigator.userAgent,
-    screen_resolution: `${screen.width}x${screen.height}`,
+    user_agent: window.navigator.userAgent,
+    screen_resolution: `${window.screen.width}x${window.screen.height}`,
     viewport: `${window.innerWidth}x${window.innerHeight}`
   });
 }

@@ -19,7 +19,7 @@ export async function GET({ params }) {
   try {
     const start = Date.now();
     const requestId = `${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
-    const apiBaseUrl = CURRENT_LEAGUE.api.twokSoftwareBaseUrl;
+    const apiBaseUrl = process.env.TWOK_SOFTWARE_API_URL || CURRENT_LEAGUE.api.twokSoftwareBaseUrl;
     const apiUrl = `${apiBaseUrl}/event/${eventId}/match/${matchId}/statistics`;
     console.info(`[proxy:match-statistics] requestId=${requestId} start eventId=${eventId} matchId=${matchId} upstream=${apiUrl}`);
     

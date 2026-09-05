@@ -16,7 +16,7 @@ export async function GET({ params }) {
     const start = Date.now();
     const requestId = `${Date.now()}-${Math.random().toString(16).slice(2, 8)}`;
     // API-URL aus der zentralen Liga-Konfiguration
-    const apiUrl = CURRENT_LEAGUE.api.twokSoftwareBaseUrl;
+    const apiUrl = process.env.TWOK_SOFTWARE_API_URL || CURRENT_LEAGUE.api.twokSoftwareBaseUrl;
     const upstreamUrl = `${apiUrl}/participant/${id}`;
     console.info(`[proxy:participant] requestId=${requestId} start participantId=${id} upstream=${upstreamUrl}`);
 

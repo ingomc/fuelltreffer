@@ -2,6 +2,8 @@
 
 A modern Astro SSR application that provides a dashboard interface for 2k dart software APIs, specifically designed for Dokploy deployment.
 
+The dashboard runs without LiveKit or a separate streaming server. Video, voice/text chat, viewer/streamer pages, and streamer authentication have been removed. Teams, schedules, match results, league tables, and statistics continue to use the 2k software API.
+
 ## 🚀 Architecture
 
 - **Frontend & Backend**: Single Astro SSR application with built-in API routes
@@ -18,6 +20,7 @@ A modern Astro SSR application that provides a dashboard interface for 2k dart s
 - 📈 Match statistics and team member management
 - 🔄 Server-side rendering for fast initial loads
 - 🐳 Docker-ready for easy deployment
+- 📍 Statically generated venue map for all current league teams at `/spielorte`
 
 ## 🛠 Tech Stack
 
@@ -44,14 +47,34 @@ npm run dev
 
 ## 🔧 Configuration
 
-Der Entwicklungsport kann bei Bedarf über `FRONTEND_PORT` gesetzt werden; die
-fachliche Konfiguration wird nicht über Umgebungsvariablen gesteuert.
+Configuration is optional when using the default API. Copy `.env.example` to `.env` to customize local development or Compose settings:
+
+```env
+# Public domain for production Compose routing
+APP_DOMAIN=darts.sc-oberfuellbach.de
+
+# Local development / Compose host port
+FRONTEND_PORT=4000
+
+# 2k Software API
+TWOK_SOFTWARE_API_URL=https://backend4.2k-dart-software.com/2k-backend4/api/v1/frontend
+
+# Optional analytics; leave empty to disable
+PUBLIC_UMAMI_URL=
+PUBLIC_UMAMI_WEBSITE_ID=
+```
+
+The default team is `633505`; select another team with `/?team=632079`. Server containers receive `TWOK_SOFTWARE_API_URL` through their environment. If enabling Umami, provide its `PUBLIC_*` variables during the build; runtime variables alone do not update the compiled tracking script.
 
 ## 🏆 Saisonkonfiguration
 
-Alle Angaben liegen zentral in `src/config/league.ts`: Liga- und Saisonname,
-Event- und Phasen-ID, Tabellenrunde, Standardteam, alle Vereine und die URLs der
-API-Proxys. Für einen Saisonwechsel wird nur diese Datei angepasst.
+Liga, Saison, Event-/Phasen-ID, Tabellenrunde, Standardteam und alle zehn Teams stehen zentral in `src/config/league.ts`. Die Spielortseite verwendet dieselbe Teamliste.
+
+## 📍 Spielorte
+
+`/spielorte` wird bei jedem Build als statisches HTML erzeugt: zehn Vereine, Adressen und eine interaktive Leaflet-/OpenStreetMap-Karte. API-Ausfälle verwenden den versionierten Ersatzdatenstand je Team. Koordinaten werden dauerhaft gespeichert; geänderte Adressen erhalten bis zur Prüfung keinen Marker. Im Browser werden keine 2k- oder Geocoding-Abfragen für die Karte ausgeführt.
+
+Es sind keine neuen ENV-Variablen oder Dienste erforderlich. `TWOK_SOFTWARE_API_URL` muss für eine abweichende Datenquelle bereits beim Build verfügbar sein. Canonical- und Social-URLs verwenden die öffentliche Domain aus `astro.config.mjs`. Datenpflege, Quellen und Prüfungen stehen in [docs/spielorte.md](docs/spielorte.md).
 
 ## 🚀 Development
 
@@ -67,6 +90,9 @@ npm run preview
 
 # Type checking
 npm run astro check
+
+# Venue data tests (Node.js 22.6+)
+npm test
 ```
 
 ## 🐳 Docker Deployment
@@ -96,21 +122,27 @@ docker-compose down
 
 ## 🌐 Dokploy Deployment
 
-1. **Create new project** in Dokploy
-2. **Connect Git repository**
-3. **Configure environment variables**:
-  - `APP_DOMAIN`: Public domain of this app (e.g. `fuelltreffer.example.com`)
-  - `FRONTEND_PORT`: 4000 (default)
-4. **Deploy** using the included Dockerfile
+1. **Point DNS** for `darts.sc-oberfuellbach.de` at the Dokploy server. Set its A record and either configure a matching AAAA record or remove AAAA if the server does not support IPv6.
+2. **Connect this repository** to the existing Dokploy service.
+3. **Configure routing**: when using `docker-compose.production.yml`, `APP_DOMAIN` controls the Traefik Host rule. When using Dokploy-managed domains, configure host `darts.sc-oberfuellbach.de`, path `/`, container port `4000`, HTTPS, and Let's Encrypt in Dokploy instead. Compose deployments must be redeployed after domain changes.
+4. **Set environment variables** as shown below. No streaming credentials are required.
+5. **Build and deploy**. Verify `/health`, team selection, matches, league tables, and match reports under the new HTTPS domain.
 
 ### Dokploy Environment Variables
 
 ```env
 NODE_ENV=production
-APP_DOMAIN=fuelltreffer.example.com
-ORIGIN=https://fuelltreffer.example.com
-FRONTEND_PORT=4000
+APP_DOMAIN=darts.sc-oberfuellbach.de
+HOST=0.0.0.0
+PORT=4000
+TWOK_SOFTWARE_API_URL=https://backend4.2k-dart-software.com/2k-backend4/api/v1/frontend
 ```
+
+`APP_DOMAIN` is a Compose interpolation variable, not an application runtime setting. Public canonical/social URLs use `site` in `astro.config.mjs`; request URLs still depend on proxy headers. Keep the public Host and HTTPS protocol intact at the proxy. No `ORIGIN` variable is required.
+
+Remove obsolete deployment variables: `LIVEKIT_*`, `PUBLIC_LIVEKIT_*`, `RTMP_URL`, `WHIP_URL`, `STREAMER_EMAIL`, and `STREAMER_PASSWORD`. The Docker image no longer copies or requires a runtime `.env` file. `/viewer`, `/streamer`, `/api/auth`, and `/api/livekit/token` are removed and return 404.
+
+Production Compose can also be started manually with `docker compose -f docker-compose.production.yml up -d --build` on a server with the existing `dokploy-network`.
 
 ## 📁 Project Structure
 
@@ -129,7 +161,7 @@ fuelltreffer/
 │   └── types/
 │       └── api.ts                   # TypeScript type definitions
 ├── astro.config.mjs                 # Astro configuration (SSR mode)
-├── Dockerfile                       # Single-stage Docker build
+├── Dockerfile                       # Multi-stage Docker build
 ├── docker-compose.yml               # Simplified container setup
 └── package.json                     # Dependencies and scripts
 ```
@@ -145,6 +177,7 @@ fuelltreffer/
 ### Frontend Routes
 
 - `/` - Main dashboard with auto-loaded participant data
+- `/spielorte` - Statically generated league venues with an OpenStreetMap overview
 
 ## 🧪 Testing League Data
 
