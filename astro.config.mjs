@@ -13,18 +13,21 @@ export default defineConfig({
   }),
   // HTML-Kompression aktivieren (Standard seit Astro v3)
   compressHTML: true,
-  // Server-Konfiguration für Performance-Header
+  // Dev pages and modules must reflect edits immediately.
   server: {
     headers: {
       'Vary': 'Accept-Encoding',
-      'Cache-Control': 'public, max-age=3600'
+      'Cache-Control': 'no-store'
     }
   },
   vite: {
-    server: {
-      hmr: {
-        port: 4000,
-        host: '0.0.0.0'
+    // Let Astro/Vite infer the HMR host and port from the actual dev server.
+    optimizeDeps: {
+      // Prebundle these before the first page loads to keep shared runtime imports stable.
+      include: ['@stomp/stompjs', 'sockjs-client', 'leaflet'],
+      esbuildOptions: {
+        // SockJS uses the Node-style name in its browser entry point.
+        define: { global: 'globalThis' }
       }
     }
   }

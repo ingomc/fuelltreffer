@@ -47,7 +47,7 @@ export async function GET({ params }) {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=60' // Cache for 1 minute
+        'Cache-Control': 'no-store'
       }
     });
   } catch (error) {

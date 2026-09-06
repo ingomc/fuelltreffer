@@ -134,3 +134,49 @@ export interface ApiError {
   error: string;
   message: string;
 }
+
+export interface LiveMatchScope {
+  database: string;
+  eventId: string;
+  matchId: string;
+  groupKey: string;
+  matchKeys: string[];
+  finished: boolean;
+  expectedActive: boolean;
+}
+
+export interface LivePlayer {
+  id: string;
+  index: number;
+  playerName: string;
+  points: number;
+  lastScore: number | null;
+  darts: number;
+  legs: number;
+  sets: number;
+  scoreTotal: number;
+  dartsTotal: number;
+  liveDarts: string[];
+}
+
+export interface LiveBoard {
+  id: string;
+  matchKey: string;
+  board: string;
+  status: number;
+  currentplayerIndex: number;
+  startplayerIndex: number;
+  mode: string;
+  roundName: string;
+  lastUpdate: string;
+  matchPlayers: LivePlayer[];
+}
+
+export interface LiveSnapshot {
+  scope: LiveMatchScope | null;
+  matches: LiveBoard[];
+}
+
+export interface LiveScoresState extends LiveSnapshot {
+  connection: 'connecting' | 'live' | 'reconnecting' | 'error' | 'paused' | 'idle';
+}

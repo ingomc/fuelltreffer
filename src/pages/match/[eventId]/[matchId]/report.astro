@@ -1,5 +1,6 @@
 ---
 import Layout from '../../../../layouts/Layout.astro';
+import LiveMatchBoards from '../../../../components/svelte/LiveMatchBoards.svelte';
 
 const { eventId, matchId } = Astro.params;
 
@@ -30,7 +31,8 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
 
     <!-- Match Report Component -->
     <div class="container mx-auto px-2 pt-0 pb-4 md:px-4 md:pt-0 md:pb-8">
-      <div id="match-report-container" class="p-0">
+      <LiveMatchBoards eventId={eventId!} matchId={matchId!} client:load />
+      <div id="match-report-container" data-event-id={eventId} data-match-id={matchId} data-team={teamParam} class="p-0">
         <!-- Loading state -->
         <div id="loading" class="flex items-center justify-center py-12">
           <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -50,13 +52,14 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
   </main>
 </Layout>
 
-<script type="module">
-  import { trackEvent, trackDartEvents } from '/src/utils/umami.js';
+<script>
+  import { trackEvent, trackDartEvents } from '../../../../utils/umami.js';
   
   // Get variables from Astro
-  const eventId = '{eventId}';
-  const matchId = '{matchId}';
-  const teamParam = '{teamParam}';
+  const reportContainer = document.getElementById('match-report-container');
+  const eventId = reportContainer?.dataset.eventId;
+  const matchId = reportContainer?.dataset.matchId;
+  const teamParam = reportContainer?.dataset.team;
   
   // Track initial page load
   trackEvent('match_report_loaded', {
@@ -67,11 +70,31 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
   });
 
   // Expose to window for use in other parts of the script
-  window.trackEvent = trackEvent;
-  window.trackDartEvents = trackDartEvents;
+  Object.assign(window, { trackEvent, trackDartEvents });
 </script>
 
-<script define:vars={{ eventId, matchId, teamParam }}>
+<script is:inline define:vars={{ eventId, matchId, teamParam }}>
+  let reportLoading = false;
+  let refreshQueued = false;
+  let refreshTimer;
+  const gameStatsCache = new Map();
+  const gameStatsVersions = new Map();
+  let cleanupStickyScoreboard = () => {};
+
+  function scheduleLiveRefresh() {
+    if (reportLoading) {
+      refreshQueued = true;
+      return;
+    }
+    if (!refreshTimer) {
+      refreshTimer = setTimeout(() => {
+        refreshTimer = null;
+        fetchMatchReport(true);
+      }, 2000);
+    }
+  }
+  document.addEventListener('match-live-result', scheduleLiveRefresh);
+
   function normalizeStatisticsResponse(payload) {
     if (Array.isArray(payload)) return payload;
     if (payload && Array.isArray(payload.statistics)) return payload.statistics;
@@ -79,7 +102,9 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
   }
 
   // Fetch match report data
-  async function fetchMatchReport() {
+  async function fetchMatchReport(silent = false) {
+    if (reportLoading) return;
+    reportLoading = true;
     const loadingEl = document.getElementById('loading');
     const errorEl = document.getElementById('error');
     const errorMessageEl = document.getElementById('error-message');
@@ -87,30 +112,29 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
 
     try {
       // Fetch report first
-      const reportResponse = await fetch(`/api/match/${eventId}/${matchId}/report`);
+      const reportResponse = await fetch(`/api/match/${eventId}/${matchId}/report`, { cache: 'no-store', signal: AbortSignal.timeout(15000) });
       
       if (!reportResponse.ok) {
         throw new Error(`HTTP error! status: ${reportResponse.status}`);
       }
       
       const reportData = await reportResponse.json();
-      
-      const firstGame = reportData[0];
-      const phaseId = firstGame.round?.phase?.id || firstGame.phase?.id;
-      const roundIndex = firstGame.round?.roundIndex !== undefined ? firstGame.round.roundIndex : firstGame.roundNr;
+      if (!Array.isArray(reportData)) throw new Error('Ungültiger Spielbericht');
       
       // Simpler approach: Just load statistics for each game in THIS match report
       // We already have all games in reportData!
-      const gameStatsMap = new Map();
+      const gameStatsMap = gameStatsCache;
       
       for (const game of reportData) {
-        if (game.id) {
+        const version = `${game.statusCd}:${game.legsHome}:${game.legsAway}`;
+        if (game.id && game.statusCd !== 'OPEN' && game.participantHome && game.participantGuest && gameStatsVersions.get(game.id) !== version) {
           try {
-            const statsResponse = await fetch(`/api/match/${eventId}/${game.id}/statistics`);
+            const statsResponse = await fetch(`/api/match/${eventId}/${game.id}/statistics`, { cache: 'no-store', signal: AbortSignal.timeout(10000) });
             
             if (statsResponse.ok) {
               const statsPayload = await statsResponse.json();
               const gameStats = normalizeStatisticsResponse(statsPayload);
+              gameStatsVersions.set(game.id, version);
               if (gameStats.length > 0) {
                 // Store stats with the game ID as key
                 const matchStats = gameStats.filter(s => s.type === 'MATCH');
@@ -149,12 +173,13 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
       
       // Hide loading
       loadingEl.classList.add('hidden');
+      errorEl.classList.add('hidden');
       
       // Show content
       contentEl.classList.remove('hidden');
       
       // Track successful report load
-      if (window.trackEvent) {
+      if (!silent && window.trackEvent) {
         window.trackEvent('match_report_success', {
           event_id: String(eventId),
           match_id: String(matchId),
@@ -169,6 +194,7 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
       
     } catch (error) {
       console.error('Error fetching match report:', error);
+      if (silent) return;
       
       // Track error
       if (window.trackEvent) {
@@ -186,6 +212,12 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
       // Show error
       errorEl.classList.remove('hidden');
       errorMessageEl.textContent = error.message;
+    } finally {
+      reportLoading = false;
+      if (refreshQueued) {
+        refreshQueued = false;
+        scheduleLiveRefresh();
+      }
     }
   }
 
@@ -231,6 +263,7 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
   }
 
   function setupStickyScoreboard() {
+    cleanupStickyScoreboard();
     const topCard = document.getElementById('top-score-card');
     const stickyBar = document.getElementById('sticky-mini-score');
     const appHeader = document.querySelector('header.sticky');
@@ -245,8 +278,9 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
     updateStickyTopOffset();
     window.addEventListener('resize', updateStickyTopOffset, { passive: true });
 
+    let resizeObserver;
     if (appHeader && 'ResizeObserver' in window) {
-      const resizeObserver = new ResizeObserver(updateStickyTopOffset);
+      resizeObserver = new ResizeObserver(updateStickyTopOffset);
       resizeObserver.observe(appHeader);
     }
 
@@ -268,6 +302,11 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
     );
 
     observer.observe(topCard);
+    cleanupStickyScoreboard = () => {
+      observer.disconnect();
+      resizeObserver?.disconnect();
+      window.removeEventListener('resize', updateStickyTopOffset);
+    };
   }
 
   function renderMatchReport(data, gameStatsMap, teamRoster, container) {
@@ -305,10 +344,13 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
     let html = '';
 
     // Compact Header with Score - Count won games (matches), not legs
-    const totalGamesHome = data.filter(m => m.legsHome > m.legsAway).length;
-    const totalGamesAway = data.filter(m => m.legsAway > m.legsHome).length;
+    const isFinished = game => ['FINISH', 'FINISHED', 'ENDED', 'COMPLETE'].includes(game.statusCd);
+    const totalGamesHome = data.filter(m => isFinished(m) && m.legsHome > m.legsAway).length;
+    const totalGamesAway = data.filter(m => isFinished(m) && m.legsAway > m.legsHome).length;
     const totalLegsHome = data.reduce((sum, m) => sum + (m.legsHome || 0), 0);
     const totalLegsAway = data.reduce((sum, m) => sum + (m.legsAway || 0), 0);
+    const matchStatus = data.some(game => game.statusCd === 'ACTIVE') ? 'ACTIVE' :
+      data.every(isFinished) ? 'FINISH' : 'OPEN';
     
     html += `
       <div id="top-score-card" class="bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 rounded-lg px-3 py-3 mt-2 text-white">
@@ -368,13 +410,12 @@ const backUrl = teamParam ? `/?team=${teamParam}` : '/';
             <div><span class="text-gray-600 dark:text-gray-400">Legs:</span> <span class="font-medium text-gray-900 dark:text-gray-100">Best of ${firstMatch.matchmode?.legsBestOf || 'N/A'}</span></div>
           </div>
           <div class="px-2 py-1 rounded text-xs font-medium ${
-            firstMatch.statusCd === 'FINISH' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' :
-            firstMatch.statusCd === 'ACTIVE' ? 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200' :
+            matchStatus === 'FINISH' ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' :
+            matchStatus === 'ACTIVE' ? 'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200' :
             'bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200'
           }">
-            ${firstMatch.statusCd === 'FINISH' ? '✅ Beendet' :
-              firstMatch.statusCd === 'ACTIVE' ? '🟢 Aktiv' :
-              firstMatch.statusCd || 'Offen'}
+            ${matchStatus === 'FINISH' ? '✅ Beendet' :
+              matchStatus === 'ACTIVE' ? '🟢 Live' : 'Offen'}
           </div>
         </div>
       </div>
