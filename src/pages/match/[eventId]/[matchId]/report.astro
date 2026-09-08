@@ -1,14 +1,68 @@
 ---
 import Layout from '../../../../layouts/Layout.astro';
+import { CURRENT_LEAGUE } from '../../../../config/league';
 
 const { eventId, matchId } = Astro.params;
 
 // Get team parameter if present (for back navigation)
 const teamParam = Astro.url.searchParams.get('team');
 const backUrl = teamParam ? `/?team=${teamParam}` : '/';
+
+type MatchParticipant = {
+  id?: string | number;
+  displayName?: string;
+};
+
+type MatchSummary = {
+  id?: string | number;
+  participantHome?: MatchParticipant;
+  participantGuest?: MatchParticipant;
+};
+
+type ParticipantResponse = {
+  matches?: MatchSummary[];
+};
+
+function getShortTeamName(participant?: MatchParticipant) {
+  if (!participant) return null;
+
+  return CURRENT_LEAGUE.teams.find((team) => team.id === String(participant.id))?.shortName
+    ?? participant.displayName
+    ?? null;
+}
+
+let matchTitle = 'Matchbericht';
+let matchDescription = 'Details zu diesem Dart-Match.';
+
+// Match reports contain their team information only after the report has been
+// started. The participant endpoint always provides the match pairing.
+if (teamParam) {
+  try {
+    const apiBaseUrl = process.env.TWOK_SOFTWARE_API_URL || CURRENT_LEAGUE.api.twokSoftwareBaseUrl;
+    const response = await fetch(`${apiBaseUrl}/participant/${teamParam}`, {
+      headers: {
+        'User-Agent': 'Fuelltreffer-SSR/1.0'
+      }
+    });
+
+    if (response.ok) {
+      const participantData = await response.json() as ParticipantResponse;
+      const match = participantData.matches?.find((candidate) => String(candidate.id) === String(matchId));
+      const homeTeamName = getShortTeamName(match?.participantHome);
+      const awayTeamName = getShortTeamName(match?.participantGuest);
+
+      if (homeTeamName && awayTeamName) {
+        matchTitle = `Matchbericht: ${homeTeamName} vs. ${awayTeamName}`;
+        matchDescription = `Matchbericht von ${homeTeamName} gegen ${awayTeamName} in der ${CURRENT_LEAGUE.name}.`;
+      }
+    }
+  } catch (error) {
+    console.warn(`[match-report] Could not load title data for match ${matchId}:`, error);
+  }
+}
 ---
 
-<Layout title={`Match Details - ${matchId}`}>
+<Layout title={matchTitle} description={matchDescription}>
   <main class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
     <!-- Header with back button -->
     <div id="match-page-header" class="bg-white dark:bg-gray-800">

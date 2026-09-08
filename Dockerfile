@@ -22,6 +22,7 @@ FROM base AS runtime
 COPY --from=prod-deps /app/node_modules ./node_modules
 # Copy built application
 COPY --from=build /app/dist ./dist
+COPY --from=build /app/scripts/server.mjs ./scripts/server.mjs
 
 # Set environment variables for proper host binding
 ENV HOST=0.0.0.0
@@ -31,4 +32,4 @@ ENV PORT=4000
 EXPOSE 4000
 
 # Start Astro server directly
-CMD ["node", "./dist/server/entry.mjs"]
+CMD ["node", "./scripts/server.mjs"]

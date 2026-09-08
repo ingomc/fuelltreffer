@@ -1,4 +1,5 @@
 <script>
+  import CalendarSubscribe from './CalendarSubscribe.svelte';
   import { trackDartEvents } from '/src/utils/umami.js';
   
   export let matches = [];
@@ -84,6 +85,7 @@
 </script>
 
 <div class="min-h-[600px] p-2 transition-colors duration-200 sm:p-3">
+  <CalendarSubscribe participantId={currentParticipantId} />
   <!-- Kompakte Matches List -->
   {#if matches.length === 0}
     <div class="text-center py-8">
