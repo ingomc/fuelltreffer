@@ -57,7 +57,7 @@ APP_DOMAIN=darts.sc-oberfuellbach.de
 FRONTEND_PORT=4000
 
 # 2k Software API
-TWOK_SOFTWARE_API_URL=https://backend4.2k-dart-software.com/2k-backend4/api/v1/frontend
+TWOK_SOFTWARE_API_URL=https://backend4.3k-darts.com/2k-backend4/api/v1/frontend
 
 # Optional analytics; leave empty to disable
 PUBLIC_UMAMI_URL=
@@ -139,7 +139,7 @@ NODE_ENV=production
 APP_DOMAIN=darts.sc-oberfuellbach.de
 HOST=0.0.0.0
 PORT=4000
-TWOK_SOFTWARE_API_URL=https://backend4.2k-dart-software.com/2k-backend4/api/v1/frontend
+TWOK_SOFTWARE_API_URL=https://backend4.3k-darts.com/2k-backend4/api/v1/frontend
 ```
 
 `APP_DOMAIN` is a Compose interpolation variable, not an application runtime setting. Public canonical/social URLs use `site` in `astro.config.mjs`; request URLs still depend on proxy headers. Keep the public Host and HTTPS protocol intact at the proxy. No `ORIGIN` variable is required.
