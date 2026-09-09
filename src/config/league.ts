@@ -16,6 +16,7 @@ export const CURRENT_LEAGUE = {
   tableRoundIndex: 0,
   defaultParticipantId: '633505',
   api: {
+    databaseId: 5,
     twokSoftwareBaseUrl: 'https://backend4.3k-darts.com/2k-backend4/api/v1/frontend',
     leagueTableBaseUrl: 'http://localhost:3001'
   },
