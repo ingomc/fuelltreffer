@@ -25,6 +25,8 @@ export async function GET({ params }) {
     
     const response = await fetch(apiUrl, {
       headers: {
+        // Use the same app identification as the other 3K proxies.
+        'User-Agent': 'Fuelltreffer-SSR/1.0',
         'Accept': 'application/json'
       }
     });

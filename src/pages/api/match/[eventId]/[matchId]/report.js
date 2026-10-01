@@ -25,6 +25,8 @@ export async function GET({ params }) {
     
     const response = await fetch(apiUrl, {
       headers: {
+        // 3K rejects requests with Node's default User-Agent.
+        'User-Agent': 'Fuelltreffer-SSR/1.0',
         'Accept': 'application/json'
       }
     });
