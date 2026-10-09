@@ -12,8 +12,6 @@ export const CURRENT_LEAGUE = {
   name: 'Liga B2',
   season: '2026-1',
   eventId: 24970,
-  phaseId: 42062,
-  tableRoundIndex: 0,
   defaultParticipantId: '633505',
   api: {
     databaseId: 5,

@@ -8,8 +8,9 @@ let pendingTable = null;
  */
 export function loadLeagueTableEntries() {
   if (!pendingTable) {
-    const { eventId, phaseId, tableRoundIndex } = CURRENT_LEAGUE;
-    pendingTable = fetch(`/api/round/${eventId}/${phaseId}/${tableRoundIndex}/table`)
+    // Phase 0 / round 0 returns the overall event table, as on the 3K portal's
+    // table page; requests for the league phase itself return no entries.
+    pendingTable = fetch(`/api/round/${CURRENT_LEAGUE.eventId}/0/0/table`)
       .then(response => {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         return response.json();
