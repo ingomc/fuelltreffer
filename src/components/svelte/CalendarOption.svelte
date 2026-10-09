@@ -3,7 +3,7 @@
   export let address;
   export let onGoogle;
   export let expanded = false;
-  const style = 'inline-flex items-center justify-center gap-2 rounded-md bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500';
+  const style = 'btn-primary w-full py-2.5';
 </script>
 
 {#if provider === 'google'}

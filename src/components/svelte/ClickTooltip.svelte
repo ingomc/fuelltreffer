@@ -43,17 +43,17 @@
   };
   
   $: arrowClasses = {
-    top: 'top-full left-1/2 transform -translate-x-1/2 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-800',
-    bottom: 'bottom-full left-1/2 transform -translate-x-1/2 border-l-4 border-r-4 border-b-4 border-transparent border-b-gray-800',
-    left: 'left-full top-1/2 transform -translate-y-1/2 border-t-4 border-b-4 border-l-4 border-transparent border-l-gray-800',
-    right: 'right-full top-1/2 transform -translate-y-1/2 border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-800'
+    top: 'top-full left-1/2 transform -translate-x-1/2 border-l-4 border-r-4 border-t-4 border-transparent border-t-zinc-900 dark:border-t-zinc-100',
+    bottom: 'bottom-full left-1/2 transform -translate-x-1/2 border-l-4 border-r-4 border-b-4 border-transparent border-b-zinc-900 dark:border-b-zinc-100',
+    left: 'left-full top-1/2 transform -translate-y-1/2 border-t-4 border-b-4 border-l-4 border-transparent border-l-zinc-900 dark:border-l-zinc-100',
+    right: 'right-full top-1/2 transform -translate-y-1/2 border-t-4 border-b-4 border-r-4 border-transparent border-r-zinc-900 dark:border-r-zinc-100'
   };
 </script>
 
 <div class="relative inline-block">
   <button 
     type="button"
-    class="cursor-help inline-block border-none bg-transparent p-0 m-0"
+    class="m-0 inline-block cursor-help rounded-full border-none bg-transparent p-0"
     on:click={handleClick}
     on:keydown={(e) => e.key === 'Enter' && handleClick(e)}
   >
@@ -63,7 +63,7 @@
   {#if showTooltip}
     <div 
       bind:this={tooltipElement}
-      class="absolute z-50 px-2 py-1 text-xs text-white bg-gray-800 rounded shadow-lg whitespace-nowrap {positionClasses[position]}"
+      class="animate-fade-in absolute z-50 whitespace-nowrap rounded-lg bg-zinc-900 px-2.5 py-1.5 text-xs font-medium text-white shadow-lg dark:bg-zinc-100 dark:text-zinc-900 {positionClasses[position]}"
       style="visibility: visible;"
     >
       {text}

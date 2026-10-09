@@ -1,4 +1,7 @@
 ---
+import '@fontsource-variable/inter';
+import '@fontsource-variable/space-grotesk';
+import '../styles/global.css';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { HOME_SEO, SITE_NAME, type SocialImage } from '../config/seo';
@@ -72,7 +75,8 @@ const umamiWebsiteId = import.meta.env.PUBLIC_UMAMI_WEBSITE_ID;
     <meta name="twitter:image:alt" content={image.alt} />
     
     <!-- Theme -->
-    <meta name="theme-color" content="#1e40af" />
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)" />
     <meta name="color-scheme" content="light dark" />
     
     <!-- Umami Analytics -->
@@ -98,9 +102,10 @@ const umamiWebsiteId = import.meta.env.PUBLIC_UMAMI_WEBSITE_ID;
       initializeTracking();
     </script>
   </head>
-  <body class="bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-200">
+  <body class="relative isolate flex min-h-screen flex-col">
+    <div class="app-backdrop" aria-hidden="true"></div>
     <Header showTeamSelector={showTeamSelector} />
-    <main>
+    <main class="flex-1">
       <slot />
     </main>
     <Footer />
