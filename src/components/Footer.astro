@@ -1,73 +1,57 @@
 ---
 import { Image } from 'astro:assets';
 import avatarImage from '../assets/andre-emoji.png';
-import ThemeSwitch from './svelte/ThemeSwitch.svelte';
+import { CURRENT_LEAGUE_TITLE } from '../config/league';
+import Icon from './Icon.astro';
+import Logo from './Logo.astro';
 ---
 
-<footer class="mt-8 pb-6">
-  <div class="border-t border-gray-200 dark:border-gray-700 pt-6 transition-colors duration-200">
-    <div class="flex items-center justify-center gap-6 mb-4">
-      <!-- Größerer Avatar Kreis mit optimiertem Bild -->
-      <div class="relative">
-        <!-- Äußerer Ring mit Glow-Effekt -->
-        <div class="w-20 h-20 rounded-full bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 dark:from-blue-500 dark:via-blue-600 dark:to-blue-700 p-0.5 shadow-lg transition-colors duration-200">
-          <!-- Innerer weißer Ring -->
-          <div class="w-full h-full rounded-full bg-white dark:bg-gray-800 p-1 transition-colors duration-200">
-            <!-- Avatar Container -->
-            <div class="relative w-full h-full rounded-full overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 transition-colors duration-200">
-              <!-- Optimiertes Bild mit Astro Image - Retina-Ready -->
-              <Image 
-                src={avatarImage}
-                alt="Andre Bellmann Avatar"
-                width={72}
-                height={72}
-                densities={[1, 2]}
-                quality={95}
-                format="webp"
-                class="w-[72px] h-[72px] object-cover rounded-full opacity-90 hover:opacity-100 hover:scale-110 transition-all duration-300 ease-out"
-                loading="lazy"
-                decoding="async"
-              />
-              <!-- Subtiler Overlay für mehr Style -->
-              <div class="absolute inset-0 rounded-full bg-gradient-to-t from-black/5 to-transparent dark:from-black/20"></div>
-            </div>
-          </div>
-        </div>
-        <!-- Pulsierender Ring beim Hover -->
-        <div class="absolute inset-0 rounded-full bg-blue-400/30 dark:bg-blue-500/30 scale-110 opacity-0 hover:opacity-100 transition-all duration-500 ease-out animate-pulse"></div>
-      </div>
-      
-      <!-- Footer Info linksbündig mit 3 Zeilen -->
-      <div class="text-left">
-        <p class="text-sm font-medium text-gray-900 dark:text-gray-100 mb-1 transition-colors duration-200">
-          🎯 Fülltreffer Dashboard
-        </p>
-        <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1 mb-1 transition-colors duration-200">
-          Made with ❤️ by 
-          <a 
-            href="https://andre-bellmann.de" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            class="font-medium text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors hover:underline"
-          >
-            Andre Bellmann
-          </a>
-        </p>
-        <p class="text-xs text-gray-400 dark:text-gray-500 transition-colors duration-200">
-          © {new Date().getFullYear()}
-        </p>
+<footer class="mt-16 border-t border-zinc-200/70 dark:border-white/[0.06]">
+  <div class="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+    <div class="flex items-center gap-3">
+      <Logo size={28} />
+      <div class="leading-tight">
+        <p class="font-display text-sm font-semibold text-zinc-900 dark:text-white">Fülltreffer Dashboard</p>
+        <p class="text-xs text-zinc-500 dark:text-zinc-400">{CURRENT_LEAGUE_TITLE}</p>
       </div>
     </div>
-    
-    <nav aria-label="Weitere Seiten" class="mb-4 text-center">
-      <a href="/spielorte" class="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-blue-600 hover:text-blue-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
-        <span aria-hidden="true">📍</span> Spielorte
+
+    <nav aria-label="Weitere Seiten" class="flex items-center gap-1 text-sm">
+      <a href="/" class="btn-ghost px-3 py-1.5">
+        <Icon name="dashboard" size={15} /> Dashboard
+      </a>
+      <a href="/spielorte" class="btn-ghost px-3 py-1.5">
+        <Icon name="map-pin" size={15} /> Spielorte
       </a>
     </nav>
 
-    <!-- Theme Switch zentriert unter dem Avatar/Info -->
-    <div class="flex justify-center">
-      <ThemeSwitch client:load />
-    </div>
+    <a
+      href="https://andre-bellmann.de"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="group flex items-center gap-3 rounded-2xl border border-zinc-200/80 bg-white/60 py-1.5 pl-1.5 pr-4 transition-colors hover:border-brand-300 dark:border-white/[0.07] dark:bg-white/[0.03] dark:hover:border-brand-500/50"
+    >
+      <span class="relative block h-10 w-10 overflow-hidden rounded-xl bg-gradient-to-br from-brand-400 to-brand-700 p-0.5">
+        <Image
+          src={avatarImage}
+          alt="Andre Bellmann Avatar"
+          width={40}
+          height={40}
+          densities={[1, 2]}
+          quality={95}
+          format="webp"
+          class="h-full w-full rounded-[10px] bg-white object-cover transition-transform duration-300 group-hover:scale-110 dark:bg-zinc-900"
+          loading="lazy"
+          decoding="async"
+        />
+      </span>
+      <span class="leading-tight">
+        <span class="flex items-center gap-1 text-xs text-zinc-500 dark:text-zinc-400">
+          Made with <Icon name="heart" size={12} class="fill-rose-500 text-rose-500" /> by
+        </span>
+        <span class="text-sm font-semibold text-zinc-900 group-hover:text-brand-600 dark:text-white dark:group-hover:text-brand-400">Andre Bellmann</span>
+      </span>
+      <span class="ml-1 text-xs text-zinc-400">© {new Date().getFullYear()}</span>
+    </a>
   </div>
 </footer>

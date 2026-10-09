@@ -6,7 +6,7 @@ import node from '@astrojs/node';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://darts.sc-oberfuellbach.de',
-  integrations: [tailwind(), svelte()],
+  integrations: [tailwind({ applyBaseStyles: false }), svelte()],
   output: 'server',
   adapter: node({
     mode: 'standalone'

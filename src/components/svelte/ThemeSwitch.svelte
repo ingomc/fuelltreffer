@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { theme } from '../../stores/theme.js';
   import { trackEvent } from '/src/utils/umami.js';
+  import Icon from './Icon.svelte';
 
   let currentTheme = 'system';
   
@@ -25,59 +26,49 @@
     theme.set(newTheme);
   }
 
-  $: themes = [
-    { 
-      id: 'system', 
-      label: 'System', 
-      icon: '🖥️',
-      description: 'Folgt Systemeinstellung'
-    },
-    { 
-      id: 'light', 
-      label: 'Hell', 
-      icon: '☀️',
-      description: 'Heller Modus'
-    },
-    { 
-      id: 'dark', 
-      label: 'Dunkel', 
-      icon: '🌙',
-      description: 'Dunkler Modus'
-    }
+  const themes = [
+    { id: 'system', label: 'System', icon: 'monitor', description: 'Folgt Systemeinstellung' },
+    { id: 'light', label: 'Hell', icon: 'sun', description: 'Heller Modus' },
+    { id: 'dark', label: 'Dunkel', icon: 'moon', description: 'Dunkler Modus' }
   ];
+
+  $: activeTheme = themes.find(t => t.id === currentTheme) || themes[0];
+
+  function cycleTheme() {
+    const index = themes.findIndex(t => t.id === currentTheme);
+    setTheme(themes[(index + 1) % themes.length].id);
+  }
 </script>
 
-<div class="flex items-center gap-2">
-  <span class="text-xs text-gray-500 dark:text-gray-400 hidden sm:inline">Theme:</span>
-  <div class="flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
-    {#each themes as themeOption}
-      <button
-        type="button"
-        class="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-md transition-all"
-        class:bg-white={currentTheme === themeOption.id && themeOption.id !== 'dark'}
-        class:bg-gray-800={currentTheme === themeOption.id && themeOption.id === 'dark'}
-        class:text-gray-900={currentTheme === themeOption.id && themeOption.id !== 'dark'}
-        class:text-white={currentTheme === themeOption.id && themeOption.id === 'dark'}
-        class:shadow-sm={currentTheme === themeOption.id}
-        class:text-gray-600={currentTheme !== themeOption.id}
-        class:dark:text-gray-300={currentTheme !== themeOption.id}
-        class:hover:bg-gray-50={currentTheme !== themeOption.id && themeOption.id !== 'dark'}
-        class:dark:hover:bg-gray-600={currentTheme !== themeOption.id}
-        on:click={() => setTheme(themeOption.id)}
-        title={themeOption.description}
-        data-track="theme-switch"
-        data-track-value={themeOption.id}
-      >
-        <span class="text-sm">{themeOption.icon}</span>
-        <span>{themeOption.label}</span>
-      </button>
-    {/each}
-  </div>
-</div>
+<!-- Mobile: single button cycling through the modes -->
+<button
+  type="button"
+  class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-zinc-200 bg-white/80 text-zinc-600 transition-colors hover:text-zinc-900 sm:hidden dark:border-white/10 dark:bg-white/5 dark:text-zinc-300 dark:hover:text-white"
+  on:click={cycleTheme}
+  aria-label="Darstellung: {activeTheme.label} (wechseln)"
+  title="Darstellung: {activeTheme.label}"
+  data-track="theme-switch"
+  data-track-value={activeTheme.id}
+>
+  <Icon name={activeTheme.icon} size={16} />
+</button>
 
-<style>
-  /* Smooth transitions for theme switching */
-  button {
-    transition: all 0.2s ease-out;
-  }
-</style>
+<!-- Desktop: segmented control -->
+<div class="hidden h-9 items-center gap-0.5 rounded-xl border border-zinc-200 bg-white/80 p-1 sm:flex dark:border-white/10 dark:bg-white/5" role="group" aria-label="Darstellung">
+  {#each themes as themeOption}
+    <button
+      type="button"
+      class="inline-flex h-7 w-7 items-center justify-center rounded-lg transition-colors {currentTheme === themeOption.id
+        ? 'bg-zinc-900 text-white shadow-sm dark:bg-white dark:text-zinc-900'
+        : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white'}"
+      on:click={() => setTheme(themeOption.id)}
+      aria-pressed={currentTheme === themeOption.id}
+      aria-label={themeOption.description}
+      title={themeOption.description}
+      data-track="theme-switch"
+      data-track-value={themeOption.id}
+    >
+      <Icon name={themeOption.icon} size={14} />
+    </button>
+  {/each}
+</div>

@@ -2,15 +2,18 @@
   import { onMount } from 'svelte';
   import SectionHeader from './SectionHeader.svelte';
   import { trackDartEvents, trackEvent } from '/src/utils/umami.js';
+  import Icon from './Icon.svelte';
   import { CURRENT_LEAGUE, CURRENT_LEAGUE_TITLE } from '../../config/league';
+  import { loadLeagueTableEntries } from '../../lib/league-table';
+  import { getShortTeamName } from '../../lib/match-utils';
 
   export let currentParticipantId = '';
   export let apiBaseUrl = '';
 
   let tableData = [];
-  let loading = false;
+  let loading = true;
   let error = null;
-  const { eventId, phaseId, tableRoundIndex: roundIndex } = CURRENT_LEAGUE;
+  const { eventId } = CURRENT_LEAGUE;
 
   async function loadLeagueTable() {
     loading = true;
@@ -20,29 +23,10 @@
       // Track league table view
       trackDartEvents.leagueTableView(eventId);
       
-      const response = await fetch(`/api/round/${eventId}/${phaseId}/${roundIndex}/table`);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-
-      const data = await response.json();
-      const entries = data.tableEntries?.[0]?.tableEntries || [];
-      
-      // Transform API data to our format
+      const entries = await loadLeagueTableEntries();
       tableData = entries.map(entry => ({
-        position: parseInt(entry.placement),
-        team: entry.participantName,
-        games: entry.matchCount,
-        wins: entry.win,
-        draws: entry.tie,
-        losses: entry.lost,
-        points: entry.points1,
-        sets: `${entry.sets1}:${entry.sets2}`,
-        setDiff: entry.sets1 - entry.sets2,
-        legs: `${entry.legs1}:${entry.legs2}`,
-        legDiff: entry.legs1 - entry.legs2,
-        isCurrentTeam: entry.participantId === parseInt(currentParticipantId)
+        ...entry,
+        isCurrentTeam: entry.participantId === String(currentParticipantId)
       }));
       
       // Track successful data load
@@ -67,127 +51,101 @@
   }
 
   onMount(() => {
-    console.log('LeagueTable mounted, loading data...');
     loadLeagueTable();
   });
 </script>
 
-<div class="p-2 sm:p-6">
-  <!-- Header -->
-  <SectionHeader 
-    title="Liga-Tabelle" 
-    subtitle={CURRENT_LEAGUE_TITLE}
-    size="large" 
-  />
+<div class="card overflow-hidden">
+  <div class="border-b border-zinc-100 px-4 py-4 sm:px-5 dark:border-white/[0.06]">
+    <SectionHeader 
+      title="Liga-Tabelle" 
+      subtitle={CURRENT_LEAGUE_TITLE}
+      size="large" 
+    >
+      {#if tableData.length > 0}
+        <span class="chip"><Icon name="users" size={12} /> {tableData.length} Teams</span>
+      {/if}
+    </SectionHeader>
+  </div>
 
   <!-- Loading State -->
   {#if loading}
-    <div class="flex items-center justify-center py-12">
-      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 dark:border-blue-400"></div>
-      <span class="ml-3 text-gray-600 dark:text-gray-300">Lade Tabelle...</span>
+    <div class="space-y-3 p-4 sm:p-5" aria-busy="true" aria-label="Lade Tabelle">
+      {#each Array(8) as _}<div class="skeleton h-9 w-full"></div>{/each}
     </div>
   {:else if tableData.length > 0}
-    <!-- Desktop Table -->
-    <div class="hidden sm:block overflow-x-auto">
-      <table class="min-w-full">
-        <!-- Table Header -->
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-sm">
         <thead>
-          <tr class="bg-gray-600 dark:bg-gray-700 text-white">
-            <th rowspan="2" class="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider align-middle">Pl.</th>
-            <th rowspan="2" class="px-3 py-3 text-left text-xs font-medium uppercase tracking-wider align-middle">Mannschaft</th>
-            <th rowspan="2" class="px-3 py-3 text-center text-xs font-medium uppercase tracking-wider align-middle">Spiele</th>
-            <th rowspan="2" class="px-3 py-3 text-center text-xs font-medium uppercase tracking-wider align-middle">S</th>
-            <th rowspan="2" class="px-3 py-3 text-center text-xs font-medium uppercase tracking-wider align-middle">U</th>
-            <th rowspan="2" class="px-3 py-3 text-center text-xs font-medium uppercase tracking-wider align-middle">N</th>
-            <th rowspan="2" class="px-3 py-3 text-center text-xs font-medium uppercase tracking-wider align-middle">Punkte</th>
-            <th colspan="2" class="px-3 py-2 text-center text-xs font-medium uppercase tracking-wider border-l-2 border-gray-500">Sets</th>
-            <th colspan="2" class="px-3 py-2 text-center text-xs font-medium uppercase tracking-wider border-l-2 border-gray-500">Legs</th>
-          </tr>
-          <tr class="bg-gray-600 dark:bg-gray-700 text-white">
-            <th class="px-2 py-2 text-center text-xs font-medium border-l-2 border-gray-500"></th>
-            <th class="px-2 py-2 text-center text-xs font-medium">+/-</th>
-            <th class="px-2 py-2 text-center text-xs font-medium border-l-2 border-gray-500"></th>
-            <th class="px-2 py-2 text-center text-xs font-medium">+/-</th>
+          <tr class="text-[11px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+            <th class="py-3 pl-4 pr-2 text-left font-semibold sm:pl-5">Pl.</th>
+            <th class="px-2 py-3 text-left font-semibold">Mannschaft</th>
+            <th class="px-2 py-3 text-center font-semibold" title="Spiele">Sp</th>
+            <th class="hidden px-2 py-3 text-center font-semibold sm:table-cell" title="Siege">S</th>
+            <th class="hidden px-2 py-3 text-center font-semibold sm:table-cell" title="Unentschieden">U</th>
+            <th class="hidden px-2 py-3 text-center font-semibold sm:table-cell" title="Niederlagen">N</th>
+            <th class="hidden border-l border-zinc-100 px-2 py-3 text-center font-semibold md:table-cell dark:border-white/[0.06]">Sets</th>
+            <th class="px-2 py-3 text-center font-semibold" title="Satzdifferenz">+/-</th>
+            <th class="hidden border-l border-zinc-100 px-2 py-3 text-center font-semibold lg:table-cell dark:border-white/[0.06]">Legs</th>
+            <th class="hidden px-2 py-3 text-center font-semibold lg:table-cell" title="Legdifferenz">+/-</th>
+            <th class="py-3 pl-2 pr-4 text-right font-semibold sm:pr-5">Pkt</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+        <tbody class="divide-y divide-zinc-100 dark:divide-white/[0.05]">
           {#each tableData as team}
-            <tr class="bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors duration-150"
-                class:bg-blue-50={team.isCurrentTeam}
-                class:dark:bg-blue-900={team.isCurrentTeam}
-                class:hover:bg-blue-100={team.isCurrentTeam}
-                class:dark:hover:bg-blue-800={team.isCurrentTeam}>
-              <td class="px-3 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{team.position}.</td>
-              <td class="px-3 py-4 text-sm text-gray-900 dark:text-white font-medium">{team.team}</td>
-              <td class="px-3 py-4 whitespace-nowrap text-sm text-center text-gray-900 dark:text-white">{team.games}</td>
-              <td class="px-3 py-4 whitespace-nowrap text-sm text-center text-gray-900 dark:text-white">{team.wins}</td>
-              <td class="px-3 py-4 whitespace-nowrap text-sm text-center text-gray-900 dark:text-white">{team.draws}</td>
-              <td class="px-3 py-4 whitespace-nowrap text-sm text-center text-gray-900 dark:text-white">{team.losses}</td>
-              <td class="px-3 py-4 whitespace-nowrap text-sm text-center text-gray-900 dark:text-white font-semibold">{team.points}</td>
-              <td class="px-3 py-4 whitespace-nowrap text-sm text-center text-gray-900 dark:text-white border-l-2 border-gray-200 dark:border-gray-700">{team.sets}</td>
-              <td class="px-3 py-4 whitespace-nowrap text-sm text-center text-gray-900 dark:text-white">{team.setDiff}</td>
-              <td class="px-3 py-4 whitespace-nowrap text-sm text-center text-gray-900 dark:text-white border-l-2 border-gray-200 dark:border-gray-700">{team.legs}</td>
-              <td class="px-3 py-4 whitespace-nowrap text-sm text-center text-gray-900 dark:text-white">{team.legDiff}</td>
+            <tr class="relative transition-colors {team.isCurrentTeam ? 'bg-brand-50/80 dark:bg-brand-500/10' : 'hover:bg-zinc-50 dark:hover:bg-white/[0.03]'}">
+              <td class="relative py-3 pl-4 pr-2 sm:pl-5">
+                {#if team.isCurrentTeam}<span class="absolute inset-y-1.5 left-0 w-1 rounded-r-full bg-brand-500"></span>{/if}
+                <span class="num inline-flex h-7 w-7 items-center justify-center rounded-lg text-xs font-bold {team.position === 1
+                  ? 'bg-draw-400 text-zinc-900'
+                  : team.isCurrentTeam
+                    ? 'bg-brand-600 text-white dark:bg-brand-500'
+                    : 'bg-zinc-100 text-zinc-600 dark:bg-white/[0.06] dark:text-zinc-300'}">{team.position}</span>
+              </td>
+              <td class="max-w-[160px] px-2 py-3 sm:max-w-none">
+                <span class="block truncate {team.isCurrentTeam ? 'font-semibold text-zinc-900 dark:text-white' : 'font-medium text-zinc-700 dark:text-zinc-200'}">
+                  <span class="sm:hidden">{getShortTeamName({ id: team.participantId, displayName: team.team })}</span>
+                  <span class="hidden sm:inline">{team.team}</span>
+                </span>
+                <span class="text-[11px] tabular-nums text-zinc-400 sm:hidden">{team.wins}S · {team.draws}U · {team.losses}N</span>
+              </td>
+              <td class="px-2 py-3 text-center tabular-nums text-zinc-600 dark:text-zinc-300">{team.games}</td>
+              <td class="hidden px-2 py-3 text-center tabular-nums text-zinc-600 sm:table-cell dark:text-zinc-300">{team.wins}</td>
+              <td class="hidden px-2 py-3 text-center tabular-nums text-zinc-600 sm:table-cell dark:text-zinc-300">{team.draws}</td>
+              <td class="hidden px-2 py-3 text-center tabular-nums text-zinc-600 sm:table-cell dark:text-zinc-300">{team.losses}</td>
+              <td class="hidden border-l border-zinc-100 px-2 py-3 text-center tabular-nums text-zinc-500 md:table-cell dark:border-white/[0.06] dark:text-zinc-400">{team.sets}</td>
+              <td class="px-2 py-3 text-center text-xs font-semibold tabular-nums {team.setDiff > 0 ? 'text-win-600 dark:text-win-400' : team.setDiff < 0 ? 'text-loss-600 dark:text-loss-400' : 'text-zinc-400'}">{team.setDiff > 0 ? '+' : ''}{team.setDiff}</td>
+              <td class="hidden border-l border-zinc-100 px-2 py-3 text-center tabular-nums text-zinc-500 lg:table-cell dark:border-white/[0.06] dark:text-zinc-400">{team.legs}</td>
+              <td class="hidden px-2 py-3 text-center text-xs font-semibold tabular-nums lg:table-cell {team.legDiff > 0 ? 'text-win-600 dark:text-win-400' : team.legDiff < 0 ? 'text-loss-600 dark:text-loss-400' : 'text-zinc-400'}">{team.legDiff > 0 ? '+' : ''}{team.legDiff}</td>
+              <td class="py-3 pl-2 pr-4 text-right sm:pr-5">
+                <span class="num text-base font-bold text-zinc-900 dark:text-white">{team.points}</span>
+              </td>
             </tr>
           {/each}
         </tbody>
       </table>
     </div>
-
-    <!-- Mobile Cards -->
-    <div class="sm:hidden space-y-3">
-      {#each tableData as team}
-        <div class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700"
-             class:bg-blue-50={team.isCurrentTeam}
-             class:dark:bg-blue-900={team.isCurrentTeam}
-             class:border-blue-200={team.isCurrentTeam}
-             class:dark:border-blue-600={team.isCurrentTeam}>
-          <div class="flex items-center justify-between mb-3">
-            <div class="flex items-center space-x-3">
-              <span class="text-lg font-bold text-gray-900 dark:text-white">{team.position}.</span>
-              <span class="text-gray-900 dark:text-white font-medium">{team.team}</span>
-            </div>
-            <span class="text-gray-900 dark:text-white font-bold text-lg">{team.points}</span>
-          </div>
-          
-          <div class="grid grid-cols-4 gap-4 text-sm">
-            <div class="text-center">
-              <div class="text-gray-500 dark:text-gray-400">Spiele</div>
-              <div class="text-gray-900 dark:text-white font-medium">{team.games}</div>
-            </div>
-            <div class="text-center">
-              <div class="text-gray-500 dark:text-gray-400">S/U/N</div>
-              <div class="text-gray-900 dark:text-white font-medium">{team.wins}/{team.draws}/{team.losses}</div>
-            </div>
-            <div class="text-center">
-              <div class="text-gray-500 dark:text-gray-400">Games</div>
-              <div class="text-gray-900 dark:text-white font-medium">{team.sets}</div>
-            </div>
-            <div class="text-center">
-              <div class="text-gray-500 dark:text-gray-400">Legs</div>
-              <div class="text-gray-900 dark:text-white font-medium">{team.legs}</div>
-            </div>
-          </div>
-        </div>
-      {/each}
-    </div>
-  {:else}
+    <p class="border-t border-zinc-100 px-4 py-3 text-[11px] text-zinc-500 sm:px-5 dark:border-white/[0.06] dark:text-zinc-400">
+      Sp = Spiele · S/U/N = Siege/Unentschieden/Niederlagen · +/- = Differenz · Pkt = Punkte
+    </p>
+  {:else if !error}
     <!-- Empty State -->
-    <div class="text-center py-12">
-      <p class="text-gray-500 dark:text-gray-400">Die Tabelle wird nach dem ersten gewerteten Spiel angezeigt.</p>
+    <div class="flex flex-col items-center px-6 py-14 text-center">
+      <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-100 text-zinc-400 dark:bg-white/5">
+        <Icon name="trophy" size={22} />
+      </span>
+      <p class="mt-3 text-sm text-zinc-500 dark:text-zinc-400">Die Tabelle wird nach dem ersten gewerteten Spiel angezeigt.</p>
     </div>
   {/if}
 
   <!-- Error State -->
   {#if error}
-    <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mt-4">
-      <div class="flex">
-        <span class="text-red-400 text-xl mr-3">⚠️</span>
-        <div>
-          <h3 class="text-sm font-medium text-red-800 dark:text-red-200">Fehler</h3>
-          <p class="mt-1 text-sm text-red-700 dark:text-red-300">{error}</p>
-          <p class="mt-2 text-xs text-red-600 dark:text-red-400">Es werden keine Ersatzdaten angezeigt.</p>
-        </div>
+    <div class="m-4 flex gap-3 rounded-2xl border border-loss-200 bg-loss-50 p-4 dark:border-loss-500/30 dark:bg-loss-500/10" role="alert">
+      <Icon name="alert" size={20} class="mt-0.5 text-loss-500" />
+      <div>
+        <h3 class="text-sm font-semibold text-loss-800 dark:text-loss-200">Tabelle konnte nicht geladen werden</h3>
+        <p class="mt-1 text-sm text-loss-700 dark:text-loss-300">{error}</p>
+        <p class="mt-2 text-xs text-loss-600 dark:text-loss-400">Es werden keine Ersatzdaten angezeigt.</p>
       </div>
     </div>
   {/if}
