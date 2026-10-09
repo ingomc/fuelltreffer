@@ -35,6 +35,8 @@ Use `tests/*.test.mjs` and Node's built-in test runner for venue-data behavior; 
 
 Prefer the history's `feat:`, `fix:`, and `chore:` prefixes for focused commits. PRs should describe behavior/configuration changes, link issues, list validation, and include screenshots for UI changes.
 
+Do not add AI attribution anywhere: no `Co-Authored-By: Claude`, `Claude-Session:` or similar trailers in commit messages, and no "Generated with Claude Code" footers or session links in PR descriptions, PR comments, or issues.
+
 ## Security & Configuration
 
 Use `.env.example` for configuration. Production routing uses `APP_DOMAIN` (default: `darts.sc-oberfuellbach.de`); upstream data uses `TWOK_SOFTWARE_API_URL`. Umami is optional and its `PUBLIC_*` settings are build-time values. Video, chat, and streamer authentication have been removed. Never commit credentials or expose secrets through `PUBLIC_*` variables.
