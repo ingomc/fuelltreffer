@@ -82,7 +82,7 @@ if (teamParam) {
     <div class="space-y-5">
       <LiveScoring client:load databaseId={CURRENT_LEAGUE.api.databaseId} matchId={matchId} />
 
-      <div id="match-report-container">
+      <div id="match-report-container" data-event-id={eventId} data-match-id={matchId} data-team={teamParam}>
         <!-- Loading state -->
         <div id="loading" class="space-y-5" aria-busy="true" aria-label="Matchbericht wird geladen">
           <div class="skeleton h-56 rounded-3xl"></div>
@@ -109,25 +109,22 @@ if (teamParam) {
   </div>
 </Layout>
 
-<script type="module">
-  import { trackEvent, trackDartEvents } from '/src/utils/umami.js';
-  
-  // Get variables from Astro
-  const eventId = '{eventId}';
-  const matchId = '{matchId}';
-  const teamParam = '{teamParam}';
-  
+<script>
+  import { trackEvent, trackDartEvents } from '../../../../utils/umami.js';
+
+  // Values rendered by Astro onto the report container
+  const { eventId = '', matchId = '', team = '' } = document.getElementById('match-report-container')?.dataset ?? {};
+
   // Track initial page load
   trackEvent('match_report_loaded', {
-    event_id: String(eventId),
-    match_id: String(matchId),
-    has_team_param: !!teamParam && teamParam !== '',
-    team_param: teamParam && teamParam !== '' ? teamParam : null
+    event_id: eventId,
+    match_id: matchId,
+    has_team_param: team !== '',
+    team_param: team !== '' ? team : null
   });
 
-  // Expose to window for use in other parts of the script
-  window.trackEvent = trackEvent;
-  window.trackDartEvents = trackDartEvents;
+  // Expose to window for use in the inline report script
+  Object.assign(window, { trackEvent, trackDartEvents });
 </script>
 
 <script define:vars={{ eventId, matchId, teamParam }}>
