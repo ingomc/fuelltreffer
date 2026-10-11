@@ -1,6 +1,6 @@
 /* global AbortSignal */
 import { CURRENT_LEAGUE } from '@/config/league';
-import { isAllowedThreeKPath } from '@/lib/threek-proxy';
+import { allowedThreeKQuery, isAllowedThreeKPath } from '@/lib/threek-proxy';
 
 const json = (body, status) =>
   new Response(JSON.stringify(body), {
@@ -8,14 +8,14 @@ const json = (body, status) =>
     headers: { 'Content-Type': 'application/json' },
   });
 
-export async function GET({ params }) {
+export async function GET({ params, url }) {
   const path = params.path ?? '';
   if (!isAllowedThreeKPath(path)) {
     return json({ error: 'Path not allowed' }, 404);
   }
 
   const apiUrl = process.env.TWOK_SOFTWARE_API_URL || CURRENT_LEAGUE.api.twokSoftwareBaseUrl;
-  const upstreamUrl = `${apiUrl}/${path}`;
+  const upstreamUrl = `${apiUrl}/${path}${allowedThreeKQuery(path, url.searchParams)}`;
   const start = Date.now();
 
   try {
