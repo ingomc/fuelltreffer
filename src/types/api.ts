@@ -134,3 +134,30 @@ export interface ApiError {
   error: string;
   message: string;
 }
+
+/** Public read-only integration used by SCO Dartcams. */
+export interface DartcamsTeam {
+  participantId: number;
+  name: string;
+  logoUrl: string | null;
+}
+
+export interface DartcamsFixture {
+  matchId: number;
+  eventId: number;
+  databaseId: number;
+  roundName: string;
+  datePlanned: string;
+  status: 'live' | 'upcoming' | 'finished';
+  liveUrl: string;
+  home: DartcamsTeam;
+  guest: DartcamsTeam;
+}
+
+export interface DartcamsContext {
+  version: 1;
+  fetchedAt: string;
+  stale: boolean;
+  logosStale: boolean;
+  fixture: DartcamsFixture | null;
+}
