@@ -1,5 +1,6 @@
 /* global AbortSignal */
 import { CURRENT_LEAGUE } from '@/config/league';
+import { THREE_K_USER_AGENT } from '@/config/threek';
 import { allowedThreeKQuery, isAllowedThreeKPath } from '@/lib/threek-proxy';
 
 const json = (body, status) =>
@@ -20,7 +21,7 @@ export async function GET({ params, url }) {
 
   try {
     const apiResponse = await fetch(upstreamUrl, {
-      headers: { 'User-Agent': 'Fuelltreffer-SSR/1.0' },
+      headers: { 'User-Agent': THREE_K_USER_AGENT },
       signal: AbortSignal.timeout(15_000),
     });
     console.info(`[proxy:3k] path=${path} upstream_status=${apiResponse.status} duration_ms=${Date.now() - start}`);

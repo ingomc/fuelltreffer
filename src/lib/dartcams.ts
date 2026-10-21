@@ -1,4 +1,5 @@
 import { CURRENT_LEAGUE } from '../config/league.ts';
+import { THREE_K_USER_AGENT } from '../config/threek.ts';
 import type { DartcamsContext, DartcamsFixture, DartcamsTeam } from '../types/api.ts';
 
 const MINUTE = 60_000;
@@ -80,15 +81,15 @@ export function createDartcamsContextService(options: {
   let logosAttemptedAt = -Infinity;
   let pending: Promise<void> | null = null;
 
-  async function json(url: string, timeout: number): Promise<unknown> {
-    const response = await fetcher(url, { signal: AbortSignal.timeout(timeout), headers: { accept: 'application/json', 'User-Agent': 'Fuelltreffer-Dartcams/1.0' } });
+  async function json(url: string, timeout: number, userAgent = 'Fuelltreffer-Dartcams/1.0'): Promise<unknown> {
+    const response = await fetcher(url, { signal: AbortSignal.timeout(timeout), headers: { accept: 'application/json', 'User-Agent': userAgent } });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     return response.json();
   }
 
   async function refreshFixtures() {
     try {
-      fixtures = readFixtures(await json(`${apiBase}/participant/${CURRENT_LEAGUE.defaultParticipantId}`, 8000));
+      fixtures = readFixtures(await json(`${apiBase}/participant/${CURRENT_LEAGUE.defaultParticipantId}`, 8000, THREE_K_USER_AGENT));
       fetchedAt = new Date(now()).toISOString();
       stale = false;
     } catch {

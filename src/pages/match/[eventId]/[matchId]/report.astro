@@ -2,6 +2,7 @@
 import Layout from '../../../../layouts/Layout.astro';
 import LiveScoring from '../../../../components/svelte/LiveScoring.svelte';
 import { CURRENT_LEAGUE } from '../../../../config/league';
+import { THREE_K_USER_AGENT } from '../../../../config/threek';
 
 const { eventId, matchId } = Astro.params;
 
@@ -43,7 +44,7 @@ if (teamParam) {
     const apiBaseUrl = process.env.TWOK_SOFTWARE_API_URL || CURRENT_LEAGUE.api.twokSoftwareBaseUrl;
     const response = await fetch(`${apiBaseUrl}/participant/${teamParam}`, {
       headers: {
-        'User-Agent': 'Fuelltreffer-SSR/1.0'
+        'User-Agent': THREE_K_USER_AGENT
       }
     });
 

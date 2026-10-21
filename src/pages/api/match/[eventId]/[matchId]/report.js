@@ -3,6 +3,7 @@
  * GET /api/match/:eventId/:matchId/report
  */
 import { CURRENT_LEAGUE } from '@/config/league';
+import { THREE_K_USER_AGENT } from '@/config/threek';
 
 export async function GET({ params }) {
   const { eventId, matchId } = params;
@@ -25,8 +26,7 @@ export async function GET({ params }) {
     
     const response = await fetch(apiUrl, {
       headers: {
-        // 3K rejects requests with Node's default User-Agent.
-        'User-Agent': 'Fuelltreffer-SSR/1.0',
+        'User-Agent': THREE_K_USER_AGENT,
         'Accept': 'application/json'
       }
     });
