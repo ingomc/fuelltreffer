@@ -1,5 +1,6 @@
 // Helpers shared by the dashboard widgets for interpreting participant matches.
 import { CURRENT_LEAGUE } from '../config/league';
+import venueSnapshot from '../data/venues.snapshot.json';
 
 const FINISHED_STATUSES = ['FINISHED', 'FINISH', 'ENDED', 'COMPLETE'];
 
@@ -123,25 +124,22 @@ export function getInitials(name = '') {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
 
-const AVATAR_STYLES = [
-  'from-indigo-400 to-indigo-600',
-  'from-sky-400 to-blue-600',
-  'from-emerald-400 to-teal-600',
-  'from-amber-400 to-orange-600',
-  'from-rose-400 to-pink-600',
-  'from-violet-400 to-purple-600',
-  'from-cyan-400 to-sky-600',
-  'from-lime-400 to-green-600'
-];
-
-/** Stable gradient classes for avatar bubbles derived from a name. */
-export function getAvatarStyle(name = '') {
-  let hash = 0;
-  for (const char of name) hash = (hash * 31 + char.codePointAt(0)) >>> 0;
-  return AVATAR_STYLES[hash % AVATAR_STYLES.length];
-}
-
 /** Short team name from the league configuration, falling back to the display name. */
 export function getShortTeamName(team) {
   return CURRENT_LEAGUE.teams.find(entry => isSameId(entry.id, team?.id))?.shortName || team?.displayName || '';
+}
+
+/** Compact date for list rows, e.g. { weekday: 'Fr', date: '13.11.', time: '18:00' }. */
+export function formatShortDate(dateString) {
+  const date = new Date(dateString);
+  return {
+    weekday: WEEKDAYS_SHORT[date.getDay()],
+    date: date.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' }),
+    time: date.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
+  };
+}
+
+/** Name of a team's home venue from the checked-in venue snapshot, if known. */
+export function getVenueName(teamId) {
+  return venueSnapshot.teams.find(entry => isSameId(entry.teamId, teamId))?.venue?.name || '';
 }

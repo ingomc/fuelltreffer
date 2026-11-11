@@ -4,6 +4,9 @@
   import { trackEvent } from '/src/utils/umami.js';
   import Icon from './Icon.svelte';
 
+  // 'segmented' for the sidebar, 'icon' for the compact mobile header
+  export let variant = 'segmented';
+
   let currentTheme = 'system';
   
   // Subscribe to theme changes
@@ -27,12 +30,12 @@
   }
 
   const themes = [
-    { id: 'system', label: 'System', icon: 'monitor', description: 'Folgt Systemeinstellung' },
     { id: 'light', label: 'Hell', icon: 'sun', description: 'Heller Modus' },
-    { id: 'dark', label: 'Dunkel', icon: 'moon', description: 'Dunkler Modus' }
+    { id: 'dark', label: 'Dunkel', icon: 'moon', description: 'Dunkler Modus' },
+    { id: 'system', label: 'System', icon: 'monitor', description: 'Folgt Systemeinstellung' }
   ];
 
-  $: activeTheme = themes.find(t => t.id === currentTheme) || themes[0];
+  $: activeTheme = themes.find(t => t.id === currentTheme) || themes[2];
 
   function cycleTheme() {
     const index = themes.findIndex(t => t.id === currentTheme);
@@ -40,35 +43,34 @@
   }
 </script>
 
-<!-- Mobile: single button cycling through the modes -->
-<button
-  type="button"
-  class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-zinc-200 bg-white/80 text-zinc-600 transition-colors hover:text-zinc-900 sm:hidden dark:border-white/10 dark:bg-white/5 dark:text-zinc-300 dark:hover:text-white"
-  on:click={cycleTheme}
-  aria-label="Darstellung: {activeTheme.label} (wechseln)"
-  title="Darstellung: {activeTheme.label}"
-  data-track="theme-switch"
-  data-track-value={activeTheme.id}
->
-  <Icon name={activeTheme.icon} size={16} />
-</button>
-
-<!-- Desktop: segmented control -->
-<div class="hidden h-9 items-center gap-0.5 rounded-xl border border-zinc-200 bg-white/80 p-1 sm:flex dark:border-white/10 dark:bg-white/5" role="group" aria-label="Darstellung">
-  {#each themes as themeOption}
-    <button
-      type="button"
-      class="inline-flex h-7 w-7 items-center justify-center rounded-lg transition-colors {currentTheme === themeOption.id
-        ? 'bg-zinc-900 text-white shadow-sm dark:bg-white dark:text-zinc-900'
-        : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white'}"
-      on:click={() => setTheme(themeOption.id)}
-      aria-pressed={currentTheme === themeOption.id}
-      aria-label={themeOption.description}
-      title={themeOption.description}
-      data-track="theme-switch"
-      data-track-value={themeOption.id}
-    >
-      <Icon name={themeOption.icon} size={14} />
-    </button>
-  {/each}
-</div>
+{#if variant === 'icon'}
+  <button
+    type="button"
+    class="btn-default w-11 shrink-0 px-0"
+    on:click={cycleTheme}
+    aria-label="Darstellung: {activeTheme.label} (wechseln)"
+    title="Darstellung: {activeTheme.label}"
+    data-track="theme-switch"
+    data-track-value={activeTheme.id}
+  >
+    <Icon name={activeTheme.icon} size={18} strokeWidth={1.6} />
+  </button>
+{:else}
+  <div class="flex gap-0.5 rounded-md bg-gray-100 p-1 dark:bg-dark-800" role="group" aria-label="Darstellung">
+    {#each themes as themeOption}
+      <button
+        type="button"
+        class="min-h-[36px] flex-1 rounded-[5px] text-[13px] font-medium transition-colors {currentTheme === themeOption.id
+          ? 'bg-white text-gray-950 shadow-paper dark:bg-dark-400 dark:text-white dark:shadow-none'
+          : 'text-gray-700 hover:text-gray-950 dark:text-dark-150 dark:hover:text-white'}"
+        on:click={() => setTheme(themeOption.id)}
+        aria-pressed={currentTheme === themeOption.id}
+        title={themeOption.description}
+        data-track="theme-switch"
+        data-track-value={themeOption.id}
+      >
+        {themeOption.label}
+      </button>
+    {/each}
+  </div>
+{/if}

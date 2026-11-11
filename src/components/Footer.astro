@@ -2,56 +2,30 @@
 import { Image } from 'astro:assets';
 import avatarImage from '../assets/andre-emoji.png';
 import { CURRENT_LEAGUE_TITLE } from '../config/league';
-import Icon from './Icon.astro';
-import Logo from './Logo.astro';
 ---
 
-<footer class="mt-16 border-t border-zinc-200/70 dark:border-white/[0.06]">
-  <div class="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-    <div class="flex items-center gap-3">
-      <Logo size={28} />
-      <div class="leading-tight">
-        <p class="font-display text-sm font-semibold text-zinc-900 dark:text-white">Fülltreffer Dashboard</p>
-        <p class="text-xs text-zinc-500 dark:text-zinc-400">{CURRENT_LEAGUE_TITLE}</p>
-      </div>
-    </div>
-
-    <nav aria-label="Weitere Seiten" class="flex items-center gap-1 text-sm">
-      <a href="/" class="btn-ghost px-3 py-1.5">
-        <Icon name="dashboard" size={15} /> Dashboard
-      </a>
-      <a href="/spielorte" class="btn-ghost px-3 py-1.5">
-        <Icon name="map-pin" size={15} /> Spielorte
-      </a>
-    </nav>
-
+<footer class="divider mt-10 border-t">
+  <div class="flex flex-wrap items-center justify-between gap-4 px-4 py-5 sm:px-6 lg:px-9">
+    <p class="dimmed text-xs">Fülltreffer Dashboard · {CURRENT_LEAGUE_TITLE}</p>
     <a
       href="https://andre-bellmann.de"
       target="_blank"
       rel="noopener noreferrer"
-      class="group flex items-center gap-3 rounded-2xl border border-zinc-200/80 bg-white/60 py-1.5 pl-1.5 pr-4 transition-colors hover:border-brand-300 dark:border-white/[0.07] dark:bg-white/[0.03] dark:hover:border-brand-500/50"
+      class="dimmed group flex items-center gap-2.5 rounded-md text-xs"
     >
-      <span class="relative block h-10 w-10 overflow-hidden rounded-xl bg-gradient-to-br from-brand-400 to-brand-700 p-0.5">
-        <Image
-          src={avatarImage}
-          alt="Andre Bellmann Avatar"
-          width={40}
-          height={40}
-          densities={[1, 2]}
-          quality={95}
-          format="webp"
-          class="h-full w-full rounded-[10px] bg-white object-cover transition-transform duration-300 group-hover:scale-110 dark:bg-zinc-900"
-          loading="lazy"
-          decoding="async"
-        />
-      </span>
-      <span class="leading-tight">
-        <span class="flex items-center gap-1 text-xs text-zinc-500 dark:text-zinc-400">
-          Made with <Icon name="heart" size={12} class="fill-rose-500 text-rose-500" /> by
-        </span>
-        <span class="text-sm font-semibold text-zinc-900 group-hover:text-brand-600 dark:text-white dark:group-hover:text-brand-400">Andre Bellmann</span>
-      </span>
-      <span class="ml-1 text-xs text-zinc-400">© {new Date().getFullYear()}</span>
+      <Image
+        src={avatarImage}
+        alt="Andre Bellmann Avatar"
+        width={28}
+        height={28}
+        densities={[1, 2]}
+        quality={95}
+        format="webp"
+        class="h-7 w-7 rounded-full bg-gray-100 object-cover dark:bg-dark-500"
+        loading="lazy"
+        decoding="async"
+      />
+      <span>Made with ♥ by <span class="heading font-semibold group-hover:underline">Andre Bellmann</span> · © {new Date().getFullYear()}</span>
     </a>
   </div>
 </footer>

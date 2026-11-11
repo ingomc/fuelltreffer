@@ -1,7 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import Icon from './Icon.svelte';
-  import { getAvatarStyle, getInitials } from '../../lib/match-utils';
+  import { getInitials } from '../../lib/match-utils';
   
   export let participant;
   export let teamSeason;
@@ -55,38 +55,36 @@
   ];
 </script>
 
-<div class="space-y-4">
-  <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+<div class="flex flex-col gap-4">
+  <div class="grid grid-cols-2 gap-4 xl:grid-cols-4">
     {#each stats as stat}
-      <div class="card flex items-center gap-3 p-3 sm:p-4">
-        <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-zinc-100 text-zinc-500 dark:bg-white/5 dark:text-zinc-400">
-          <Icon name={stat.icon} size={16} />
-        </span>
-        <div class="leading-tight">
-          <p class="num text-xl font-bold text-zinc-900 dark:text-white">{stat.value}</p>
-          <p class="text-xs text-zinc-500 dark:text-zinc-400">{stat.label}</p>
+      <div class="paper flex min-w-0 flex-col gap-2.5 p-4">
+        <div class="flex items-center justify-between gap-2">
+          <span class="label truncate">{stat.label}</span>
+          <span class="shrink-0 text-gray-600 dark:text-dark-200"><Icon name={stat.icon} size={22} strokeWidth={1.5} /></span>
         </div>
+        <span class="heading text-[28px] font-bold leading-none tabular-nums">{stat.value}</span>
       </div>
     {/each}
   </div>
 
-  <div class="card overflow-hidden">
-    <div class="card-header">
+  <section class="paper flex flex-col overflow-hidden">
+    <div class="paper-head">
       <div>
-        <p class="text-sm font-semibold text-zinc-900 dark:text-white">Kader</p>
-        <p class="text-xs text-zinc-500 dark:text-zinc-400">{members.length} gemeldete Spieler</p>
+        <h2 class="paper-title">Kader</h2>
+        <p class="dimmed text-xs">{members.length} gemeldete Spieler</p>
       </div>
-      <div class="inline-flex rounded-xl border border-zinc-200 bg-zinc-50 p-0.5 dark:border-white/10 dark:bg-white/5" role="group" aria-label="Ansicht">
+      <div class="flex gap-0.5 rounded-md bg-gray-100 p-1 dark:bg-dark-800" role="group" aria-label="Ansicht">
         {#each [{ table: false, label: 'Karten', icon: 'grid' }, { table: true, label: 'Liste', icon: 'list' }] as view}
           <button
             type="button"
             aria-pressed={showMembersTable === view.table}
-            class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors {showMembersTable === view.table
-              ? 'bg-white text-zinc-900 shadow-sm dark:bg-white/15 dark:text-white'
-              : 'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white'}"
+            class="inline-flex min-h-[36px] items-center gap-1.5 rounded-[5px] px-3 text-[13px] font-medium transition-colors {showMembersTable === view.table
+              ? 'bg-white text-gray-950 shadow-paper dark:bg-dark-400 dark:text-white dark:shadow-none'
+              : 'text-gray-700 hover:text-gray-950 dark:text-dark-150 dark:hover:text-white'}"
             on:click={() => updateView(view.table)}
           >
-            <Icon name={view.icon} size={13} />
+            <Icon name={view.icon} size={14} strokeWidth={1.6} />
             {view.label}
           </button>
         {/each}
@@ -94,45 +92,43 @@
     </div>
 
     {#if members.length === 0}
-      <div class="flex flex-col items-center px-6 py-14 text-center">
-        <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-100 text-zinc-400 dark:bg-white/5">
-          <Icon name="users" size={22} />
-        </span>
-        <p class="mt-3 text-sm text-zinc-500 dark:text-zinc-400">Keine Mitglieder gefunden</p>
+      <div class="divider flex flex-col items-center border-t px-6 py-12 text-center">
+        <span class="text-gray-600 dark:text-dark-200"><Icon name="users" size={28} strokeWidth={1.5} /></span>
+        <p class="dimmed mt-3">Keine Mitglieder gefunden</p>
       </div>
     {:else if showMembersTable}
       <div class="overflow-x-auto">
-        <table class="min-w-full text-sm">
+        <table class="w-full border-collapse">
           <thead>
-            <tr class="text-left text-[11px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-              <th class="px-4 py-2.5 font-semibold sm:px-5">Spieler</th>
-              <th class="px-4 py-2.5 font-semibold">Rolle</th>
-              <th class="px-4 py-2.5 text-right font-semibold sm:px-5">Status</th>
+            <tr class="heading text-left">
+              <th class="divider border-t py-2.5 pl-5 pr-2 font-bold">Spieler</th>
+              <th class="divider border-t px-2 py-2.5 font-bold">Rolle</th>
+              <th class="divider border-t py-2.5 pl-2 pr-5 text-right font-bold">Status</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-zinc-100 dark:divide-white/[0.05]">
+          <tbody>
             {#each sortedMembers as member}
-              <tr class="transition-colors hover:bg-zinc-50 dark:hover:bg-white/[0.03] {isInactive(member) ? 'opacity-60' : ''}">
-                <td class="px-4 py-2.5 sm:px-5">
+              <tr class={isInactive(member) ? 'opacity-60' : ''}>
+                <td class="divider border-t py-2.5 pl-5 pr-2">
                   <div class="flex items-center gap-3">
-                    <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br text-[11px] font-bold text-white {getAvatarStyle(member.displayName)}">{getInitials(member.displayName)}</span>
-                    <span class="truncate font-medium text-zinc-900 dark:text-zinc-100">{member.displayName}</span>
+                    <span aria-hidden="true" class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-100 text-xs font-bold text-gray-700 dark:bg-dark-500 dark:text-dark-50">{getInitials(member.displayName)}</span>
+                    <span class="heading truncate font-medium">{member.displayName}</span>
                   </div>
                 </td>
-                <td class="px-4 py-2.5 text-zinc-600 dark:text-zinc-300">
+                <td class="divider border-t px-2 py-2.5">
                   {#if member.tc1}
-                    <span class="inline-flex items-center gap-1 text-draw-600 dark:text-draw-400"><Icon name="crown" size={13} /> Kapitän 1</span>
+                    <span class="badge-brand"><Icon name="crown" size={12} />Kapitän 1</span>
                   {:else if member.tc2}
-                    <span class="inline-flex items-center gap-1 text-zinc-600 dark:text-zinc-300"><Icon name="crown" size={13} /> Kapitän 2</span>
+                    <span class="badge-brand"><Icon name="crown" size={12} />Kapitän 2</span>
                   {:else}
-                    <span class="text-zinc-400">Spieler</span>
+                    <span class="dimmed">Spieler</span>
                   {/if}
                 </td>
-                <td class="px-4 py-2.5 text-right sm:px-5">
+                <td class="divider border-t py-2.5 pl-2 pr-5 text-right">
                   {#if isInactive(member)}
-                    <span class="inline-flex items-center gap-1.5 text-xs font-medium text-loss-600 dark:text-loss-400" title="Aus dem Team ausgetreten"><span class="h-1.5 w-1.5 rounded-full bg-loss-500"></span>Inaktiv</span>
+                    <span class="badge-gray" title="Aus dem Team ausgetreten">Inaktiv</span>
                   {:else}
-                    <span class="inline-flex items-center gap-1.5 text-xs font-medium text-win-600 dark:text-win-400"><span class="h-1.5 w-1.5 rounded-full bg-win-500"></span>Aktiv</span>
+                    <span class="badge-win">Aktiv</span>
                   {/if}
                 </td>
               </tr>
@@ -141,29 +137,30 @@
         </table>
       </div>
     {:else}
-      <ul class="grid gap-3 p-3 sm:grid-cols-2 sm:p-4 xl:grid-cols-3">
+      <ul class="divider grid gap-3 border-t p-4 sm:grid-cols-2 sm:p-5 2xl:grid-cols-3">
         {#each sortedMembers as member}
-          <li class="group flex items-center gap-3 rounded-xl border border-zinc-100 bg-zinc-50/60 p-3 transition-colors hover:border-zinc-200 hover:bg-white dark:border-white/[0.05] dark:bg-white/[0.02] dark:hover:border-white/10 dark:hover:bg-white/[0.04] {isInactive(member) ? 'opacity-60' : ''}">
-            <span class="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br text-sm font-bold text-white shadow-sm {getAvatarStyle(member.displayName)}">
-              {getInitials(member.displayName)}
-              {#if member.tc1 || member.tc2}
-                <span class="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-draw-400 text-zinc-900 dark:border-zinc-900" title={member.tc1 ? 'Team-Kapitän 1' : 'Team-Kapitän 2'}>
-                  <Icon name="crown" size={10} strokeWidth={2.5} />
-                </span>
-              {/if}
-            </span>
+          <li class="divider flex items-center gap-3 rounded-xl border p-3 {isInactive(member) ? 'opacity-60' : ''}">
+            <span
+              aria-hidden="true"
+              class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[13px] font-bold {member.tc1 || member.tc2
+                ? 'bg-brand-700/10 text-brand-700 dark:bg-brand-700/25 dark:text-brand-300'
+                : 'bg-gray-100 text-gray-700 dark:bg-dark-500 dark:text-dark-50'}"
+            >{getInitials(member.displayName)}</span>
             <div class="min-w-0 flex-1">
-              <p class="truncate text-sm font-semibold text-zinc-900 dark:text-white">{member.displayName}</p>
-              <p class="text-xs text-zinc-500 dark:text-zinc-400">
+              <p class="heading truncate font-semibold">{member.displayName}</p>
+              <p class="dimmed text-xs">
                 {#if member.tc1}Kapitän 1{:else if member.tc2}Kapitän 2{:else}Spieler{/if}
               </p>
             </div>
+            {#if member.tc1 || member.tc2}
+              <span class="badge-brand shrink-0" title={member.tc1 ? 'Team-Kapitän 1' : 'Team-Kapitän 2'}><Icon name="crown" size={12} />{member.tc1 ? 'TC 1' : 'TC 2'}</span>
+            {/if}
             {#if isInactive(member)}
-              <span class="rounded-md bg-loss-50 px-2 py-0.5 text-[11px] font-medium text-loss-700 dark:bg-loss-500/10 dark:text-loss-300" title="Aus dem Team ausgetreten">Inaktiv</span>
+              <span class="badge-gray shrink-0" title="Aus dem Team ausgetreten">Inaktiv</span>
             {/if}
           </li>
         {/each}
       </ul>
     {/if}
-  </div>
+  </section>
 </div>

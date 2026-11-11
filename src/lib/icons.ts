@@ -30,6 +30,9 @@ export const ICONS = {
   code: '<path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/>',
   'user-x': '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m17 8 5 5M22 8l-5 5"/>',
   dashboard: '<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>',
+  star: '<path d="m12 17.75-6.17 3.25 1.18-6.87-5-4.87 6.9-1L12 2l3.09 6.26 6.9 1-5 4.87 1.18 6.87z"/>',
+  table: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/>',
+  'chart-line': '<path d="M4 19h16"/><path d="m4 15 4-6 4 2 4-5 4 4"/>',
   heart: '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>',
 } as const;
 

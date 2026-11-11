@@ -3,7 +3,7 @@
   export let address;
   export let onGoogle;
   export let expanded = false;
-  const style = 'btn-primary w-full py-2.5';
+  const style = 'btn-filled w-full';
 </script>
 
 {#if provider === 'google'}
