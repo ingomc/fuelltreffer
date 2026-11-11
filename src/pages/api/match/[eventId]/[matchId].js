@@ -1,4 +1,5 @@
 import { CURRENT_LEAGUE } from '@/config/league';
+import { THREE_K_USER_AGENT } from '@/config/threek';
 
 export async function GET({ params }) {
   const { eventId, matchId } = params;
@@ -22,7 +23,7 @@ export async function GET({ params }) {
 
     const apiResponse = await fetch(upstreamUrl, {
       headers: {
-        'User-Agent': 'Fuelltreffer-SSR/1.0'
+        'User-Agent': THREE_K_USER_AGENT
       }
     });
 

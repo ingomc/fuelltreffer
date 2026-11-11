@@ -1,5 +1,6 @@
 import { writeFile } from 'node:fs/promises';
 import { CURRENT_LEAGUE } from '../src/config/league.ts';
+import { THREE_K_USER_AGENT } from '../src/config/threek.ts';
 import { parseParticipant } from '../src/lib/venue-data.ts';
 
 // Manual maintenance only. Do not attach this to a build or deploy hook.
@@ -8,7 +9,7 @@ const teams = [];
 for (const team of CURRENT_LEAGUE.teams) {
   const response = await fetch(`${baseUrl.replace(/\/$/, '')}/participant/${team.id}`, {
     signal: AbortSignal.timeout(8000),
-    headers: { 'User-Agent': 'Fuelltreffer-Spielorte/1.0 (+https://darts.sc-oberfuellbach.de)' },
+    headers: { 'User-Agent': THREE_K_USER_AGENT },
   });
   if (!response.ok) throw new Error(`${team.name}: HTTP ${response.status}; gespeicherter Datenstand bleibt unverändert.`);
   teams.push(parseParticipant(await response.json(), team));

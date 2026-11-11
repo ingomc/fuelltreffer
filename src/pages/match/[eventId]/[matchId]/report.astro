@@ -3,6 +3,7 @@ import Layout from '../../../../layouts/Layout.astro';
 import LiveScoring from '../../../../components/svelte/LiveScoring.svelte';
 import Icon from '../../../../components/Icon.astro';
 import { CURRENT_LEAGUE } from '../../../../config/league';
+import { THREE_K_USER_AGENT } from '../../../../config/threek';
 
 const { eventId, matchId } = Astro.params;
 
@@ -35,6 +36,7 @@ function getShortTeamName(participant?: MatchParticipant) {
 
 let matchTitle = 'Matchbericht';
 let matchDescription = 'Details zu diesem Dart-Match.';
+let initialMatchSummary: MatchSummary | null = null;
 
 // Match reports contain their team information only after the report has been
 // started. The participant endpoint always provides the match pairing.
@@ -43,13 +45,14 @@ if (teamParam) {
     const apiBaseUrl = process.env.TWOK_SOFTWARE_API_URL || CURRENT_LEAGUE.api.twokSoftwareBaseUrl;
     const response = await fetch(`${apiBaseUrl}/participant/${teamParam}`, {
       headers: {
-        'User-Agent': 'Fuelltreffer-SSR/1.0'
+        'User-Agent': THREE_K_USER_AGENT
       }
     });
 
     if (response.ok) {
       const participantData = await response.json() as ParticipantResponse;
       const match = participantData.matches?.find((candidate) => String(candidate.id) === String(matchId));
+      initialMatchSummary = match ?? null;
       const homeTeamName = getShortTeamName(match?.participantHome);
       const awayTeamName = getShortTeamName(match?.participantGuest);
 
@@ -127,7 +130,7 @@ if (teamParam) {
   Object.assign(window, { trackEvent, trackDartEvents });
 </script>
 
-<script define:vars={{ eventId, matchId, teamParam }}>
+<script define:vars={{ eventId, matchId, teamParam, initialMatchSummary, tableRoundIndex: CURRENT_LEAGUE.tableRoundIndex }}>
   function normalizeStatisticsResponse(payload) {
     if (Array.isArray(payload)) return payload;
     if (payload && Array.isArray(payload.statistics)) return payload.statistics;
@@ -152,8 +155,8 @@ if (teamParam) {
       const reportData = await reportResponse.json();
       
       const firstGame = reportData[0];
-      const phaseId = firstGame.round?.phase?.id || firstGame.phase?.id;
-      const roundIndex = firstGame.round?.roundIndex !== undefined ? firstGame.round.roundIndex : firstGame.roundNr;
+      const phaseId = firstGame?.round?.phase?.id || firstGame?.phase?.id;
+      let matchSummary = initialMatchSummary;
       
       // Simpler approach: Just load statistics for each game in THIS match report
       // We already have all games in reportData!
@@ -202,6 +205,23 @@ if (teamParam) {
           console.error('Failed to load team roster:', e);
         }
       }
+
+      matchSummary = teamRoster?.match || matchSummary;
+      // The report contains individual players. Resolve the parent team match
+      // independently of the optional team parameter (also for shared links).
+      if (!matchSummary && phaseId) {
+        try {
+          const roundResponse = await fetch(`/api/round/${eventId}/${phaseId}/${tableRoundIndex}`);
+          if (roundResponse.ok) {
+            const roundData = await roundResponse.json();
+            matchSummary = (roundData.matches || []).find(
+              (match) => String(match?.id) === String(matchId)
+            ) || null;
+          }
+        } catch (e) {
+          console.error('Failed to load match pairing:', e);
+        }
+      }
       
       // Hide loading
       loadingEl.classList.add('hidden');
@@ -221,7 +241,7 @@ if (teamParam) {
       }
       
       // Render the match report
-      renderMatchReport(reportData, gameStatsMap, teamRoster, contentEl);
+      renderMatchReport(reportData, gameStatsMap, teamRoster, matchSummary, contentEl);
       
     } catch (error) {
       console.error('Error fetching match report:', error);
@@ -467,7 +487,7 @@ if (teamParam) {
     `;
   }
 
-  function renderMatchReport(data, gameStatsMap, teamRoster, container) {
+  function renderMatchReport(data, gameStatsMap, teamRoster, matchSummary, container) {
     if (!data || data.length === 0) {
       container.innerHTML = '<div class="card px-6 py-14 text-center text-sm text-zinc-500 dark:text-zinc-400">Keine Daten verfügbar</div>';
       return;
@@ -476,28 +496,24 @@ if (teamParam) {
     // Get first match for general info
     const firstMatch = data[0];
     
-    // Try to find team names by looking at all participants
-    // Group by home/away and collect unique team names
+    // Only the parent match's display names identify teams. Individual report
+    // participants' display names identify players and must never be used here.
     const homeTeams = new Set();
     const awayTeams = new Set();
-    const summaryHomeTeamName = teamRoster?.match?.participantHome?.displayName || null;
-    const summaryAwayTeamName = teamRoster?.match?.participantGuest?.displayName || null;
+    const summaryHomeTeamName = matchSummary?.participantHome?.displayName || null;
+    const summaryAwayTeamName = matchSummary?.participantGuest?.displayName || null;
     
     data.forEach(match => {
-      const homeName = match.participantHome?.teamSeason?.team?.name || match.participantHome?.displayName;
-      const awayName = match.participantGuest?.teamSeason?.team?.name || match.participantGuest?.displayName;
+      const homeName = match.participantHome?.teamSeason?.team?.name || match.participantHome?.teamSeason?.name;
+      const awayName = match.participantGuest?.teamSeason?.team?.name || match.participantGuest?.teamSeason?.name;
       if (homeName) homeTeams.add(homeName);
       if (awayName) awayTeams.add(awayName);
     });
     
     const homeTeamName = summaryHomeTeamName ||
-                         (homeTeams.size === 1 ? [...homeTeams][0] : 
-                         firstMatch.participantHome?.teamSeason?.team?.name || firstMatch.participantHome?.displayName || 
-                         'Heimteam');
+                         (homeTeams.size === 1 ? [...homeTeams][0] : 'Heimteam');
     const awayTeamName = summaryAwayTeamName ||
-                         (awayTeams.size === 1 ? [...awayTeams][0] : 
-                         firstMatch.participantGuest?.teamSeason?.team?.name || firstMatch.participantGuest?.displayName || 
-                         'Gastteam');
+                         (awayTeams.size === 1 ? [...awayTeams][0] : 'Gastteam');
     
     let html = '';
 
@@ -616,6 +632,7 @@ if (teamParam) {
             </div>
             <span class="rounded-lg bg-zinc-100 px-2.5 py-1 font-display text-sm font-bold tabular-nums text-zinc-900 dark:bg-white/[0.06] dark:text-white" title="Spiele gewonnen in diesem Block">${blockHome}:${blockAway}</span>
           </div>
+          <!-- Games in Block -->
           <ul class="divide-y divide-zinc-100 dark:divide-white/[0.05]">
       `;
       

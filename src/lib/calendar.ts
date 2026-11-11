@@ -1,4 +1,5 @@
 import { CURRENT_LEAGUE } from '../config/league.ts';
+import { THREE_K_USER_AGENT } from '../config/threek.ts';
 
 export const REFRESH_MS = 6 * 60 * 60 * 1000;
 export type CalendarVenue = { name?: string; locationStreet?: string; locationPostalCode?: string; locationCity?: string; infoU18?: boolean; infoSmokers?: boolean; infoAccessible?: boolean; numberOfBoards?: number };
@@ -57,7 +58,7 @@ export function createCalendarCache(fetcher: typeof fetch = fetch, origin = 'htt
         await Promise.all(CURRENT_LEAGUE.teams.slice(index, index + 2).map(async team => {
           try {
             const base = process.env.TWOK_SOFTWARE_API_URL || CURRENT_LEAGUE.api.twokSoftwareBaseUrl;
-            const response = await fetcher(`${base.replace(/\/$/, '')}/participant/${team.id}`, { signal: AbortSignal.timeout(8000), headers: { 'User-Agent': 'Fuelltreffer-Kalender/1.0' } });
+            const response = await fetcher(`${base.replace(/\/$/, '')}/participant/${team.id}`, { signal: AbortSignal.timeout(8000), headers: { 'User-Agent': THREE_K_USER_AGENT } });
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const payload = await response.json();
             if (String(payload?.participant?.id) !== team.id || !Array.isArray(payload.matches) || payload.matches.some((match: unknown) => !match || typeof match !== 'object')) throw new Error('Ungültige Teilnehmerdaten');

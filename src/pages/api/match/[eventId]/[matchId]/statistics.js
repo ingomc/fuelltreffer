@@ -3,6 +3,7 @@
  * GET /api/match/:eventId/:matchId/statistics
  */
 import { CURRENT_LEAGUE } from '@/config/league';
+import { THREE_K_USER_AGENT } from '@/config/threek';
 
 export async function GET({ params }) {
   const { eventId, matchId } = params;
@@ -26,7 +27,7 @@ export async function GET({ params }) {
     const response = await fetch(apiUrl, {
       headers: {
         // Use the same app identification as the other 3K proxies.
-        'User-Agent': 'Fuelltreffer-SSR/1.0',
+        'User-Agent': THREE_K_USER_AGENT,
         'Accept': 'application/json'
       }
     });

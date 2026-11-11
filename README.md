@@ -274,3 +274,7 @@ This project was converted from a dual-service architecture (Astro static + Expr
 ---
 
 **Built with Astro SSR for Dokploy deployment** 🚀
+
+## SCO Dartcams
+
+`GET /api/dartcams/context` supplies the current or next own-team fixture, its 3K live link and team logo URLs from Dartstory. It is a public, read-only endpoint with browser CORS support. Team/season settings come from `src/config/league.ts`; optional `DARTSTORY_URL` changes the logo source. Deploy this endpoint before enabling the Dartcams integration. See [docs/dartcams.md](docs/dartcams.md) for selection, caching, fallback behavior and the versioned response contract.

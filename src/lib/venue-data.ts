@@ -1,3 +1,5 @@
+import { THREE_K_USER_AGENT } from '../config/threek.ts';
+
 export type Venue = {
   id: string;
   name: string;
@@ -89,7 +91,7 @@ export async function loadVenues(
       try {
         const response = await fetcher(`${options.baseUrl.replace(/\/$/, '')}/participant/${encodeURIComponent(team.id)}`, {
           signal: AbortSignal.timeout(timeoutMs),
-          headers: { 'User-Agent': 'Fuelltreffer-Spielorte/1.0 (+https://darts.sc-oberfuellbach.de)' },
+          headers: { 'User-Agent': THREE_K_USER_AGENT },
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         value = parseParticipant(await response.json(), team);
