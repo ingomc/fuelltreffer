@@ -2,13 +2,21 @@
 import Layout from '../../../../layouts/Layout.astro';
 import LiveScoring from '../../../../components/svelte/LiveScoring.svelte';
 import Icon from '../../../../components/Icon.astro';
-import { CURRENT_LEAGUE, CURRENT_LEAGUE_TITLE } from '../../../../config/league';
+import { CURRENT_LEAGUE, CURRENT_LEAGUE_TITLE, findLeagueTeam } from '../../../../config/league';
 import { THREE_K_USER_AGENT } from '../../../../config/threek';
+import { isNumericId } from '../../../../lib/threek-proxy';
 
 const { eventId, matchId } = Astro.params;
 
-// Get team parameter if present (for back navigation)
-const teamParam = Astro.url.searchParams.get('team');
+if (!isNumericId(eventId) || !isNumericId(matchId)) {
+  return new Response('Matchbericht nicht gefunden', {
+    status: 404,
+    headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+  });
+}
+
+// Team parameter for back navigation and roster; only teams of this league count
+const teamParam = findLeagueTeam(Astro.url.searchParams.get('team'))?.id ?? null;
 const backUrl = teamParam ? `/?team=${teamParam}` : '/';
 
 type MatchParticipant = {
@@ -263,7 +271,11 @@ if (teamParam) {
   function formatDate(dateString) {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
+    // 3K sends report times as league wall time without an offset, which must be
+    // shown unchanged in every browser; only real instants are converted.
+    const hasOffset = /(Z|[+-]\d{2}:?\d{2})$/.test(dateString);
     return date.toLocaleString('de-DE', {
+      ...(hasOffset ? { timeZone: 'Europe/Berlin' } : {}),
       weekday: 'long',
       year: 'numeric',
       month: 'long',

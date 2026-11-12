@@ -14,6 +14,11 @@ const ALLOWED_PATHS = [
 // The per-match performance list is only filled with ?matchReport=1.
 const ALLOWED_QUERY: [RegExp, string][] = [[/^event\/\d+\/performance\/match\/\d+$/, 'matchReport=1']];
 
+/** IDs in 3K URLs are plain integers; anything else never reaches the upstream API. */
+export function isNumericId(value: unknown): value is string {
+  return typeof value === 'string' && /^\d{1,15}$/.test(value);
+}
+
 export function isAllowedThreeKPath(path: string): boolean {
   return ALLOWED_PATHS.some((pattern) => pattern.test(path));
 }

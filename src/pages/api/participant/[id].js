@@ -1,11 +1,12 @@
 import { CURRENT_LEAGUE } from '@/config/league';
 import { THREE_K_USER_AGENT } from '@/config/threek';
+import { isNumericId } from '@/lib/threek-proxy';
 
 export async function GET({ params }) {
   const { id } = params;
   
-  if (!id) {
-    return new Response(JSON.stringify({ error: 'Participant ID is required' }), {
+  if (!isNumericId(id)) {
+    return new Response(JSON.stringify({ error: 'Participant ID must be numeric' }), {
       status: 400,
       headers: {
         'Content-Type': 'application/json',

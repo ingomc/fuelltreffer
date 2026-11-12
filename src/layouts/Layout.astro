@@ -3,7 +3,7 @@ import '@fontsource-variable/inter';
 import '../styles/global.css';
 import Footer from '../components/Footer.astro';
 import AppNav from '../components/svelte/AppNav.svelte';
-import { CURRENT_LEAGUE } from '../config/league';
+import { CURRENT_LEAGUE, findLeagueTeam } from '../config/league';
 import { HOME_SEO, SITE_NAME, type SocialImage } from '../config/seo';
 import { resolveTab } from '../stores/dashboard.js';
 
@@ -32,7 +32,7 @@ const absoluteImageURL = socialImageURL.toString();
 // Navigation state: the dashboard view and the selected team come from the URL
 const pathname = Astro.url.pathname;
 const initialTab = pathname === '/' ? resolveTab(Astro.url.searchParams.get('tab')) : null;
-const selectedTeamId = Astro.url.searchParams.get('team') || CURRENT_LEAGUE.defaultParticipantId;
+const selectedTeamId = findLeagueTeam(Astro.url.searchParams.get('team'))?.id ?? CURRENT_LEAGUE.defaultParticipantId;
 
 // Umami Analytics configuration
 const umamiUrl = import.meta.env.PUBLIC_UMAMI_URL;

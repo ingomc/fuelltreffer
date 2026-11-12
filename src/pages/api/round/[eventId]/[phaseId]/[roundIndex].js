@@ -1,11 +1,12 @@
 import { CURRENT_LEAGUE } from '@/config/league';
 import { THREE_K_USER_AGENT } from '@/config/threek';
+import { isNumericId } from '@/lib/threek-proxy';
 
 export async function GET({ params }) {
   const { eventId, phaseId, roundIndex } = params;
   
-  if (!eventId || !phaseId || roundIndex === undefined) {
-    return new Response(JSON.stringify({ error: 'Event ID, Phase ID and Round Index are required' }), {
+  if (!isNumericId(eventId) || !isNumericId(phaseId) || !isNumericId(roundIndex)) {
+    return new Response(JSON.stringify({ error: 'Event ID, Phase ID and Round Index must be numeric' }), {
       status: 400,
       headers: {
         'Content-Type': 'application/json',
