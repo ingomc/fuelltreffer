@@ -1,12 +1,18 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import ParticipantData from '../components/ParticipantData.astro';
-import { CURRENT_LEAGUE } from '../config/league';
+import { CURRENT_LEAGUE, findLeagueTeam } from '../config/league';
 import { HOME_SEO } from '../config/seo';
 
-// Get team ID from URL parameter or use default
-const urlParams = new URLSearchParams(Astro.url.search);
-const selectedTeamId = urlParams.get('team') || CURRENT_LEAGUE.defaultParticipantId;
+// Unknown or outdated team IDs lead to the default team instead of an empty dashboard.
+const requestedTeamId = Astro.url.searchParams.get('team');
+if (requestedTeamId !== null && !findLeagueTeam(requestedTeamId)) {
+  const target = new URL(Astro.url);
+  target.searchParams.delete('team');
+  return Astro.redirect(target.pathname + target.search);
+}
+
+const selectedTeamId = requestedTeamId ?? CURRENT_LEAGUE.defaultParticipantId;
 ---
 
 <Layout {...HOME_SEO}>

@@ -1,9 +1,10 @@
 import { CURRENT_LEAGUE } from '@/config/league';
+import { isNumericId } from '@/lib/threek-proxy';
 
 export async function GET({ params }) {
   const { eventId } = params;
   
-  if (!eventId) {
+  if (!isNumericId(eventId)) {
     return new Response(JSON.stringify({
       success: false,
       message: 'Event ID ist erforderlich'

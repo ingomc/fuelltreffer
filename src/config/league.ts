@@ -34,4 +34,9 @@ export const CURRENT_LEAGUE = {
   ] satisfies readonly LeagueTeam[]
 } as const;
 
+/** The team with this ID if it plays in the current league, otherwise null. */
+export function findLeagueTeam(id: string | null | undefined): LeagueTeam | null {
+  return CURRENT_LEAGUE.teams.find(team => team.id === id) ?? null;
+}
+
 export const CURRENT_LEAGUE_TITLE = `${CURRENT_LEAGUE.name} • Saison ${CURRENT_LEAGUE.season}`;
