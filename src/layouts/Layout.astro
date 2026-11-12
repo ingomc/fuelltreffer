@@ -1,7 +1,11 @@
 ---
+import '@fontsource-variable/inter';
+import '../styles/global.css';
 import Footer from '../components/Footer.astro';
-import Header from '../components/Header.astro';
+import AppNav from '../components/svelte/AppNav.svelte';
+import { CURRENT_LEAGUE } from '../config/league';
 import { HOME_SEO, SITE_NAME, type SocialImage } from '../config/seo';
+import { resolveTab } from '../stores/dashboard.js';
 
 export interface Props {
   title: string;
@@ -24,6 +28,11 @@ const socialImageURL = new URL(image.path, publicOrigin);
 
 // Ensure absolute URL for social sharing
 const absoluteImageURL = socialImageURL.toString();
+
+// Navigation state: the dashboard view and the selected team come from the URL
+const pathname = Astro.url.pathname;
+const initialTab = pathname === '/' ? resolveTab(Astro.url.searchParams.get('tab')) : null;
+const selectedTeamId = Astro.url.searchParams.get('team') || CURRENT_LEAGUE.defaultParticipantId;
 
 // Umami Analytics configuration
 const umamiUrl = import.meta.env.PUBLIC_UMAMI_URL;
@@ -72,7 +81,8 @@ const umamiWebsiteId = import.meta.env.PUBLIC_UMAMI_WEBSITE_ID;
     <meta name="twitter:image:alt" content={image.alt} />
     
     <!-- Theme -->
-    <meta name="theme-color" content="#1e40af" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#2e2e2e" media="(prefers-color-scheme: dark)" />
     <meta name="color-scheme" content="light dark" />
     
     <!-- Umami Analytics -->
@@ -98,11 +108,15 @@ const umamiWebsiteId = import.meta.env.PUBLIC_UMAMI_WEBSITE_ID;
       initializeTracking();
     </script>
   </head>
-  <body class="bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-200">
-    <Header showTeamSelector={showTeamSelector} />
-    <main>
-      <slot />
-    </main>
-    <Footer />
+  <body>
+    <div class="flex min-h-screen flex-col lg:flex-row">
+      <AppNav client:load pathname={pathname} initialTab={initialTab} selectedTeamId={selectedTeamId} showTeamSelector={showTeamSelector} />
+      <div class="flex min-w-0 flex-1 flex-col">
+        <main class="flex-1">
+          <slot />
+        </main>
+        <Footer />
+      </div>
+    </div>
   </body>
 </html>

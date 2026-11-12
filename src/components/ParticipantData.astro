@@ -34,6 +34,7 @@ const frontendConfig = {
 <ParticipantDashboard 
   client:load
   initialData={participantData}
+  initialTab={Astro.url.searchParams.get('tab') ?? 'overview'}
   apiBaseUrl={frontendConfig.API_BASE_URL}
   defaultParticipantId={frontendConfig.DEFAULT_PARTICIPANT_ID}
 />

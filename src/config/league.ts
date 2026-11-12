@@ -12,7 +12,7 @@ export const CURRENT_LEAGUE = {
   name: 'Liga B2',
   season: '2026-1',
   eventId: 24970,
-  phaseId: 42062,
+  // Runde, über die 3K alle Begegnungen der Liga-Phase liefert (Matchbericht).
   tableRoundIndex: 0,
   defaultParticipantId: '633505',
   api: {

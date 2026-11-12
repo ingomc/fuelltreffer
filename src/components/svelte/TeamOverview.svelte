@@ -1,6 +1,7 @@
 <script>
   import { onMount } from 'svelte';
-  import ClickTooltip from './ClickTooltip.svelte';
+  import Icon from './Icon.svelte';
+  import { getInitials } from '../../lib/match-utils';
   
   export let participant;
   export let teamSeason;
@@ -37,138 +38,98 @@
     }
     // Default is cards (showMembersTable = false), no URL parameter needed
   });
+
+  const isInactive = (member) => member.dateTo && new Date(member.dateTo) < new Date();
+
+  // Active players first, captains on top; inactive players at the end
+  $: sortedMembers = [...members].sort((a, b) =>
+    Number(isInactive(a)) - Number(isInactive(b)) ||
+    Number(!(a.tc1 || a.tc2)) - Number(!(b.tc1 || b.tc2)) ||
+    Number(!a.tc1) - Number(!b.tc1)
+  );
+  $: stats = [
+    { label: 'Spieler', value: members.length, icon: 'users' },
+    { label: 'Kapitäne', value: members.filter(m => m.tc1 || m.tc2).length, icon: 'crown' },
+    { label: 'Aktiv', value: members.filter(m => !m.dateTo || new Date(m.dateTo) > new Date()).length, icon: 'activity' },
+    { label: 'Inaktiv', value: members.filter(m => m.dateTo && new Date(m.dateTo) < new Date()).length, icon: 'user-x' }
+  ];
 </script>
 
-<div class="min-h-[600px] space-y-4 p-2 transition-colors duration-200 sm:p-3">
-  <!-- Kompakte Team Members Section -->
-  <div>
-    <div class="flex items-center justify-between mb-3">
-      <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100 flex items-center transition-colors duration-200">
-        <span class="text-xl mr-2">👥</span>
-        Team ({members.length})
-      </h2>
-    </div>
+<div class="flex flex-col gap-4">
+  <div class="grid grid-cols-2 gap-4 xl:grid-cols-4">
+    {#each stats as stat}
+      <div class="paper flex min-w-0 flex-col gap-2.5 p-4">
+        <div class="flex items-center justify-between gap-2">
+          <span class="label truncate">{stat.label}</span>
+          <span class="shrink-0 text-gray-600 dark:text-dark-200"><Icon name={stat.icon} size={22} strokeWidth={1.5} /></span>
+        </div>
+        <span class="heading text-[28px] font-bold leading-none tabular-nums">{stat.value}</span>
+      </div>
+    {/each}
+  </div>
 
-    <!-- Kompakte Team Stats -->
-    <!-- Kompakte Team Stats - bessere Kategorisierung -->
-    <div class="grid grid-cols-4 gap-2 mb-3">
-      <div class="bg-blue-50 dark:bg-blue-900 rounded-lg py-2 px-1 text-center transition-colors duration-200">
-        <div class="text-lg font-bold text-blue-600 dark:text-blue-400">{members.length}</div>
-        <div class="text-xs text-gray-500 dark:text-gray-400">Total</div>
+  <section class="paper flex flex-col overflow-hidden">
+    <div class="paper-head">
+      <div>
+        <h2 class="paper-title">Kader</h2>
+        <p class="dimmed text-xs">{members.length} gemeldete Spieler</p>
       </div>
-      <div class="bg-green-50 dark:bg-green-900 rounded-lg py-2 px-1 text-center transition-colors duration-200">
-        <div class="text-lg font-bold text-green-600 dark:text-green-400">
-          {members.filter(m => m.tc1 || m.tc2).length}
-        </div>
-        <div class="text-xs text-gray-500 dark:text-gray-400">Kapitäne</div>
-      </div>
-      <div class="bg-yellow-50 dark:bg-yellow-900 rounded-lg py-2 px-1 text-center transition-colors duration-200">
-        <div class="text-lg font-bold text-yellow-600 dark:text-yellow-400">
-          {members.filter(m => !m.dateTo || new Date(m.dateTo) > new Date()).length}
-        </div>
-        <div class="text-xs text-gray-500 dark:text-gray-400">Aktiv</div>
-      </div>
-      <div class="bg-purple-50 dark:bg-purple-900 rounded-lg py-2 px-1 text-center transition-colors duration-200">
-        <div class="text-lg font-bold text-purple-600 dark:text-purple-400">
-          {members.filter(m => m.dateTo && new Date(m.dateTo) < new Date()).length}
-        </div>
-        <div class="text-xs text-gray-500 dark:text-gray-400">Inaktiv</div>
-      </div>
-    </div>    <!-- Kompakte View Toggle Buttons -->
-    <div class="flex justify-end mb-3">
-      <div class="inline-flex rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 p-0.5 shadow-sm transition-colors duration-200">
-        <button
-          class="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-md transition-all"
-          class:bg-blue-500={!showMembersTable}
-          class:text-white={!showMembersTable}
-          class:shadow-sm={!showMembersTable}
-          class:text-gray-700={showMembersTable}
-          class:dark:text-gray-300={showMembersTable}
-          class:hover:bg-gray-50={showMembersTable}
-          class:dark:hover:bg-gray-700={showMembersTable}
-          on:click={() => updateView(false)}
-        >
-          <span class="text-sm">🎴</span>
-          <span>Karten</span>
-        </button>
-        <button
-          class="flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-md transition-all"
-          class:bg-blue-500={showMembersTable}
-          class:text-white={showMembersTable}
-          class:shadow-sm={showMembersTable}
-          class:text-gray-700={!showMembersTable}
-          class:dark:text-gray-300={!showMembersTable}
-          class:hover:bg-gray-50={!showMembersTable}
-          class:dark:hover:bg-gray-700={!showMembersTable}
-          on:click={() => updateView(true)}
-        >
-          <span class="text-sm">📋</span>
-          <span>Tabelle</span>
-        </button>
+      <div class="flex gap-0.5 rounded-md bg-gray-100 p-1 dark:bg-dark-800" role="group" aria-label="Ansicht">
+        {#each [{ table: false, label: 'Karten', icon: 'grid' }, { table: true, label: 'Liste', icon: 'list' }] as view}
+          <button
+            type="button"
+            aria-pressed={showMembersTable === view.table}
+            class="inline-flex min-h-[36px] items-center gap-1.5 rounded-[5px] px-3 text-[13px] font-medium transition-colors {showMembersTable === view.table
+              ? 'bg-white text-gray-950 shadow-paper dark:bg-dark-400 dark:text-white dark:shadow-none'
+              : 'text-gray-700 hover:text-gray-950 dark:text-dark-150 dark:hover:text-white'}"
+            on:click={() => updateView(view.table)}
+          >
+            <Icon name={view.icon} size={14} strokeWidth={1.6} />
+            {view.label}
+          </button>
+        {/each}
       </div>
     </div>
 
-    <!-- Kompakte Members List -->
     {#if members.length === 0}
-      <div class="text-center py-6">
-        <span class="text-4xl">👥</span>
-        <p class="text-gray-500 dark:text-gray-400 mt-2 text-sm transition-colors duration-200">Keine Mitglieder gefunden</p>
+      <div class="divider flex flex-col items-center border-t px-6 py-12 text-center">
+        <span class="text-gray-600 dark:text-dark-200"><Icon name="users" size={28} strokeWidth={1.5} /></span>
+        <p class="dimmed mt-3">Keine Mitglieder gefunden</p>
       </div>
     {:else if showMembersTable}
-      <!-- Mobile-optimierte Table -->
       <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm transition-colors duration-200">
-          <thead class="bg-gray-50 dark:bg-gray-800 transition-colors duration-200">
-            <tr>
-              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase transition-colors duration-200">Name</th>
-              <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase transition-colors duration-200">Pos</th>
-              <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase transition-colors duration-200">#</th>
-              <th class="px-2 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase transition-colors duration-200">Rolle</th>
+        <table class="w-full border-collapse">
+          <thead>
+            <tr class="heading text-left">
+              <th class="divider border-t py-2.5 pl-5 pr-2 font-bold">Spieler</th>
+              <th class="divider border-t px-2 py-2.5 font-bold">Rolle</th>
+              <th class="divider border-t py-2.5 pl-2 pr-5 text-right font-bold">Status</th>
             </tr>
           </thead>
-          <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700 transition-colors duration-200">
-            {#each members as member}
-              <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
-                <td class="px-3 py-2">
-                  <div class="flex items-center">
-                    <div class="w-6 h-6 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-2 transition-colors duration-200">
-                      <span class="text-xs font-bold text-blue-600 dark:text-blue-400">{member.displayName.charAt(0)}</span>
-                    </div>
-                    <div class="min-w-0">
-                      <div class="text-xs font-medium text-gray-900 dark:text-gray-100 truncate transition-colors duration-200">{member.displayName}</div>
-                    </div>
+          <tbody>
+            {#each sortedMembers as member}
+              <tr class={isInactive(member) ? 'opacity-60' : ''}>
+                <td class="divider border-t py-2.5 pl-5 pr-2">
+                  <div class="flex items-center gap-3">
+                    <span aria-hidden="true" class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-100 text-xs font-bold text-gray-700 dark:bg-dark-500 dark:text-dark-50">{getInitials(member.displayName)}</span>
+                    <span class="heading truncate font-medium">{member.displayName}</span>
                   </div>
                 </td>
-                <td class="px-2 py-2 text-xs text-gray-900 dark:text-gray-100 transition-colors duration-200">
-                  N/A
+                <td class="divider border-t px-2 py-2.5">
+                  {#if member.tc1}
+                    <span class="badge-brand"><Icon name="crown" size={12} />Kapitän 1</span>
+                  {:else if member.tc2}
+                    <span class="badge-brand"><Icon name="crown" size={12} />Kapitän 2</span>
+                  {:else}
+                    <span class="dimmed">Spieler</span>
+                  {/if}
                 </td>
-                <td class="px-2 py-2 text-xs text-gray-900 dark:text-gray-100 transition-colors duration-200">
-                  N/A
-                </td>
-                <td class="px-2 py-2">
-                  <div class="flex gap-1">
-                    {#if member.tc1}
-                      <ClickTooltip text="Team-Kapitän 1" position="top">
-                        <span class="text-xs px-1 py-0.5 rounded bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300 cursor-help transition-colors duration-200">
-                          👑 1
-                        </span>
-                      </ClickTooltip>
-                    {/if}
-                    {#if member.tc2}
-                      <ClickTooltip text="Team-Kapitän 2" position="top">
-                        <span class="text-xs px-1 py-0.5 rounded bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-300 cursor-help transition-colors duration-200">
-                          👑 2
-                        </span>
-                      </ClickTooltip>
-                    {/if}
-                    {#if member.dateTo && new Date(member.dateTo) < new Date()}
-                      <ClickTooltip text="Aus dem Team ausgetreten" position="top">
-                        <span class="text-xs px-1 py-0.5 rounded bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-300 cursor-help transition-colors duration-200">
-                          Inaktiv
-                        </span>
-                      </ClickTooltip>
-                    {/if}
-                  </div>
+                <td class="divider border-t py-2.5 pl-2 pr-5 text-right">
+                  {#if isInactive(member)}
+                    <span class="badge-gray" title="Aus dem Team ausgetreten">Inaktiv</span>
+                  {:else}
+                    <span class="badge-win">Aktiv</span>
+                  {/if}
                 </td>
               </tr>
             {/each}
@@ -176,68 +137,30 @@
         </table>
       </div>
     {:else}
-      <!-- Kompakte Card View -->
-      <div class="space-y-2">
-        {#each members as member}
-          <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-3 transition-colors duration-200">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center space-x-3 flex-1 min-w-0">
-                <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center transition-colors duration-200">
-                  <span class="text-xs font-bold text-blue-600 dark:text-blue-400">{member.displayName.charAt(0)}</span>
-                </div>
-                <div class="min-w-0 flex-1">
-                  <div class="font-medium text-gray-900 dark:text-gray-100 text-sm truncate transition-colors duration-200">{member.displayName}</div>
-                </div>
-              </div>
-              
-              <div class="flex items-center gap-1 ml-2">
-                {#if member.tc1}
-                  <ClickTooltip text="Team-Kapitän 1" position="top">
-                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300 cursor-help transition-colors duration-200">
-                      👑 1
-                    </span>
-                  </ClickTooltip>
-                {/if}
-                {#if member.tc2}
-                  <ClickTooltip text="Team-Kapitän 2" position="top">
-                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-300 cursor-help transition-colors duration-200">
-                      👑 2
-                    </span>
-                  </ClickTooltip>
-                {/if}
-                {#if member.dateTo && new Date(member.dateTo) < new Date()}
-                  <ClickTooltip text="Aus dem Team ausgetreten" position="top">
-                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-300 cursor-help transition-colors duration-200">
-                      Inaktiv
-                    </span>
-                  </ClickTooltip>
-                {/if}
-              </div>
+      <ul class="divider grid gap-3 border-t p-4 sm:grid-cols-2 sm:p-5 2xl:grid-cols-3">
+        {#each sortedMembers as member}
+          <li class="divider flex items-center gap-3 rounded-xl border p-3 {isInactive(member) ? 'opacity-60' : ''}">
+            <span
+              aria-hidden="true"
+              class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[13px] font-bold {member.tc1 || member.tc2
+                ? 'bg-brand-700/10 text-brand-700 dark:bg-brand-700/25 dark:text-brand-300'
+                : 'bg-gray-100 text-gray-700 dark:bg-dark-500 dark:text-dark-50'}"
+            >{getInitials(member.displayName)}</span>
+            <div class="min-w-0 flex-1">
+              <p class="heading truncate font-semibold">{member.displayName}</p>
+              <p class="dimmed text-xs">
+                {#if member.tc1}Kapitän 1{:else if member.tc2}Kapitän 2{:else}Spieler{/if}
+              </p>
             </div>
-          </div>
+            {#if member.tc1 || member.tc2}
+              <span class="badge-brand shrink-0" title={member.tc1 ? 'Team-Kapitän 1' : 'Team-Kapitän 2'}><Icon name="crown" size={12} />{member.tc1 ? 'TC 1' : 'TC 2'}</span>
+            {/if}
+            {#if isInactive(member)}
+              <span class="badge-gray shrink-0" title="Aus dem Team ausgetreten">Inaktiv</span>
+            {/if}
+          </li>
         {/each}
-      </div>
+      </ul>
     {/if}
-
-                                <!-- Kompakte Symbol-Legende -->
-    {#if members.length > 0}
-      <div class="mt-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 transition-colors duration-200">
-        <h4 class="text-xs font-medium text-gray-900 dark:text-gray-100 mb-2 transition-colors duration-200">Team Rollen:</h4>
-        <div class="grid grid-cols-2 gap-1 text-xs text-gray-700 dark:text-gray-300 transition-colors duration-200">
-          <div class="flex items-center gap-1">
-            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300 transition-colors duration-200">👑 1</span>
-            <span>Kapitän 1</span>
-          </div>
-          <div class="flex items-center gap-1">
-            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-300 transition-colors duration-200">👑 2</span>
-            <span>Kapitän 2</span>
-          </div>
-          <div class="flex items-center gap-1">
-            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-300 transition-colors duration-200">Inaktiv</span>
-            <span>Ausgetreten</span>
-          </div>
-        </div>
-      </div>
-    {/if}
-  </div>
+  </section>
 </div>

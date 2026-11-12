@@ -54,7 +54,7 @@ async function initializeMap() {
         alt: group.venue.name,
         icon: L.divIcon({
           className: 'venue-pin',
-          html: '<span style="display:block;width:24px;height:24px;border:3px solid white;border-radius:50% 50% 50% 0;background:#2563eb;box-shadow:0 2px 6px #0006;transform:rotate(-45deg)"></span>',
+          html: '<span style="display:block;width:24px;height:24px;border:3px solid white;border-radius:50% 50% 50% 0;background:#b91c1c;box-shadow:0 2px 6px #0006;transform:rotate(-45deg)"></span>',
           iconSize: [24, 24], iconAnchor: [12, 27], popupAnchor: [0, -27],
         }),
       }).bindPopup(content).addTo(map);

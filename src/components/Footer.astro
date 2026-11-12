@@ -1,73 +1,31 @@
 ---
 import { Image } from 'astro:assets';
 import avatarImage from '../assets/andre-emoji.png';
-import ThemeSwitch from './svelte/ThemeSwitch.svelte';
+import { CURRENT_LEAGUE_TITLE } from '../config/league';
 ---
 
-<footer class="mt-8 pb-6">
-  <div class="border-t border-gray-200 dark:border-gray-700 pt-6 transition-colors duration-200">
-    <div class="flex items-center justify-center gap-6 mb-4">
-      <!-- Größerer Avatar Kreis mit optimiertem Bild -->
-      <div class="relative">
-        <!-- Äußerer Ring mit Glow-Effekt -->
-        <div class="w-20 h-20 rounded-full bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 dark:from-blue-500 dark:via-blue-600 dark:to-blue-700 p-0.5 shadow-lg transition-colors duration-200">
-          <!-- Innerer weißer Ring -->
-          <div class="w-full h-full rounded-full bg-white dark:bg-gray-800 p-1 transition-colors duration-200">
-            <!-- Avatar Container -->
-            <div class="relative w-full h-full rounded-full overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 transition-colors duration-200">
-              <!-- Optimiertes Bild mit Astro Image - Retina-Ready -->
-              <Image 
-                src={avatarImage}
-                alt="Andre Bellmann Avatar"
-                width={72}
-                height={72}
-                densities={[1, 2]}
-                quality={95}
-                format="webp"
-                class="w-[72px] h-[72px] object-cover rounded-full opacity-90 hover:opacity-100 hover:scale-110 transition-all duration-300 ease-out"
-                loading="lazy"
-                decoding="async"
-              />
-              <!-- Subtiler Overlay für mehr Style -->
-              <div class="absolute inset-0 rounded-full bg-gradient-to-t from-black/5 to-transparent dark:from-black/20"></div>
-            </div>
-          </div>
-        </div>
-        <!-- Pulsierender Ring beim Hover -->
-        <div class="absolute inset-0 rounded-full bg-blue-400/30 dark:bg-blue-500/30 scale-110 opacity-0 hover:opacity-100 transition-all duration-500 ease-out animate-pulse"></div>
-      </div>
-      
-      <!-- Footer Info linksbündig mit 3 Zeilen -->
-      <div class="text-left">
-        <p class="text-sm font-medium text-gray-900 dark:text-gray-100 mb-1 transition-colors duration-200">
-          🎯 Fülltreffer Dashboard
-        </p>
-        <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1 mb-1 transition-colors duration-200">
-          Made with ❤️ by 
-          <a 
-            href="https://andre-bellmann.de" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            class="font-medium text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors hover:underline"
-          >
-            Andre Bellmann
-          </a>
-        </p>
-        <p class="text-xs text-gray-400 dark:text-gray-500 transition-colors duration-200">
-          © {new Date().getFullYear()}
-        </p>
-      </div>
-    </div>
-    
-    <nav aria-label="Weitere Seiten" class="mb-4 text-center">
-      <a href="/spielorte" class="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-blue-600 hover:text-blue-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
-        <span aria-hidden="true">📍</span> Spielorte
-      </a>
-    </nav>
-
-    <!-- Theme Switch zentriert unter dem Avatar/Info -->
-    <div class="flex justify-center">
-      <ThemeSwitch client:load />
-    </div>
+<footer class="divider mt-10 border-t">
+  <div class="flex flex-wrap items-center justify-between gap-4 px-4 py-5 sm:px-6 lg:px-9">
+    <p class="dimmed text-xs">Fülltreffer Dashboard · {CURRENT_LEAGUE_TITLE}</p>
+    <a
+      href="https://andre-bellmann.de"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="dimmed group flex items-center gap-2.5 rounded-md text-xs"
+    >
+      <Image
+        src={avatarImage}
+        alt="Andre Bellmann Avatar"
+        width={28}
+        height={28}
+        densities={[1, 2]}
+        quality={95}
+        format="webp"
+        class="h-7 w-7 rounded-full bg-gray-100 object-cover dark:bg-dark-500"
+        loading="lazy"
+        decoding="async"
+      />
+      <span>Made with ♥ by <span class="heading font-semibold group-hover:underline">Andre Bellmann</span> · © {new Date().getFullYear()}</span>
+    </a>
   </div>
 </footer>
