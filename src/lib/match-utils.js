@@ -91,32 +91,6 @@ export function getNextMatch(matches) {
   return pending.find(isLiveMatch) || pending[0] || null;
 }
 
-const WEEKDAYS_SHORT = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
-
-export function getDateParts(dateString) {
-  const date = new Date(dateString);
-  return {
-    weekday: WEEKDAYS_SHORT[date.getDay()],
-    day: date.toLocaleDateString('de-DE', { day: '2-digit' }),
-    month: date.toLocaleDateString('de-DE', { month: 'short' }).replace('.', ''),
-    time: date.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
-  };
-}
-
-export function formatLongDate(dateString) {
-  return new Date(dateString).toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' });
-}
-
-/** Human readable distance in days, e.g. "Heute", "Morgen", "in 4 Tagen". */
-export function formatRelativeDay(dateString, now = new Date()) {
-  const startOfDay = (value) => new Date(value.getFullYear(), value.getMonth(), value.getDate()).getTime();
-  const days = Math.round((startOfDay(new Date(dateString)) - startOfDay(now)) / 86400000);
-  if (days === 0) return 'Heute';
-  if (days === 1) return 'Morgen';
-  if (days === -1) return 'Gestern';
-  return days > 0 ? `in ${days} Tagen` : `vor ${-days} Tagen`;
-}
-
 export function getInitials(name = '') {
   const parts = name.replace(/[^\p{L}\p{N}\s]/gu, ' ').trim().split(/\s+/).filter(Boolean);
   if (parts.length === 0) return '?';
@@ -127,16 +101,6 @@ export function getInitials(name = '') {
 /** Short team name from the league configuration, falling back to the display name. */
 export function getShortTeamName(team) {
   return CURRENT_LEAGUE.teams.find(entry => isSameId(entry.id, team?.id))?.shortName || team?.displayName || '';
-}
-
-/** Compact date for list rows, e.g. { weekday: 'Fr', date: '13.11.', time: '18:00' }. */
-export function formatShortDate(dateString) {
-  const date = new Date(dateString);
-  return {
-    weekday: WEEKDAYS_SHORT[date.getDay()],
-    date: date.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' }),
-    time: date.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
-  };
 }
 
 /** Name of a team's home venue from the checked-in venue snapshot, if known. */

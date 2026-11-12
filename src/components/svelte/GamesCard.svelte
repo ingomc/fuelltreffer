@@ -1,8 +1,9 @@
 <script>
   import Icon from './Icon.svelte';
   import { trackDartEvents } from '/src/utils/umami.js';
+  import { formatShortDate } from '../../lib/dates';
   import {
-    formatShortDate, getMatchOutcome, getScorePair, getShortTeamName, isCancelledMatch, isFinishedMatch,
+    getMatchOutcome, getScorePair, getShortTeamName, isCancelledMatch, isFinishedMatch,
     isLiveMatch, isSameId, sortByDate, OUTCOME_LABELS
   } from '../../lib/match-utils';
 

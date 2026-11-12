@@ -1,9 +1,8 @@
 <script>
   import Icon from './Icon.svelte';
   import { trackDartEvents } from '/src/utils/umami.js';
-  import {
-    getNextMatch, isLiveMatch, isSameId, formatLongDate, formatRelativeDay, formatShortDate, getInitials, getVenueName
-  } from '../../lib/match-utils';
+  import { formatLongDate, formatRelativeDay, formatShortDate } from '../../lib/dates';
+  import { getNextMatch, isLiveMatch, isSameId, getInitials, getVenueName } from '../../lib/match-utils';
 
   export let matches = [];
   export let currentParticipantId = '';

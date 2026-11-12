@@ -263,7 +263,11 @@ if (teamParam) {
   function formatDate(dateString) {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
+    // 3K sends report times as league wall time without an offset, which must be
+    // shown unchanged in every browser; only real instants are converted.
+    const hasOffset = /(Z|[+-]\d{2}:?\d{2})$/.test(dateString);
     return date.toLocaleString('de-DE', {
+      ...(hasOffset ? { timeZone: 'Europe/Berlin' } : {}),
       weekday: 'long',
       year: 'numeric',
       month: 'long',
